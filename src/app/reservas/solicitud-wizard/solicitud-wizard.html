@@ -1,0 +1,1707 @@
+<div class="container py-4">
+    <!-- Indicador de progreso dinámico -->
+    <div class="progress-steps mb-4">
+        <div class="step-item" [class.active]="pasoActual() === 1" [class.completed]="pasoActual() > 1">
+            <span class="step-number">1</span><span class="step-label">Solicitud</span>
+        </div>
+        <div class="step-item" [class.active]="pasoActual() === 2" [class.completed]="pasoActual() > 2">
+            <span class="step-number">2</span><span class="step-label">Política</span>
+        </div>
+        <div class="step-item" [class.active]="pasoActual() === 3" [class.completed]="pasoActual() > 3">
+            <span class="step-number">3</span><span class="step-label">Pago</span>
+        </div>
+        <div class="step-item" [class.active]="pasoActual() === 4" [class.completed]="pasoActual() > 4">
+            <span class="step-number">4</span><span class="step-label">Comportamiento</span>
+        </div>
+        <div class="step-item" [class.active]="pasoActual() === 5" [class.completed]="pasoActual() > 5">
+            <span class="step-number">5</span><span class="step-label">Recomendaciones</span>
+        </div>
+    </div>
+
+    <div class="form-container shadow-lg">
+        <header class="encabezado-institucional">
+            <span class="step-badge">Paso {{ pasoActual() }}</span>
+            <h1>
+                @switch (pasoActual()) {
+                @case (1) { FORMATO SOLICITUD SERVICIOS EDUCATIVOS }
+                @case (2) { POLÍTICA DE SERVICIO }
+                @case (3) { REPORTE DE PAGO }
+                @case (4) { CÓDIGO DE COMPORTAMIENTO }
+                @case (5) { RECOMENDACIONES }
+                }
+            </h1>
+            <img ngSrc="assets/logo.jpg" width="100" height="100" alt="Logo Jardín Botánico BUAP"
+                class="logo-institucional">
+        </header>
+
+        <div class="form-content p-4 p-md-5">
+            <form [formGroup]="solicitudForm">
+
+                @switch (pasoActual()) {
+                @case (1) {
+                <!-- Sección: Datos de la Institución -->
+                <div class="section-card">
+                    <div class="section-title">
+                        <div class="d-flex align-items-center">
+                            <span class="step-badge"><i class="bi bi-building"></i></span>
+                            <span class="ms-3">Datos de la Institución</span>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="escuela" class="form-label text-muted fw-semibold">
+                            <i class="bi bi-mortarboard me-1"></i> Nombre de la Escuela *
+                        </label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light"><i class="bi bi-bank"></i></span>
+                            <input type="text" class="form-control" id="escuela" formControlName="escuela"
+                                placeholder="Ej. Preparatoria Benemérita"
+                                [class.is-invalid]="solicitudForm.controls.escuela.invalid && solicitudForm.controls.escuela.touched">
+                        </div>
+                    </div>
+
+                    <label class="form-label text-muted fw-semibold mb-3">
+                        <i class="bi bi-geo-alt me-1"></i> Dirección de la Escuela *
+                    </label>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="input-group">
+                                <span class="input-group-text bg-light"><i class="bi bi-signpost-split"></i></span>
+                                <input type="text" class="form-control" id="calle" formControlName="calle"
+                                    placeholder="Calle">
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <input type="text" class="form-control" id="num_ext" formControlName="num_ext"
+                                placeholder="N° Ext.">
+                        </div>
+                        <div class="col-md-3">
+                            <input type="text" class="form-control" id="num_int" formControlName="num_int"
+                                placeholder="N° Int. (Opcional)">
+                        </div>
+                        <div class="col-md-5">
+                            <input type="text" class="form-control" id="colonia" formControlName="colonia"
+                                placeholder="Colonia">
+                        </div>
+                        <div class="col-md-3">
+                            <div class="input-group">
+                                <span class="input-group-text bg-light"><i class="bi bi-mailbox"></i></span>
+                                <input type="text" class="form-control" id="cp" formControlName="cp" placeholder="C.P."
+                                    [class.is-invalid]="solicitudForm.controls.cp.invalid && solicitudForm.controls.cp.touched">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <input type="text" class="form-control" id="municipio" formControlName="municipio"
+                                placeholder="Municipio">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sección: Información de Contacto y Nivel -->
+                <div class="section-card">
+                    <div class="section-title">
+                        <div class="d-flex align-items-center">
+                            <span class="step-badge"><i class="bi bi-person-lines-fill"></i></span>
+                            <span class="ms-3">Información de Contacto y Nivel</span>
+                        </div>
+                    </div>
+
+                    <div class="row mb-4">
+                        <!-- Arreglo Dinámico: Profesores -->
+                        <div class="col-md-7 mb-3 mb-md-0">
+                            <label class="form-label text-muted fw-semibold">
+                                <i class="bi bi-person-badge me-1"></i> Profesor(es) Responsable(s) *
+                            </label>
+                            <div formArrayName="profesores">
+                                @for (prof of profesores.controls; track $index) {
+                                <div class="input-group mb-2 shadow-sm">
+                                    <span class="input-group-text bg-light text-success"><i
+                                            class="bi bi-person"></i></span>
+                                    <input type="text" class="form-control" [formControlName]="$index"
+                                        placeholder="Nombre completo">
+
+                                    @if ($first) {
+                                    <button type="button" class="btn btn-outline-success"
+                                        (click)="agregarCampo('profesor')" title="Agregar otro profesor">
+                                        <i class="bi bi-plus-lg"></i> Agregar
+                                    </button>
+                                    } @else {
+                                    <button type="button" class="btn btn-outline-danger px-3"
+                                        (click)="eliminarCampo('profesor', $index)">
+                                        <i class="bi bi-trash-fill"></i>
+                                    </button>
+                                    }
+                                </div>
+                                }
+                            </div>
+                            <small class="text-muted"><i class="bi bi-info-circle me-1"></i>Si asisten varios grupos,
+                                agregue a los
+                                responsables.</small>
+                        </div>
+
+                        <!-- Arreglo Dinámico: Teléfonos -->
+                        <div class="col-md-5">
+                            <label class="form-label text-muted fw-semibold">
+                                <i class="bi bi-telephone me-1"></i> Teléfono(s) de Contacto *
+                            </label>
+                            <div formArrayName="telefonos">
+                                @for (tel of telefonos.controls; track $index) {
+                                <div class="input-group mb-2 shadow-sm">
+                                    <span class="input-group-text bg-light text-success"><i
+                                            class="bi bi-phone"></i></span>
+                                    <input type="tel" class="form-control" [formControlName]="$index"
+                                        placeholder="10 dígitos">
+
+                                    @if ($first) {
+                                    <button type="button" class="btn btn-outline-success px-3"
+                                        (click)="agregarCampo('telefono')" title="Agregar otro teléfono">
+                                        <i class="bi bi-plus-lg"></i>
+                                    </button>
+                                    } @else {
+                                    <button type="button" class="btn btn-outline-danger px-3"
+                                        (click)="eliminarCampo('telefono', $index)">
+                                        <i class="bi bi-trash-fill"></i>
+                                    </button>
+                                    }
+                                </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row g-3 mb-3">
+                        <!-- Arreglo Dinámico: Correos -->
+                        <div class="col-md-4">
+                            <label class="form-label text-muted fw-semibold">
+                                <i class="bi bi-envelope-at me-1"></i> Correo(s) Electrónico(s) *
+                            </label>
+                            <div formArrayName="correos">
+                                @for (correo of correos.controls; track $index) {
+                                <div class="input-group mb-2 shadow-sm">
+                                    <span class="input-group-text bg-light text-success"><i
+                                            class="bi bi-envelope"></i></span>
+                                    <input type="email" class="form-control" [formControlName]="$index"
+                                        placeholder="ejemplo@correo.com">
+
+                                    @if ($first) {
+                                    <button type="button" class="btn btn-outline-success px-3"
+                                        (click)="agregarCampo('correo')" title="Agregar otro correo">
+                                        <i class="bi bi-plus-lg"></i>
+                                    </button>
+                                    } @else {
+                                    <button type="button" class="btn btn-outline-danger px-3"
+                                        (click)="eliminarCampo('correo', $index)">
+                                        <i class="bi bi-trash-fill"></i>
+                                    </button>
+                                    }
+                                </div>
+                                }
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label for="nivel" class="form-label text-muted fw-semibold">
+                                <i class="bi bi-diagram-2 me-1"></i> Nivel Escolar *
+                            </label>
+                            <select class="form-select shadow-sm" id="nivel" formControlName="nivel">
+                                <option value="" selected disabled>Seleccione nivel...</option>
+                                <option value="prescolar">Preescolar</option>
+                                <option value="primaria">Primaria</option>
+                                <option value="secundaria">Secundaria</option>
+                                <option value="preparatoria">Preparatoria</option>
+                                <option value="licenciatura">Licenciatura</option>
+                                <option value="otro">Otro</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label for="grado" class="form-label text-muted fw-semibold">
+                                <i class="bi bi-award me-1"></i> Grado o Carrera *
+                            </label>
+                            <input type="text" class="form-control shadow-sm" id="grado" formControlName="grado"
+                                placeholder="Ej. 3er Año / Biología">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sección: Detalles del Servicio -->
+                <div class="section-card">
+                    <div class="section-title">
+                        <div class="d-flex align-items-center">
+                            <span class="step-badge"><i class="bi bi-calendar-event"></i></span>
+                            <span class="ms-3">Detalles del Servicio</span>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-success d-flex align-items-center border-0 shadow-sm mb-4" role="alert">
+                        <i class="bi bi-info-circle-fill fs-4 me-3"></i>
+                        <div>
+                            <strong>Nota importante:</strong> El cupo mínimo es de 10 personas y máximo de 60 por
+                            día. Los docentes acompañantes no pagan. El anticipo obligatorio es del 50%.
+                        </div>
+                    </div>
+
+                    <div class="mb-5">
+                        <label class="form-label text-muted fw-semibold mb-3">
+                            <i class="bi bi-flower1 me-1"></i> Seleccione la Visita o Taller *
+                        </label>
+
+                        <!-- Acordeón de Categorías -->
+                        <div class="accordion accordion-flush shadow-sm border rounded-3 overflow-hidden"
+                            id="accordionServicios">
+
+                            <!-- Categoría: Visitas -->
+                            <div class="accordion-item">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button fw-bold text-success" type="button"
+                                        data-bs-toggle="collapse" data-bs-target="#collapseVisitas"
+                                        aria-expanded="true">
+                                        <i class="bi bi-geo-alt-fill me-2"></i> Visitas Generales (1h 15m - 1.5h)
+                                    </button>
+                                </h2>
+                                <div id="collapseVisitas" class="accordion-collapse collapse show"
+                                    data-bs-parent="#accordionServicios">
+                                    <div class="accordion-body bg-light">
+
+                                        <!-- Tarjeta: Visita Guiada -->
+                                        <div class="service-option mb-3">
+                                            <input class="visually-hidden service-radio-input" type="radio"
+                                                formControlName="servicio" id="serv_visita_guiada"
+                                                value="visita_guiada">
+                                            <label class="service-radio-card rounded-3 p-3 w-100 m-0"
+                                                for="serv_visita_guiada">
+                                                <div class="d-flex align-items-start gap-3">
+                                                    <div class="service-check-icon mt-1">
+                                                        <i class="bi bi-circle fs-4 unselected-icon text-muted"></i>
+                                                        <i
+                                                            class="bi bi-check-circle-fill fs-4 selected-icon text-success d-none"></i>
+                                                    </div>
+                                                    <div class="flex-grow-1">
+                                                        <div
+                                                            class="d-flex justify-content-between align-items-center mb-1">
+                                                            <h6 class="mb-0 fw-bold">Visita Guiada</h6>
+                                                            <span class="badge bg-success rounded-pill">$30.00
+                                                                MXN</span>
+                                                        </div>
+                                                        <button
+                                                            class="btn btn-sm btn-link p-0 text-decoration-none text-muted collapsed mt-1"
+                                                            type="button" data-bs-toggle="collapse"
+                                                            data-bs-target="#desc_visita_guiada">
+                                                            Ver detalles y fotos <i class="bi bi-chevron-down"></i>
+                                                        </button>
+                                                        <div class="collapse mt-3" id="desc_visita_guiada">
+                                                            <div
+                                                                class="d-flex gap-3 align-items-start flex-column flex-sm-row">
+                                                                <img ngSrc="/VisitaGuiada.jpg" width="200" height="150"
+                                                                    class="rounded object-fit-cover shadow-sm img-fluid"
+                                                                    alt="Visita Guiada">
+                                                                <div>
+                                                                    <p class="small text-muted mb-2">¡Conoce las plantas
+                                                                        del Estado de
+                                                                        Puebla, mientras recorres el Jardín Botánico!
+                                                                    </p>
+                                                                    <span
+                                                                        class="badge bg-white border text-dark me-1"><i
+                                                                            class="bi bi-clock me-1"></i>1 h 15
+                                                                        min</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </label>
+                                        </div>
+
+                                        <!-- Tarjeta: Visita Temática -->
+                                        <div class="service-option mb-2">
+                                            <input class="visually-hidden service-radio-input" type="radio"
+                                                formControlName="servicio" id="serv_visita_tematica"
+                                                value="visita_tematica">
+                                            <label class="service-radio-card rounded-3 p-3 w-100 m-0"
+                                                for="serv_visita_tematica">
+                                                <div class="d-flex align-items-start gap-3">
+                                                    <div class="service-check-icon mt-1">
+                                                        <i class="bi bi-circle fs-4 unselected-icon text-muted"></i>
+                                                        <i
+                                                            class="bi bi-check-circle-fill fs-4 selected-icon text-success d-none"></i>
+                                                    </div>
+                                                    <div class="flex-grow-1">
+                                                        <div
+                                                            class="d-flex justify-content-between align-items-center mb-1">
+                                                            <h6 class="mb-0 fw-bold">Visita Temática</h6>
+                                                            <span class="badge bg-success rounded-pill">$99.00
+                                                                MXN</span>
+                                                        </div>
+                                                        <button
+                                                            class="btn btn-sm btn-link p-0 text-decoration-none text-muted collapsed mt-1"
+                                                            type="button" data-bs-toggle="collapse"
+                                                            data-bs-target="#desc_visita_tematica">
+                                                            Ver detalles y fotos <i class="bi bi-chevron-down"></i>
+                                                        </button>
+                                                        <div class="collapse mt-3" id="desc_visita_tematica">
+                                                            <div
+                                                                class="d-flex gap-3 align-items-start flex-column flex-sm-row">
+                                                                <img ngSrc="/VisitaTematica.jpg" width="200"
+                                                                    height="150"
+                                                                    class="rounded object-fit-cover shadow-sm img-fluid"
+                                                                    alt="Visita Temática">
+                                                                <div>
+                                                                    <p class="small text-muted mb-2">Incluye temas como
+                                                                        Paisajismo,
+                                                                        Nuestros árboles o ¿Qué es conservación y por
+                                                                        qué conservar?</p>
+                                                                    <span
+                                                                        class="badge bg-white border text-dark me-1"><i
+                                                                            class="bi bi-clock me-1"></i>1 h 30
+                                                                        min</span>
+                                                                    <span class="badge bg-secondary">A nivel
+                                                                        profesional</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Categoría: Talleres Generales -->
+                            <div class="accordion-item">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button collapsed fw-bold text-success" type="button"
+                                        data-bs-toggle="collapse" data-bs-target="#collapseGenerales"
+                                        aria-expanded="false">
+                                        <i class="bi bi-book-half me-2"></i> Talleres Generales (1 hora)
+                                    </button>
+                                </h2>
+                                <div id="collapseGenerales" class="accordion-collapse collapse"
+                                    data-bs-parent="#accordionServicios">
+                                    <div class="accordion-body bg-light">
+
+                                        <!-- Tarjeta: Medio Ambiente -->
+                                        <div class="service-option mb-3">
+                                            <input class="visually-hidden service-radio-input" type="radio"
+                                                formControlName="servicio" id="serv_medio_ambiente"
+                                                value="conociendo_medio_ambiente">
+                                            <label class="service-radio-card rounded-3 p-3 w-100 m-0"
+                                                for="serv_medio_ambiente">
+                                                <div class="d-flex align-items-start gap-3">
+                                                    <div class="service-check-icon mt-1">
+                                                        <i class="bi bi-circle fs-4 unselected-icon text-muted"></i>
+                                                        <i
+                                                            class="bi bi-check-circle-fill fs-4 selected-icon text-success d-none"></i>
+                                                    </div>
+                                                    <div class="flex-grow-1">
+                                                        <div
+                                                            class="d-flex justify-content-between align-items-center mb-1">
+                                                            <h6 class="mb-0 fw-bold">Conociendo y conservando el medio
+                                                                ambiente</h6>
+                                                            <span class="badge bg-success rounded-pill">$125.00
+                                                                MXN</span>
+                                                        </div>
+                                                        <button
+                                                            class="btn btn-sm btn-link p-0 text-decoration-none text-muted collapsed mt-1"
+                                                            type="button" data-bs-toggle="collapse"
+                                                            data-bs-target="#desc_medio_ambiente">
+                                                            Ver detalles y fotos <i class="bi bi-chevron-down"></i>
+                                                        </button>
+                                                        <div class="collapse mt-3" id="desc_medio_ambiente">
+                                                            <div
+                                                                class="d-flex gap-3 align-items-start flex-column flex-sm-row">
+                                                                <img ngSrc="/ConociendoConservando.jpg" width="200"
+                                                                    height="150"
+                                                                    class="rounded object-fit-cover shadow-sm img-fluid"
+                                                                    alt="Medio Ambiente">
+                                                                <div>
+                                                                    <p class="small text-muted mb-2">Conoce qué es un
+                                                                        ecosistema, cuál
+                                                                        es el impacto que el ser humano tiene sobre
+                                                                        ellos y súmate a las
+                                                                        soluciones para cuidar nuestro medio ambiente.
+                                                                    </p>
+                                                                    <span
+                                                                        class="badge bg-white border text-dark me-1"><i
+                                                                            class="bi bi-person-workspace me-1"></i>Secundaria
+                                                                        y
+                                                                        bachillerato</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </label>
+                                        </div>
+
+                                        <!-- Tarjeta: Herbario -->
+                                        <div class="service-option mb-3">
+                                            <input class="visually-hidden service-radio-input" type="radio"
+                                                formControlName="servicio" id="serv_herbario" value="crea_herbario">
+                                            <label class="service-radio-card rounded-3 p-3 w-100 m-0"
+                                                for="serv_herbario">
+                                                <div class="d-flex align-items-start gap-3">
+                                                    <div class="service-check-icon mt-1">
+                                                        <i class="bi bi-circle fs-4 unselected-icon text-muted"></i>
+                                                        <i
+                                                            class="bi bi-check-circle-fill fs-4 selected-icon text-success d-none"></i>
+                                                    </div>
+                                                    <div class="flex-grow-1">
+                                                        <div
+                                                            class="d-flex justify-content-between align-items-center mb-1">
+                                                            <h6 class="mb-0 fw-bold">Crea tu herbario</h6>
+                                                            <span class="badge bg-success rounded-pill">$125.00
+                                                                MXN</span>
+                                                        </div>
+                                                        <button
+                                                            class="btn btn-sm btn-link p-0 text-decoration-none text-muted collapsed mt-1"
+                                                            type="button" data-bs-toggle="collapse"
+                                                            data-bs-target="#desc_herbario">
+                                                            Ver detalles y fotos <i class="bi bi-chevron-down"></i>
+                                                        </button>
+                                                        <div class="collapse mt-3" id="desc_herbario">
+                                                            <div
+                                                                class="d-flex gap-3 align-items-start flex-column flex-sm-row">
+                                                                <img ngSrc="/CreaHerbario.jpg" width="200" height="150"
+                                                                    class="rounded object-fit-cover shadow-sm img-fluid"
+                                                                    alt="Herbario">
+                                                                <div>
+                                                                    <p class="small text-muted mb-2">Conoce qué es un
+                                                                        herbario, cuáles
+                                                                        son las características de los ejemplares que
+                                                                        albergan y su
+                                                                        importancia para el conocimiento de nuestro
+                                                                        mundo.</p>
+                                                                    <span
+                                                                        class="badge bg-white border text-dark me-1"><i
+                                                                            class="bi bi-person-workspace me-1"></i>3°
+                                                                        Primaria a nivel
+                                                                        medio superior</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </label>
+                                        </div>
+
+                                        <!-- Tarjeta: Fósiles y plantas -->
+                                        <div class="service-option mb-3">
+                                            <input class="visually-hidden service-radio-input" type="radio"
+                                                formControlName="servicio" id="serv_fosiles" value="fosiles_plantas">
+                                            <label class="service-radio-card rounded-3 p-3 w-100 m-0"
+                                                for="serv_fosiles">
+                                                <div class="d-flex align-items-start gap-3">
+                                                    <div class="service-check-icon mt-1">
+                                                        <i class="bi bi-circle fs-4 unselected-icon text-muted"></i>
+                                                        <i
+                                                            class="bi bi-check-circle-fill fs-4 selected-icon text-success d-none"></i>
+                                                    </div>
+                                                    <div class="flex-grow-1">
+                                                        <div
+                                                            class="d-flex justify-content-between align-items-center mb-1">
+                                                            <h6 class="mb-0 fw-bold">De fósiles y plantas</h6>
+                                                            <span class="badge bg-success rounded-pill">$99.00
+                                                                MXN</span>
+                                                        </div>
+                                                        <button
+                                                            class="btn btn-sm btn-link p-0 text-decoration-none text-muted collapsed mt-1"
+                                                            type="button" data-bs-toggle="collapse"
+                                                            data-bs-target="#desc_fosiles">
+                                                            Ver detalles y fotos <i class="bi bi-chevron-down"></i>
+                                                        </button>
+                                                        <div class="collapse mt-3" id="desc_fosiles">
+                                                            <div
+                                                                class="d-flex gap-3 align-items-start flex-column flex-sm-row">
+                                                                <img ngSrc="/Fosiles.jpg" width="200" height="150"
+                                                                    class="rounded object-fit-cover shadow-sm img-fluid"
+                                                                    alt="Fósiles">
+                                                                <div>
+                                                                    <p class="small text-muted mb-2">Conocer la
+                                                                        importancia del registro
+                                                                        fósil para descubrir los seres vivos que
+                                                                        habitaron en el pasado.
+                                                                    </p>
+                                                                    <span
+                                                                        class="badge bg-white border text-dark me-1"><i
+                                                                            class="bi bi-person-workspace me-1"></i>Primaria,
+                                                                        secundaria
+                                                                        y bachillerato</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </label>
+                                        </div>
+
+                                        <!-- Tarjeta: El detective botánico -->
+                                        <div class="service-option mb-3">
+                                            <input class="visually-hidden service-radio-input" type="radio"
+                                                formControlName="servicio" id="serv_detective"
+                                                value="detective_botanico">
+                                            <label class="service-radio-card rounded-3 p-3 w-100 m-0"
+                                                for="serv_detective">
+                                                <div class="d-flex align-items-start gap-3">
+                                                    <div class="service-check-icon mt-1">
+                                                        <i class="bi bi-circle fs-4 unselected-icon text-muted"></i>
+                                                        <i
+                                                            class="bi bi-check-circle-fill fs-4 selected-icon text-success d-none"></i>
+                                                    </div>
+                                                    <div class="flex-grow-1">
+                                                        <div
+                                                            class="d-flex justify-content-between align-items-center mb-1">
+                                                            <h6 class="mb-0 fw-bold">El detective botánico</h6>
+                                                            <span class="badge bg-success rounded-pill">$99.00
+                                                                MXN</span>
+                                                        </div>
+                                                        <button
+                                                            class="btn btn-sm btn-link p-0 text-decoration-none text-muted collapsed mt-1"
+                                                            type="button" data-bs-toggle="collapse"
+                                                            data-bs-target="#desc_detective">
+                                                            Ver detalles y fotos <i class="bi bi-chevron-down"></i>
+                                                        </button>
+                                                        <div class="collapse mt-3" id="desc_detective">
+                                                            <div
+                                                                class="d-flex gap-3 align-items-start flex-column flex-sm-row">
+                                                                <img ngSrc="/Detective.jpg" width="200" height="150"
+                                                                    class="rounded object-fit-cover shadow-sm img-fluid"
+                                                                    alt="Detective">
+                                                                <div>
+                                                                    <p class="small text-muted mb-2">Aprender a
+                                                                        distinguir cuáles son
+                                                                        las características que hacen a las plantas
+                                                                        seres vivos tan
+                                                                        diferentes de los demás.</p>
+                                                                    <span
+                                                                        class="badge bg-white border text-dark me-1"><i
+                                                                            class="bi bi-person-workspace me-1"></i>3°
+                                                                        preescolar a 3°
+                                                                        de primaria</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </label>
+                                        </div>
+
+                                        <!-- Tarjeta: Horticultura -->
+                                        <div class="service-option mb-3">
+                                            <input class="visually-hidden service-radio-input" type="radio"
+                                                formControlName="servicio" id="serv_horticultura" value="horticultura">
+                                            <label class="service-radio-card rounded-3 p-3 w-100 m-0"
+                                                for="serv_horticultura">
+                                                <div class="d-flex align-items-start gap-3">
+                                                    <div class="service-check-icon mt-1">
+                                                        <i class="bi bi-circle fs-4 unselected-icon text-muted"></i>
+                                                        <i
+                                                            class="bi bi-check-circle-fill fs-4 selected-icon text-success d-none"></i>
+                                                    </div>
+                                                    <div class="flex-grow-1">
+                                                        <div
+                                                            class="d-flex justify-content-between align-items-center mb-1">
+                                                            <h6 class="mb-0 fw-bold">Horticultura</h6>
+                                                            <span class="badge bg-success rounded-pill">$125.00
+                                                                MXN</span>
+                                                        </div>
+                                                        <button
+                                                            class="btn btn-sm btn-link p-0 text-decoration-none text-muted collapsed mt-1"
+                                                            type="button" data-bs-toggle="collapse"
+                                                            data-bs-target="#desc_horticultura">
+                                                            Ver detalles y fotos <i class="bi bi-chevron-down"></i>
+                                                        </button>
+                                                        <div class="collapse mt-3" id="desc_horticultura">
+                                                            <div
+                                                                class="d-flex gap-3 align-items-start flex-column flex-sm-row">
+                                                                <img ngSrc="/Horticultura.jpg" width="200" height="150"
+                                                                    class="rounded object-fit-cover shadow-sm img-fluid"
+                                                                    alt="Horticultura">
+                                                                <div>
+                                                                    <p class="small text-muted mb-2">Aprender a cultivar
+                                                                        hortalizas para
+                                                                        fomentar la autoproducción de estos alimentos.
+                                                                    </p>
+                                                                    <span
+                                                                        class="badge bg-white border text-dark me-1"><i
+                                                                            class="bi bi-person-workspace me-1"></i>De
+                                                                        Preescolar a
+                                                                        nivel superior</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </label>
+                                        </div>
+
+                                        <!-- Tarjeta: Insectos -->
+                                        <div class="service-option mb-3">
+                                            <input class="visually-hidden service-radio-input" type="radio"
+                                                formControlName="servicio" id="serv_insectos" value="insectos">
+                                            <label class="service-radio-card rounded-3 p-3 w-100 m-0"
+                                                for="serv_insectos">
+                                                <div class="d-flex align-items-start gap-3">
+                                                    <div class="service-check-icon mt-1">
+                                                        <i class="bi bi-circle fs-4 unselected-icon text-muted"></i>
+                                                        <i
+                                                            class="bi bi-check-circle-fill fs-4 selected-icon text-success d-none"></i>
+                                                    </div>
+                                                    <div class="flex-grow-1">
+                                                        <div
+                                                            class="d-flex justify-content-between align-items-center mb-1">
+                                                            <h6 class="mb-0 fw-bold">Insectos</h6>
+                                                            <span class="badge bg-success rounded-pill">$99.00
+                                                                MXN</span>
+                                                        </div>
+                                                        <button
+                                                            class="btn btn-sm btn-link p-0 text-decoration-none text-muted collapsed mt-1"
+                                                            type="button" data-bs-toggle="collapse"
+                                                            data-bs-target="#desc_insectos">
+                                                            Ver detalles y fotos <i class="bi bi-chevron-down"></i>
+                                                        </button>
+                                                        <div class="collapse mt-3" id="desc_insectos">
+                                                            <div
+                                                                class="d-flex gap-3 align-items-start flex-column flex-sm-row">
+                                                                <img ngSrc="/Insecctos.jpg" width="200" height="150"
+                                                                    class="rounded object-fit-cover shadow-sm img-fluid"
+                                                                    alt="Insectos">
+                                                                <div>
+                                                                    <p class="small text-muted mb-2">Diferenciar a los
+                                                                        insectos de otros
+                                                                        organismos y conocer las formas en que se
+                                                                        relacionan con las
+                                                                        plantas.</p>
+                                                                    <span
+                                                                        class="badge bg-white border text-dark me-1"><i
+                                                                            class="bi bi-person-workspace me-1"></i>Primaria,
+                                                                        secundaria
+                                                                        y bachillerato</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </label>
+                                        </div>
+
+                                        <!-- Tarjeta: Lombricomposta -->
+                                        <div class="service-option mb-3">
+                                            <input class="visually-hidden service-radio-input" type="radio"
+                                                formControlName="servicio" id="serv_lombricomposta"
+                                                value="lombricomposta">
+                                            <label class="service-radio-card rounded-3 p-3 w-100 m-0"
+                                                for="serv_lombricomposta">
+                                                <div class="d-flex align-items-start gap-3">
+                                                    <div class="service-check-icon mt-1">
+                                                        <i class="bi bi-circle fs-4 unselected-icon text-muted"></i>
+                                                        <i
+                                                            class="bi bi-check-circle-fill fs-4 selected-icon text-success d-none"></i>
+                                                    </div>
+                                                    <div class="flex-grow-1">
+                                                        <div
+                                                            class="d-flex justify-content-between align-items-center mb-1">
+                                                            <h6 class="mb-0 fw-bold">Lombricomposta</h6>
+                                                            <span class="badge bg-success rounded-pill">$125.00
+                                                                MXN</span>
+                                                        </div>
+                                                        <button
+                                                            class="btn btn-sm btn-link p-0 text-decoration-none text-muted collapsed mt-1"
+                                                            type="button" data-bs-toggle="collapse"
+                                                            data-bs-target="#desc_lombricomposta">
+                                                            Ver detalles y fotos <i class="bi bi-chevron-down"></i>
+                                                        </button>
+                                                        <div class="collapse mt-3" id="desc_lombricomposta">
+                                                            <div
+                                                                class="d-flex gap-3 align-items-start flex-column flex-sm-row">
+                                                                <img ngSrc="/Lombricomposta.jpg" width="200"
+                                                                    height="150"
+                                                                    class="rounded object-fit-cover shadow-sm img-fluid"
+                                                                    alt="Lombricomposta">
+                                                                <div>
+                                                                    <p class="small text-muted mb-2">Reconocer que
+                                                                        existen alternativas
+                                                                        para aprovechar los restos orgánicos y disminuir
+                                                                        la generación
+                                                                        de basura.</p>
+                                                                    <span
+                                                                        class="badge bg-white border text-dark me-1"><i
+                                                                            class="bi bi-person-workspace me-1"></i>4°
+                                                                        Primaria a nivel
+                                                                        superior</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </label>
+                                        </div>
+
+                                        <!-- Tarjeta: Terrarios -->
+                                        <div class="service-option mb-2">
+                                            <input class="visually-hidden service-radio-input" type="radio"
+                                                formControlName="servicio" id="serv_terrarios" value="terrarios">
+                                            <label class="service-radio-card rounded-3 p-3 w-100 m-0"
+                                                for="serv_terrarios">
+                                                <div class="d-flex align-items-start gap-3">
+                                                    <div class="service-check-icon mt-1">
+                                                        <i class="bi bi-circle fs-4 unselected-icon text-muted"></i>
+                                                        <i
+                                                            class="bi bi-check-circle-fill fs-4 selected-icon text-success d-none"></i>
+                                                    </div>
+                                                    <div class="flex-grow-1">
+                                                        <div
+                                                            class="d-flex justify-content-between align-items-center mb-1">
+                                                            <h6 class="mb-0 fw-bold">Terrarios (un mini jardín)</h6>
+                                                            <span class="badge bg-success rounded-pill">$145.00
+                                                                MXN</span>
+                                                        </div>
+                                                        <button
+                                                            class="btn btn-sm btn-link p-0 text-decoration-none text-muted collapsed mt-1"
+                                                            type="button" data-bs-toggle="collapse"
+                                                            data-bs-target="#desc_terrarios">
+                                                            Ver detalles y fotos <i class="bi bi-chevron-down"></i>
+                                                        </button>
+                                                        <div class="collapse mt-3" id="desc_terrarios">
+                                                            <div
+                                                                class="d-flex gap-3 align-items-start flex-column flex-sm-row">
+                                                                <img ngSrc="/Terrarios.jpg" width="200" height="150"
+                                                                    class="rounded object-fit-cover shadow-sm img-fluid"
+                                                                    alt="Terrarios">
+                                                                <div>
+                                                                    <p class="small text-muted mb-2">Conocer de forma
+                                                                        sencilla los
+                                                                        ecosistemas que existen en nuestro país para
+                                                                        valorar la
+                                                                        biodiversidad mexicana.</p>
+                                                                    <span
+                                                                        class="badge bg-white border text-dark me-1"><i
+                                                                            class="bi bi-person-workspace me-1"></i>De
+                                                                        Preescolar a
+                                                                        nivel superior</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Categoría: Talleres Especiales -->
+                            <div class="accordion-item">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button collapsed fw-bold text-success" type="button"
+                                        data-bs-toggle="collapse" data-bs-target="#collapseEspeciales"
+                                        aria-expanded="false">
+                                        <i class="bi bi-star-fill me-2 text-warning"></i> Talleres Especiales (2 horas)
+                                    </button>
+                                </h2>
+                                <div id="collapseEspeciales" class="accordion-collapse collapse"
+                                    data-bs-parent="#accordionServicios">
+                                    <div class="accordion-body bg-light">
+
+                                        <!-- Tarjeta: Colecta de plantas -->
+                                        <div class="service-option mb-3">
+                                            <input class="visually-hidden service-radio-input" type="radio"
+                                                formControlName="servicio" id="serv_colecta" value="colecta_plantas">
+                                            <label class="service-radio-card rounded-3 p-3 w-100 m-0"
+                                                for="serv_colecta">
+                                                <div class="d-flex align-items-start gap-3">
+                                                    <div class="service-check-icon mt-1">
+                                                        <i class="bi bi-circle fs-4 unselected-icon text-muted"></i>
+                                                        <i
+                                                            class="bi bi-check-circle-fill fs-4 selected-icon text-success d-none"></i>
+                                                    </div>
+                                                    <div class="flex-grow-1">
+                                                        <div
+                                                            class="d-flex justify-content-between align-items-center mb-1">
+                                                            <h6 class="mb-0 fw-bold">Colecta de plantas</h6>
+                                                            <span class="badge bg-success rounded-pill">$190.00
+                                                                MXN</span>
+                                                        </div>
+                                                        <button
+                                                            class="btn btn-sm btn-link p-0 text-decoration-none text-muted collapsed mt-1"
+                                                            type="button" data-bs-toggle="collapse"
+                                                            data-bs-target="#desc_colecta">
+                                                            Ver detalles y fotos <i class="bi bi-chevron-down"></i>
+                                                        </button>
+                                                        <div class="collapse mt-3" id="desc_colecta">
+                                                            <div
+                                                                class="d-flex gap-3 align-items-start flex-column flex-sm-row">
+                                                                <img ngSrc="/Colecta.jpg" width="200" height="150"
+                                                                    class="rounded object-fit-cover shadow-sm img-fluid"
+                                                                    alt="Colecta">
+                                                                <div>
+                                                                    <p class="small text-muted mb-2">Conoce la
+                                                                        metodología para crear
+                                                                        una colección científica de plantas y revisar
+                                                                        las técnicas para
+                                                                        realizar colectas, prensado y fijación de
+                                                                        plantas.</p>
+                                                                    <span
+                                                                        class="badge bg-white border text-dark me-1"><i
+                                                                            class="bi bi-clock me-1"></i>2 horas</span>
+                                                                    <span
+                                                                        class="badge bg-white border text-dark me-1"><i
+                                                                            class="bi bi-person-workspace me-1"></i>Técnico
+                                                                        y
+                                                                        profesional</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </label>
+                                        </div>
+
+                                        <!-- Tarjeta: Plantas medicinales -->
+                                        <div class="service-option mb-2">
+                                            <input class="visually-hidden service-radio-input" type="radio"
+                                                formControlName="servicio" id="serv_medicinales"
+                                                value="plantas_medicinales">
+                                            <label class="service-radio-card rounded-3 p-3 w-100 m-0"
+                                                for="serv_medicinales">
+                                                <div class="d-flex align-items-start gap-3">
+                                                    <div class="service-check-icon mt-1">
+                                                        <i class="bi bi-circle fs-4 unselected-icon text-muted"></i>
+                                                        <i
+                                                            class="bi bi-check-circle-fill fs-4 selected-icon text-success d-none"></i>
+                                                    </div>
+                                                    <div class="flex-grow-1">
+                                                        <div
+                                                            class="d-flex justify-content-between align-items-center mb-1">
+                                                            <h6 class="mb-0 fw-bold">Plantas medicinales</h6>
+                                                            <span class="badge bg-success rounded-pill">$190.00
+                                                                MXN</span>
+                                                        </div>
+                                                        <button
+                                                            class="btn btn-sm btn-link p-0 text-decoration-none text-muted collapsed mt-1"
+                                                            type="button" data-bs-toggle="collapse"
+                                                            data-bs-target="#desc_medicinales">
+                                                            Ver detalles y fotos <i class="bi bi-chevron-down"></i>
+                                                        </button>
+                                                        <div class="collapse mt-3" id="desc_medicinales">
+                                                            <div
+                                                                class="d-flex gap-3 align-items-start flex-column flex-sm-row">
+                                                                <img ngSrc="/PlantasMedicinales.jpg" width="200"
+                                                                    height="150"
+                                                                    class="rounded object-fit-cover shadow-sm img-fluid"
+                                                                    alt="Plantas Medicinales">
+                                                                <div>
+                                                                    <p class="small text-muted mb-2">Mostrar los
+                                                                        procesos más
+                                                                        importantes para la colecta, el secado y el
+                                                                        almacenado de
+                                                                        plantas medicinales, así como las técnicas de
+                                                                        cultivo.</p>
+                                                                    <span
+                                                                        class="badge bg-white border text-dark me-1"><i
+                                                                            class="bi bi-clock me-1"></i>2 horas</span>
+                                                                    <span
+                                                                        class="badge bg-white border text-dark me-1"><i
+                                                                            class="bi bi-person-workspace me-1"></i>Bachillerato,
+                                                                        técnico y profesional</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Fecha, Hora y Cantidades -->
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <label for="fecha" class="form-label text-muted fw-semibold">
+                                <i class="bi bi-calendar-day me-1"></i> Fecha de visita (Lun-Vie) *
+                            </label>
+                            <div class="input-group shadow-sm">
+                                <span class="input-group-text bg-white text-success border-end-0"><i
+                                        class="bi bi-calendar3"></i></span>
+                                <input type="text" class="form-control border-start-0 bg-white" id="fecha"
+                                    formControlName="fecha" #fechaInput placeholder="Seleccione una fecha..."
+                                    style="cursor: pointer;">
+                            </div>
+                        </div>
+                        <div class="col-md-6 mt-3 mt-md-0">
+                            <label for="hora" class="form-label text-muted fw-semibold">
+                                <i class="bi bi-clock me-1"></i> Horario (09:00 - 15:00) *
+                            </label>
+                            <div class="input-group shadow-sm">
+                                <span class="input-group-text bg-white text-success border-end-0"><i
+                                        class="bi bi-clock-history"></i></span>
+                                <input type="text" class="form-control border-start-0 bg-white" id="hora"
+                                    formControlName="hora" #horaInput placeholder="09:00" style="cursor: pointer;">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row g-3 mb-4 bg-light p-3 rounded-3 border">
+                        <div class="col-6 col-md-3">
+                            <label for="num_grupos" class="form-label fw-semibold text-secondary">
+                                <i class="bi bi-collection me-1"></i> N° Grupos
+                            </label>
+                            <input type="number" class="form-control text-center" id="num_grupos"
+                                formControlName="num_grupos">
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <label for="estudiantes_grupo" class="form-label fw-semibold text-secondary">
+                                <i class="bi bi-people me-1"></i> Alumnos/Grp
+                            </label>
+                            <input type="number" class="form-control text-center" id="estudiantes_grupo"
+                                formControlName="estudiantes_grupo">
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <label for="num_maestros" class="form-label fw-semibold text-secondary">
+                                <i class="bi bi-person-video3 me-1"></i> Maestros
+                            </label>
+                            <input type="number" class="form-control text-center" id="num_maestros"
+                                formControlName="num_maestros">
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <label for="num_padres" class="form-label fw-semibold text-secondary">
+                                <i class="bi bi-person-hearts me-1"></i> Padres
+                            </label>
+                            <input type="number" class="form-control text-center" id="num_padres"
+                                formControlName="num_padres">
+                        </div>
+                    </div>
+
+                    <!-- Totales (Alimentados por Signals) -->
+                    <div class="row g-3 p-3 rounded-3 mb-4 shadow-sm border border-secondary-subtle"
+                        style="background-color: #f8f9fa;">
+                        <div class="col-md-4">
+                            <label for="total_estudiantes" class="form-label text-muted small fw-bold mb-1">
+                                <i class="bi bi-hash me-1"></i> Total de Alumnos
+                            </label>
+                            <input type="text" class="form-control bg-white text-center fw-semibold text-secondary"
+                                id="total_estudiantes" readonly [value]="totalAlumnos()">
+                        </div>
+                        <div class="col-md-4">
+                            <label for="monto_total" class="form-label text-success small fw-bold mb-1">
+                                <i class="bi bi-currency-dollar me-1"></i> Monto Total Estimado
+                            </label>
+                            <input type="text" class="form-control bg-white text-center fw-bold text-success"
+                                id="monto_total" readonly [value]="montoTotal()">
+                        </div>
+                        <div class="col-md-4">
+                            <label for="monto_anticipo" class="form-label text-primary small fw-bold mb-1">
+                                <i class="bi bi-pie-chart-fill me-1"></i> Anticipo Requerido (50%)
+                            </label>
+                            <input type="text" class="form-control bg-white text-center fw-bold text-primary"
+                                id="monto_anticipo" readonly [value]="montoAnticipo()">
+                        </div>
+                    </div>
+
+                    <div class="d-flex align-items-center justify-content-between flex-wrap p-3 rounded-3"
+                        style="background-color: var(--light-green); border: 1px dashed var(--accent-green);">
+                        <div class="mb-2 mb-md-0">
+                            <label class="form-label fw-bold mb-0 text-dark">
+                                <i class="bi bi-basket me-1"></i> ¿Tomarán su lunch en la visita?
+                            </label>
+                        </div>
+                        <div class="d-flex gap-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" formControlName="lunch" id="lunch_si"
+                                    value="si">
+                                <label class="form-check-label fw-semibold" for="lunch_si">Sí</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" formControlName="lunch" id="lunch_no"
+                                    value="no">
+                                <label class="form-check-label fw-semibold" for="lunch_no">No</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Navegación -->
+                <div class="d-flex justify-content-end mt-4">
+                    <button type="button" class="btn btn-outline-secondary btn-lg px-4 me-3">
+                        <i class="bi bi-arrow-left me-2"></i> Anterior
+                    </button>
+                    <button type="button" class="btn btn-success btn-lg px-5" (click)="irAPaso(2)">
+                        Siguiente <i class="bi bi-arrow-right ms-2"></i>
+                    </button>
+                </div>
+                }
+
+                @case (2) {
+                <div class="container py-4">
+
+
+                    <div class="form-content p-4 p-md-5">
+
+                        <!-- Alerta de confirmación -->
+                        <div class="alert alert-success d-flex align-items-center border-0 shadow-lg mb-4" role="alert"
+                            style="background: linear-gradient(135deg, #d4edda, #c3e6cb); border-left: 6px solid #155724 !important;">
+                            <i class="bi bi-check-circle-fill fs-2 me-3 text-success"></i>
+                            <div>
+                                <h5 class="fw-bold mb-1">¡Espere la confirmación!</h5>
+                                <p class="mb-0">Una vez recibido su formato, el área correspondiente le confirmará
+                                    la
+                                    disponibilidad y hora solicitada.</p>
+                                <p class="mb-0 mt-1 fw-bold text-danger">No realice ningún pago hasta recibir la
+                                    confirmación.
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Políticas en Grid -->
+                        <div class="section-card">
+                            <div class="section-title">
+                                <div class="d-flex align-items-center">
+                                    <span class="step-badge"><i class="bi bi-list-check"></i></span>
+                                    <span class="ms-3">Políticas de Servicio</span>
+                                </div>
+                            </div>
+
+                            <div class="row g-4">
+                                <div class="col-md-6">
+                                    <div class="terms-card h-100 shadow-sm border-0 p-4 rounded-3"
+                                        style="background-color: #f8f9fa; border-left: 4px solid var(--primary-green) !important;">
+                                        <h5 class="fw-bold" style="color: var(--primary-green);">
+                                            <i class="bi bi-arrow-repeat me-2"></i>Cambios en la reservación
+                                        </h5>
+                                        <p class="mb-0">Si realiza cambios en su reservación, envíe nuevamente el
+                                            formato
+                                            actualizado al mismo correo. Asegúrese de recibir confirmación de que el
+                                            cambio fue
+                                            autorizado.</p>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="terms-card h-100 shadow-sm border-0 p-4 rounded-3"
+                                        style="background-color: #f8f9fa; border-left: 4px solid var(--primary-green) !important;">
+                                        <h5 class="fw-bold" style="color: var(--primary-green);">
+                                            <i class="bi bi-clock me-2"></i>Puntualidad
+                                        </h5>
+                                        <p class="mb-0">Le pedimos llegar a tiempo a su visita. Los minutos de
+                                            retraso se
+                                            descontarán del tiempo total de su servicio.</p>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="terms-card h-100 shadow-sm border-0 p-4 rounded-3"
+                                        style="background-color: #f8f9fa; border-left: 4px solid var(--primary-green) !important;">
+                                        <h5 class="fw-bold" style="color: var(--primary-green);">
+                                            <i class="bi bi-file-earmark-text me-2"></i>Código de comportamiento
+                                        </h5>
+                                        <p class="mb-0">Antes de su visita, lea el <strong>Código de
+                                                Comportamiento</strong> y
+                                            <strong>Recomendaciones</strong> que se incluye en las siguientes
+                                            secciones de este
+                                            documento.
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="terms-card h-100 shadow-sm border-0 p-4 rounded-3"
+                                        style="background-color: #fff5f5; border-left: 4px solid #dc3545 !important;">
+                                        <h5 class="fw-bold" style="color: #dc3545;">
+                                            <i class="bi bi-exclamation-triangle-fill me-2"></i>Política antisoborno
+                                            BUAP
+                                        </h5>
+                                        <p class="mb-0">De acuerdo con la <strong>Política de Calidad
+                                                antisoborno</strong> de la
+                                            BUAP, queda estrictamente prohibido ofrecer propinas, regalos u
+                                            obsequios de
+                                            cualquier tipo al personal.</p>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="terms-card h-100 shadow-sm border-0 p-4 rounded-3"
+                                        style="background-color: #f8f9fa; border-left: 4px solid var(--primary-green) !important;">
+                                        <h5 class="fw-bold" style="color: var(--primary-green);">
+                                            <i class="bi bi-receipt me-2"></i>Facturación
+                                        </h5>
+                                        <p class="mb-0">Si requiere factura, favor de notificarlo y envíe su
+                                            constancia de
+                                            situación fiscal y el uso de CFDI.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Información de Pago -->
+                        <div class="section-card">
+                            <div class="section-title">
+                                <div class="d-flex align-items-center">
+                                    <span class="step-badge"><i class="bi bi-cash-coin"></i></span>
+                                    <span class="ms-3">Información de Pago</span>
+                                </div>
+                            </div>
+
+                            <div class="alert text-dark d-flex align-items-center"
+                                style="background-color: #e8f5e9; border: 1px solid #c8e6c9;">
+                                <i class="bi bi-bank fs-2 me-3 text-success"></i>
+                                <div>
+                                    <h5 class="fw-bold mb-1">Cuenta HSBC</h5>
+                                    <p class="mb-0">A nombre del <strong>Herbario y Jardín Botánico BUAP</strong>
+                                    </p>
+                                    <p class="mb-0"><strong>No. de cuenta:</strong> 4016001638</p>
+                                    <p class="mb-0"><strong>CI:</strong> 021650040160016381</p>
+                                </div>
+                            </div>
+
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <div class="bg-light p-3 rounded-3 border">
+                                        <h6 class="fw-bold text-success"><i class="bi bi-clock-history me-2"></i>Plazos
+                                            de pago
+                                        </h6>
+                                        <ul class="list-unstyled m-0">
+                                            <li class="mb-2"><i
+                                                    class="bi bi-1-circle-fill text-success me-2"></i><strong>Anticipo
+                                                    del
+                                                    50%</strong> mínimo una semana antes de su visita.</li>
+                                            <li><i class="bi bi-2-circle-fill text-success me-2"></i><strong>Pago
+                                                    del 50%
+                                                    restante</strong> mínimo dos días antes de su visita.</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="bg-light p-3 rounded-3 border">
+                                        <h6 class="fw-bold text-primary"><i class="bi bi-envelope-paper me-2"></i>Envío
+                                            de
+                                            comprobante</h6>
+                                        <p class="mb-0">Envíe su ficha de depósito o comprobante de transferencia al
+                                            correo:</p>
+                                        <p class="mb-0 fw-bold"><a
+                                                href="mailto:jardinbotanico.cfdi@correo.buap.mx">jardinbotanico.cfdi@correo.buap.mx</a>
+                                        </p>
+                                        <small class="text-muted">El comprobante debe verse como el ejemplo que se
+                                            muestra en el
+                                            Paso 3.</small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="alert alert-warning mt-3 border-0 shadow-sm">
+                                <i class="bi bi-exclamation-circle-fill me-2"></i>
+                                En caso de retraso o cancelación, favor de avisar al área de educación o relaciones
+                                públicas.
+                                <br><strong>Tel: 222 229 5500 ext. 7033, 7032, 7034</strong> | <strong>WhatsApp: +52
+                                    222 529
+                                    7312</strong>
+                            </div>
+                        </div>
+
+                        <!-- Navegación entre pasos -->
+                        <div class="d-flex justify-content-end mt-4">
+                            <button type="button" class="btn btn-outline-secondary btn-lg px-4 me-3">
+                                <i class="bi bi-arrow-left me-2"></i> Anterior
+                            </button>
+                            <button type="button" class="btn btn-success btn-lg px-5" (click)="irAPaso(3)">
+                                Siguiente <i class="bi bi-arrow-right ms-2"></i>
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
+
+
+                }
+
+                @case (3){
+                <div class="form-content p-4 p-md-5">
+
+                    <!-- Alertas de pago -->
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            <div class="alert alert-danger d-flex align-items-center border-0 shadow-sm h-100"
+                                role="alert">
+                                <i class="bi bi-exclamation-triangle-fill fs-3 me-3"></i>
+                                <div>
+                                    <strong>¡Importante!</strong> El pago debe efectuarse únicamente después de haber
+                                    recibido la <strong>confirmación</strong> de su servicio educativo por parte de
+                                    nuestra
+                                    área.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="alert alert-success d-flex align-items-center border-0 shadow-sm h-100"
+                                role="alert">
+                                <i class="bi bi-clock-fill fs-3 me-3"></i>
+                                <div>
+                                    <strong>Plazo límite:</strong> Para garantizar su acceso, el pago debe quedar
+                                    registrado
+                                    con al menos <strong>dos días hábiles</strong> de anticipación a la fecha de su
+                                    visita.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Formulario de reporte de pago -->
+                    <div class="section-card">
+                        <div class="section-title">
+                            <div class="d-flex align-items-center">
+                                <span class="step-badge"><i class="bi bi-upload"></i></span>
+                                <span class="ms-3">Adjuntar Comprobante de Pago</span>
+                            </div>
+                        </div>
+
+                        <div class="mb-4 p-4 border rounded-3 bg-light">
+                            <label for="comprobante" class="form-label fw-bold"><i
+                                    class="bi bi-cloud-arrow-up-fill me-2 text-primary"></i>Adjuntar Ficha de Depósito
+                                (50%
+                                de anticipo) *</label>
+                            <input type="file" class="form-control form-control-lg" id="comprobante" name="comprobante"
+                                accept=".pdf,.jpg,.jpeg,.png" required>
+                            <small class="text-muted mt-2 d-block"><i class="bi bi-info-circle me-1"></i>Formatos
+                                permitidos: PDF, JPG, PNG (máx. 5MB)</small>
+                        </div>
+
+                        <fieldset>
+                            <legend class="fw-bold text-secondary" style="font-size: 1.1rem;">Información que debe
+                                incluir
+                                en su reporte de pago</legend>
+
+                            <div class="row g-4">
+                                <div class="col-md-6">
+                                    <label for="titular" class="form-label fw-semibold"><i
+                                            class="bi bi-person-vcard me-1"></i>Nombre
+                                        del titular/Institución *</label>
+                                    <input type="text" class="form-control" id="titular" name="nombre_titular"
+                                        placeholder="Nombre completo o institución" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="monto" class="form-label fw-semibold"><i
+                                            class="bi bi-currency-dollar me-1"></i>Monto a
+                                        pagar *</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">$</span>
+                                        <input type="text" class="form-control" id="monto" name="monto_pagar"
+                                            placeholder="350.00 MXN" required>
+                                    </div>
+                                    <small class="text-muted">Incluir moneda (ej. $350.00 MXN)</small>
+                                </div>
+                                <div class="col-12">
+                                    <label for="concepto" class="form-label fw-semibold"><i
+                                            class="bi bi-tag me-1"></i>Concepto del pago
+                                        *</label>
+                                    <input type="text" class="form-control" id="concepto" name="concepto_pago"
+                                        placeholder="Ejemplo: 30 visitas guiadas - Grupo 3° Primaria" required>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </div>
+
+                    <!-- Ejemplos de comprobantes -->
+                    <div class="section-card">
+                        <div class="section-title">
+                            <div class="d-flex align-items-center">
+                                <span class="step-badge"><i class="bi bi-images"></i></span>
+                                <span class="ms-3">Ejemplos de comprobantes</span>
+                            </div>
+                        </div>
+
+                        <p class="text-muted mb-3">Su comprobante debe verse como alguno de los siguientes ejemplos:</p>
+
+                        <div class="row g-4">
+                            <div class="col-md-6">
+                                <div class="card shadow-sm border-0 h-100">
+                                    <img src="assets/FichaPago1.jpg" class="card-img-top rounded-top"
+                                        alt="Ejemplo de ficha de depósito en sucursal"
+                                        style="object-fit: cover; height: 850px;">
+                                    <div class="card-body text-center">
+                                        <h6 class="fw-bold">Ejemplo de ficha de depósito</h6>
+                                        <p class="text-muted small mb-0">Depósito realizado en sucursal bancaria</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card shadow-sm border-0 h-100">
+                                    <img src="assets/FichaPago2.jpg" class="card-img-top rounded-top"
+                                        alt="Ejemplo de captura de transferencia digital"
+                                        style="object-fit: cover; height: 950px;">
+                                    <div class="card-body text-center">
+                                        <h6 class="fw-bold">Ejemplo de transferencia electrónica</h6>
+                                        <p class="text-muted small mb-0">Captura de pantalla de transferencia digital
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Envío de reporte -->
+                    <div class="alert alert-info d-flex align-items-start border-0 shadow-sm" role="alert"
+                        style="background: linear-gradient(135deg, #d1ecf1, #bee5eb); border-left: 6px solid #0c5460 !important;">
+                        <i class="bi bi-send-fill fs-3 me-3 text-primary"></i>
+                        <div>
+                            <h5 class="fw-bold mb-1">Envía tu reporte de pago</h5>
+                            <p class="mb-0">Correo: <strong><a
+                                        href="mailto:jardinbotanico.cfdi@correo.buap.mx">jardinbotanico.cfdi@correo.buap.mx</a></strong>
+                            </p>
+                            <p class="mb-0 mt-1">Su reserva quedará <strong>completamente confirmada</strong> una vez
+                                que se
+                                reciba esta información.</p>
+                            <p class="mb-0 text-danger fw-bold">Recuerde informar si requiere factura.</p>
+                        </div>
+                    </div>
+
+                    <!-- Navegación entre pasos -->
+                    <div class="d-flex justify-content-end mt-4">
+                        <button type="button" class="btn btn-outline-secondary btn-lg px-4 me-3">
+                            <i class="bi bi-arrow-left me-2"></i> Anterior
+                        </button>
+                        <button type="button" class="btn btn-success btn-lg px-5" (click)="irAPaso(4)">
+                            Siguiente <i class="bi bi-arrow-right ms-2"></i>
+                        </button>
+                    </div>
+
+                </div>
+
+                }
+
+                @case (4) {
+                <div class="form-content p-4 p-md-5">
+
+                    <!-- Introducción -->
+                    <div class="alert alert-success d-flex align-items-center border-0 shadow-sm mb-4"
+                        style="background: linear-gradient(135deg, #d5f5e3, #abebc6); border-left: 6px solid #145a32 !important;">
+                        <i class="bi bi-heart-fill fs-2 me-3 text-success"></i>
+                        <div>
+                            <h5 class="fw-bold mb-1">Estimado visitante</h5>
+                            <p class="mb-0">El Jardín Botánico intenta ser un espacio de conexión entre la naturaleza y
+                                el
+                                ser humano. Por favor, ayúdanos a lograrlo tomando en cuenta las siguientes
+                                indicaciones.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Reglas Negativas -->
+                    <div class="section-card">
+                        <div class="section-title">
+                            <div class="d-flex align-items-center">
+                                <span class="step-badge bg-danger text-white"><i class="bi bi-x-lg"></i></span>
+                                <span class="ms-3 text-danger">No está permitido</span>
+                            </div>
+                        </div>
+
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <ul class="list-unstyled">
+                                    <li class="mb-2 d-flex align-items-start">
+                                        <i class="bi bi-x-circle-fill text-danger me-2 mt-1"></i>
+                                        Llevarse semillas y/o partes de plantas
+                                    </li>
+                                    <li class="mb-2 d-flex align-items-start">
+                                        <i class="bi bi-x-circle-fill text-danger me-2 mt-1"></i>
+                                        Dañar las plantas (pisar, rayonear, arrancar flores, frutos y hojas)
+                                    </li>
+                                    <li class="mb-2 d-flex align-items-start">
+                                        <i class="bi bi-x-circle-fill text-danger me-2 mt-1"></i>
+                                        Entrar con mascotas
+                                    </li>
+                                    <li class="mb-2 d-flex align-items-start">
+                                        <i class="bi bi-x-circle-fill text-danger me-2 mt-1"></i>
+                                        Entrar con bicicletas
+                                    </li>
+                                    <li class="mb-2 d-flex align-items-start">
+                                        <i class="bi bi-x-circle-fill text-danger me-2 mt-1"></i>
+                                        Entrar con balones
+                                    </li>
+                                    <li class="mb-2 d-flex align-items-start">
+                                        <i class="bi bi-x-circle-fill text-danger me-2 mt-1"></i>
+                                        Pescar, ni arrojar objetos al lago
+                                    </li>
+                                    <li class="mb-2 d-flex align-items-start">
+                                        <i class="bi bi-x-circle-fill text-danger me-2 mt-1"></i>
+                                        Hacer fogatas
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="col-md-6">
+                                <ul class="list-unstyled">
+                                    <li class="mb-2 d-flex align-items-start">
+                                        <i class="bi bi-x-circle-fill text-danger me-2 mt-1"></i>
+                                        Ingresar con radios/grabadoras
+                                    </li>
+                                    <li class="mb-2 d-flex align-items-start">
+                                        <i class="bi bi-x-circle-fill text-danger me-2 mt-1"></i>
+                                        Tomar fotos con fines comerciales
+                                    </li>
+                                    <li class="mb-2 d-flex align-items-start">
+                                        <i class="bi bi-x-circle-fill text-danger me-2 mt-1"></i>
+                                        Dar comida a las aves y otros animales silvestres
+                                    </li>
+                                    <li class="mb-2 d-flex align-items-start">
+                                        <i class="bi bi-x-circle-fill text-danger me-2 mt-1"></i>
+                                        Ingresar con bebidas alcohólicas
+                                    </li>
+                                    <li class="mb-2 d-flex align-items-start">
+                                        <i class="bi bi-x-circle-fill text-danger me-2 mt-1"></i>
+                                        Hacer picnics
+                                    </li>
+                                    <li class="mb-2 d-flex align-items-start">
+                                        <i class="bi bi-x-circle-fill text-danger me-2 mt-1"></i>
+                                        Fumar
+                                    </li>
+                                    <li class="mb-2 d-flex align-items-start">
+                                        <i class="bi bi-x-circle-fill text-danger me-2 mt-1"></i>
+                                        Llevarse las etiquetas de las plantas
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Reglas Positivas -->
+                    <div class="section-card">
+                        <div class="section-title">
+                            <div class="d-flex align-items-center">
+                                <span class="step-badge bg-success text-white"><i class="bi bi-check-lg"></i></span>
+                                <span class="ms-3">Así mismo</span>
+                            </div>
+                        </div>
+
+                        <ul class="list-unstyled">
+                            <li class="mb-3 d-flex align-items-start bg-light p-3 rounded-3">
+                                <i class="bi bi-check-circle-fill text-success fs-4 me-3"></i>
+                                <div>Por favor, llévate tu basura o deposítala en los contenedores.</div>
+                            </li>
+                            <li class="mb-3 d-flex align-items-start bg-light p-3 rounded-3">
+                                <i class="bi bi-check-circle-fill text-success fs-4 me-3"></i>
+                                <div>Caminar únicamente por los senderos de adoquín y los senderos secundarios que el
+                                    guía
+                                    les indique.</div>
+                            </li>
+                            <li class="mb-3 d-flex align-items-start bg-light p-3 rounded-3">
+                                <i class="bi bi-check-circle-fill text-success fs-4 me-3"></i>
+                                <div>Respetar al guía y/o facilitador.</div>
+                            </li>
+                            <li
+                                class="d-flex align-items-start bg-warning bg-opacity-25 p-3 rounded-3 border border-warning">
+                                <i class="bi bi-person-badge-fill text-warning fs-4 me-3"></i>
+                                <div><strong>Estimado profesor:</strong> para un mejor aprovechamiento de las visitas,
+                                    le
+                                    pedimos que acompañe a su grupo durante todas las actividades. Recuerde, el
+                                    responsable
+                                    del comportamiento adecuado de su grupo es usted.</div>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Advertencia importante -->
+                    <div class="alert alert-danger d-flex align-items-center justify-content-between border-0 shadow-lg"
+                        role="alert"
+                        style="background: linear-gradient(135deg, #fff5f5, #ffe3e3); border-left: 6px solid #dc3545 !important;">
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-exclamation-triangle-fill fs-3 me-3"></i>
+                            <div>
+                                <strong>¡IMPORTANTE!</strong> Por su seguridad: No ingresar al lago bajo ninguna
+                                circunstancia
+                            </div>
+                        </div>
+                        <span class="badge bg-success fs-6 rounded-pill px-4 py-2">¡MUCHAS GRACIAS POR
+                            RESPETARLO!</span>
+                    </div>
+
+                    <!-- Navegación entre pasos -->
+                    <div class="d-flex justify-content-end mt-4">
+                        <button type="button" class="btn btn-outline-secondary btn-lg px-4 me-3">
+                            <i class="bi bi-arrow-left me-2"></i> Anterior
+                        </button>
+                        <button type="button" class="btn btn-success btn-lg px-5" (click)="irAPaso(5)">
+                            Siguiente <i class="bi bi-arrow-right ms-2"></i>
+                        </button>
+                    </div>
+
+                </div>
+
+                }
+
+                @case (5) {
+                <div class="form-content p-4 p-md-5">
+
+                    <!-- Bienvenida -->
+                    <div class="text-center mb-5 p-4 rounded-3"
+                        style="background: linear-gradient(135deg, #d5f5e3, #a9dfbf);">
+                        <h2 class="fw-bold" style="color: var(--primary-green);">
+                            <i class="bi bi-emoji-sunglasses-fill me-2"></i>¡Damos la bienvenida a su grupo!
+                        </h2>
+                        <p class="lead mb-0">Nos emociona recibirles en este espacio dedicado a la conservación y la
+                            biodiversidad.</p>
+                        <p class="mb-0">Para que su visita sea segura, cómoda y enriquecedora, les invitamos a seguir
+                            estas
+                            recomendaciones.</p>
+                    </div>
+
+                    <!-- Recomendaciones en Grid -->
+                    <div class="row g-4">
+                        <!-- Preparación de la Visita -->
+                        <div class="col-md-6">
+                            <div class="terms-card h-100 shadow-sm border-0 p-4 rounded-3"
+                                style="background-color: #f8f9fa; border-top: 6px solid var(--primary-green) !important;">
+                                <h5 class="fw-bold" style="color: var(--primary-green);">
+                                    <i class="bi bi-clipboard-check me-2"></i>Preparación de la Visita
+                                </h5>
+                                <p class="text-muted fst-italic small">Unos pasos previos garantizan que toda la
+                                    experiencia
+                                    fluya mejor desde el principio.</p>
+                                <ul class="list-unstyled mt-3">
+                                    <li class="mb-2 d-flex align-items-start">
+                                        <i class="bi bi-1-circle-fill text-success me-2 mt-1"></i>
+                                        <div><strong>Información para el grupo:</strong> Recomendamos compartir el
+                                            programa
+                                            y los objetivos de la visita con todas las personas del grupo antes de su
+                                            llegada, así como el código de comportamiento.</div>
+                                    </li>
+                                    <li class="mb-2 d-flex align-items-start">
+                                        <i class="bi bi-2-circle-fill text-success me-2 mt-1"></i>
+                                        <div><strong>Identificación:</strong> Cada persona deberá portar un gafete o
+                                            etiqueta con su nombre de forma visible.</div>
+                                    </li>
+                                    <li class="d-flex align-items-start">
+                                        <i class="bi bi-3-circle-fill text-success me-2 mt-1"></i>
+                                        <div><strong>Puntualidad:</strong> El servicio educativo se realizará conforme a
+                                            los
+                                            tiempos señalados en su programa para garantizar la calidad del recorrido.
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Comodidad y protección personal -->
+                        <div class="col-md-6">
+                            <div class="terms-card h-100 shadow-sm border-0 p-4 rounded-3"
+                                style="background-color: #f8f9fa; border-top: 6px solid #f39c12 !important;">
+                                <h5 class="fw-bold" style="color: #f39c12;">
+                                    <i class="bi bi-sun-fill me-2"></i>Comodidad y protección personal
+                                </h5>
+                                <p class="text-muted fst-italic small">El jardín es un espacio al aire libre, estar bien
+                                    preparados hará la visita mucho más agradable.</p>
+                                <ul class="list-unstyled mt-3">
+                                    <li class="mb-2 d-flex align-items-start">
+                                        <i class="bi bi-check-circle-fill text-warning me-2 mt-1"></i>
+                                        <div><strong>Vestimenta:</strong> Sugerimos el uso de ropa cómoda y calzado
+                                            adecuado
+                                            para caminar por senderos.</div>
+                                    </li>
+                                    <li class="mb-2 d-flex align-items-start">
+                                        <i class="bi bi-check-circle-fill text-warning me-2 mt-1"></i>
+                                        <div><strong>Protección personal:</strong> Es recomendable el uso de repelente
+                                            de
+                                            insectos y bloqueador solar.</div>
+                                    </li>
+                                    <li class="d-flex align-items-start">
+                                        <i class="bi bi-check-circle-fill text-warning me-2 mt-1"></i>
+                                        <div><strong>Previsión climática:</strong> El clima puede cambiar
+                                            repentinamente;
+                                            sugerimos consultar el pronóstico del tiempo para traer equipo para lluvia
+                                            (impermeable o sombrilla) o protección para el calor (gorras o sombreros).
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Sustentabilidad -->
+                        <div class="col-md-6">
+                            <div class="terms-card h-100 shadow-sm border-0 p-4 rounded-3"
+                                style="background-color: #f8f9fa; border-top: 6px solid #2ecc71 !important;">
+                                <h5 class="fw-bold" style="color: #2ecc71;">
+                                    <i class="bi bi-recycle me-2"></i>Sustentabilidad y manejo de residuos
+                                </h5>
+                                <p class="text-muted fst-italic small">Como centro de Educación Ambiental, promovemos
+                                    hábitos responsables con el entorno.</p>
+                                <ul class="list-unstyled mt-3">
+                                    <li class="mb-2 d-flex align-items-start">
+                                        <i class="bi bi-check-circle-fill text-success me-2 mt-1"></i>
+                                        <div><strong>Alimentación consciente:</strong> Les invitamos a traer lunches
+                                            nutritivos y evitar alimentos ultra procesados.</div>
+                                    </li>
+                                    <li class="d-flex align-items-start">
+                                        <i class="bi bi-check-circle-fill text-success me-2 mt-1"></i>
+                                        <div><strong>Responsabilidad ambiental:</strong> El manejo de la basura es
+                                            responsabilidad de cada integrante del grupo. Les pedimos llevar sus
+                                            residuos de
+                                            vuelta o depositarlos correctamente para mantener este jardín en óptimas
+                                            condiciones.</div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Logística y accesibilidad -->
+                        <div class="col-md-6">
+                            <div class="terms-card h-100 shadow-sm border-0 p-4 rounded-3"
+                                style="background-color: #f8f9fa; border-top: 6px solid #3498db !important;">
+                                <h5 class="fw-bold" style="color: #3498db;">
+                                    <i class="bi bi-geo-alt me-2"></i>Logística y accesibilidad
+                                </h5>
+                                <p class="text-muted fst-italic small">Planear con anticipación el acceso y movilidad
+                                    del
+                                    grupo asegura una llegada sin contratiempos.</p>
+                                <ul class="list-unstyled mt-3">
+                                    <li class="mb-2 d-flex align-items-start">
+                                        <i class="bi bi-check-circle-fill text-primary me-2 mt-1"></i>
+                                        <div><strong>Transporte:</strong> En caso de llegar al jardín en autobús o
+                                            camionetas, les sugerimos ingresar por la Puerta 1 (24 sur y Av. San
+                                            Claudio,
+                                            junto a gasolinera). El lugar asignado para el estacionamiento es el Estadio
+                                            Universitario. En caso de cambios, el personal de seguridad les indicará la
+                                            zona
+                                            disponible.</div>
+                                    </li>
+                                    <li class="d-flex align-items-start">
+                                        <i class="bi bi-check-circle-fill text-primary me-2 mt-1"></i>
+                                        <div><strong>Inclusión:</strong> Si alguna persona del grupo tiene necesidades
+                                            específicas de movilidad o comunicación, les agradecemos informarnos con
+                                            antelación para brindarles la mejor atención.</div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Mensaje final -->
+                    <div class="text-center mt-5 p-4 rounded-3"
+                        style="background: linear-gradient(135deg, #fdebd0, #fad7a0); border: 2px solid #e67e22;">
+                        <h4 class="fw-bold" style="color: #e67e22;">
+                            <i class="bi bi-emoji-smile-fill me-2"></i>¡Disfruten su estancia!
+                        </h4>
+                        <p class="mb-0 fw-bold">El seguimiento de estas recomendaciones mejora la calidad y el
+                            aprovechamiento de su visita.</p>
+                    </div>
+
+                    <!-- Botón de finalización -->
+                    <div class="d-flex justify-content-end mt-4">
+                        <button type="button" class="btn btn-outline-secondary btn-lg px-4 me-3">
+                            <i class="bi bi-arrow-left me-2"></i> Anterior
+                        </button>
+                        <button type="button" class="btn btn-success btn-lg px-5" (click)="irAPaso(1)">
+                            Siguiente <i class="bi bi-arrow-right ms-2"></i>
+                        </button>
+                    </div>
+
+                </div>
+
+
+
+                }
+
+                }
+            </form>
+        </div>
+    </div>
+</div>
