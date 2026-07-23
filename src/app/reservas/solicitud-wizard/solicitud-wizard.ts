@@ -1,9 +1,12 @@
 import { Component, ChangeDetectionStrategy, inject, signal, computed, AfterViewInit, ElementRef, viewChild } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators, FormArray, AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { NgOptimizedImage } from '@angular/common';
+import { NgOptimizedImage, CurrencyPipe, DatePipe } from '@angular/common'; // Agregamos pipes
+import { Router } from '@angular/router'; // Inyectar Router para salir
 import flatpickr from 'flatpickr';
 import { Spanish } from 'flatpickr/dist/l10n/es.js';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 
 // Validador personalizado para las reglas de los servicios
 export function serviciosValidator(): ValidatorFn {
@@ -33,11 +36,16 @@ export function serviciosValidator(): ValidatorFn {
 })
 export class SolicitudWizardComponent implements AfterViewInit {
   private fb = inject(FormBuilder).nonNullable;
+  private router = inject(Router);
 
   fechaInput = viewChild<ElementRef>('fechaInput');
   horaInput = viewChild<ElementRef>('horaInput');
 
   pasoActual = signal<number>(1);
+
+  folioAsignado = signal<string>('');
+  fechaGeneracion = signal<Date>(new Date());
+  politicasAceptadas = signal<boolean>(false);
 
   preciosServicios: Record<string, number> = {
     visita_guiada: 30, visita_tematica: 99, conociendo_medio_ambiente: 125,
@@ -191,7 +199,7 @@ export class SolicitudWizardComponent implements AfterViewInit {
   }
 
   irAPaso(paso: number) {
-    if (paso >= 1 && paso <= 5) {
+    if (paso >= 1 && paso <= 6) {
       this.pasoActual.set(paso);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
@@ -199,10 +207,95 @@ export class SolicitudWizardComponent implements AfterViewInit {
 
   enviarSolicitud() {
     if (this.solicitudForm.valid) {
-      const datosFinales = this.solicitudForm.getRawValue();
-      console.log('Enviando datos al servidor:', datosFinales);
+      // 1. Generar el Folio de Seguimiento
+      const hoy = new Date();
+      const y = hoy.getFullYear();
+      const m = String(hoy.getMonth() + 1).padStart(2, '0');
+      const d = String(hoy.getDate()).padStart(2, '0');
+
+      // Generar un número aleatorio de 3 dígitos para simular el registro del sistema
+      const numSistema = String(Math.floor(Math.random() * 1000)).padStart(3, '0');
+
+      // 2. Asignar los valores a las señales
+      this.folioAsignado.set(`${y}${m}${d}-${numSistema}`);
+      this.fechaGeneracion.set(hoy);
+
+      console.log('Datos enviados correctamente:', this.solicitudForm.getRawValue());
+
+      // 3. Enviar al usuario al Paso 6
+      this.irAPaso(6);
+
     } else {
+      // Si el formulario es inválido, revelamos los errores
       this.solicitudForm.markAllAsTouched();
+
+      // Mostramos una alerta para que el usuario no se quede atascado sin saber por qué
+      alert('No se puede enviar la solicitud. Existen campos incompletos o con errores en los pasos anteriores (como la Selección de Servicios o el Reporte de Pago). Por favor, revisa tus datos.');
+
+      // Opcional: Imprimir en consola el estado de los controles para que tú, como desarrollador, veas qué falla
+      console.error('El formulario es inválido. Revisa el estado de los controles.');
     }
   }
+
+  regresarACorrecciones() {
+    this.politicasAceptadas.set(false); // Resetear checkbox
+    this.irAPaso(1);
+  }
+
+  // NUEVO: Finalizar y salir al menú principal
+  salirAlMenu() {
+    // Redirigir al inicio o login
+    this.router.navigate(['/login']);
+  }
+
+  // NUEVO: Descargar PDF de Resumen
+  descargarResumenPDF() {
+    const doc = new jsPDF();
+    const vals = this.solicitudForm.getRawValue();
+    const folio = this.folioAsignado();
+
+    // Encabezado
+    doc.setFillColor(143, 186, 66); // primary-green
+    doc.rect(0, 0, 210, 25, 'F');
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(16);
+    doc.text('RESUMEN DE SOLICITUD - JARDÍN BOTÁNICO', 14, 16);
+
+    // Datos del Folio
+    doc.setTextColor(44, 62, 80);
+    doc.setFontSize(12);
+    doc.text(`Folio Asignado: ${folio}`, 14, 40);
+    doc.text(`Fecha de Emisión: ${this.fechaGeneracion().toLocaleDateString()}`, 14, 48);
+
+    // Tabla de Datos
+    autoTable(doc, {
+      startY: 55,
+      headStyles: { fillColor: [27, 55, 31] }, // secondary-green
+      body: [
+        ['Institución / Escuela', vals.escuela],
+        ['Nivel y Grado', `${vals.nivel} - ${vals.grado}`],
+        ['Fecha de Visita', vals.fecha],
+        ['Horario', vals.hora],
+        ['Total de Alumnos', this.totalAlumnos().toString()],
+        ['Monto Total Estimado', `$${this.montoTotal().toFixed(2)} MXN`],
+        ['Anticipo a Pagar (50%)', `$${this.montoAnticipo().toFixed(2)} MXN`]
+      ],
+    });
+
+    // Guardar el archivo
+    doc.save(`Solicitud_${folio}.pdf`);
+  }
+
+  // NUEVO: Descargar Políticas (Simula descargar un archivo estático)
+  descargarPoliticas() {
+    // Si tienes un PDF físico en tu carpeta public/ o assets/, fuerza su descarga:
+    const link = document.createElement('a');
+    link.href = '/Reglamento_JardinBotanico.pdf'; // Asegúrate de tener este archivo
+    link.download = 'Politicas_y_Reglamento.pdf';
+    link.click();
+  }
+
+
+
+
 }

@@ -16,6 +16,10 @@
         <div class="step-item" [class.active]="pasoActual() === 5" [class.completed]="pasoActual() > 5">
             <span class="step-number">5</span><span class="step-label">Recomendaciones</span>
         </div>
+        <div class="step-item" [class.active]="pasoActual() === 6" [class.completed]="pasoActual() > 6">
+            <span class="step-number">6</span><span class="step-label">Resumen</span>
+        </div>
+
     </div>
 
     <div class="form-container shadow-lg">
@@ -28,9 +32,10 @@
                 @case (3) { REPORTE DE PAGO }
                 @case (4) { CÓDIGO DE COMPORTAMIENTO }
                 @case (5) { RECOMENDACIONES }
+                @case (6) { RESUMEN DE LA SOLICITUD }
                 }
             </h1>
-            <img ngSrc="assets/logo.jpg" width="100" height="100" alt="Logo Jardín Botánico BUAP"
+            <img ngSrc="assets/logo.jpg" width="123" height="100" alt="Logo Jardín Botánico BUAP"
                 class="logo-institucional">
         </header>
 
@@ -997,10 +1002,12 @@
                 </div>
 
                 <!-- Navegación -->
-                <div class="d-flex justify-content-end mt-4">
-                    <button type="button" class="btn btn-outline-secondary btn-lg px-4 me-3" disabled>
-                        <i class="bi bi-arrow-left me-2"></i> Anterior
+                <div class="d-flex justify-content-between mt-4">
+                    <button type="button" class="btn btn-outline-secondary btn-lg px-4" disabled>
+                        <i class="bi bi-arrow-left me-2"></i> Regresar a la pagina principal
                     </button>
+
+
                     <button type="button" class="btn btn-success btn-lg px-5" [disabled]="!esPasoValido(1)"
                         (click)="irAPaso(2)">
                         Siguiente <i class="bi bi-arrow-right ms-2"></i>
@@ -1263,10 +1270,10 @@
                     <div class="row g-4">
                         <div class="col-md-6">
                             <div class="card shadow-sm border-0 h-100">
-                                <!-- Se utiliza ngSrc para optimizar la carga de la imagen -->
-                                <img ngSrc="assets/FichaPago1.jpg" width="400" height="850"
+                                <!-- Asumiendo que ya redimensionaste las imágenes -->
+                                <img ngSrc="assets/FichaPago1.jpg" width="384" height="690"
                                     class="card-img-top rounded-top" alt="Ejemplo de ficha de depósito en sucursal"
-                                    style="object-fit: cover; height: 850px; width: 100%;">
+                                    style="object-fit: cover; height: auto; width: 100%;">
                                 <div class="card-body text-center">
                                     <h6 class="fw-bold">Ejemplo de ficha de depósito</h6>
                                     <p class="text-muted small mb-0">Depósito realizado en sucursal bancaria</p>
@@ -1275,9 +1282,9 @@
                         </div>
                         <div class="col-md-6">
                             <div class="card shadow-sm border-0 h-100">
-                                <img ngSrc="assets/FichaPago2.jpg" width="400" height="950"
+                                <img ngSrc="assets/FichaPago2.jpg" width="352" height="764"
                                     class="card-img-top rounded-top" alt="Ejemplo de captura de transferencia digital"
-                                    style="object-fit: cover; height: 950px; width: 100%;">
+                                    style="object-fit: cover; height: auto; width: 100%;">
                                 <div class="card-body text-center">
                                     <h6 class="fw-bold">Ejemplo de transferencia electrónica</h6>
                                     <p class="text-muted small mb-0">Captura de pantalla de transferencia digital</p>
@@ -1639,9 +1646,108 @@
 
                         <!-- Botón principal para enviar el formulario -->
                         <!-- Llama a una función enviarSolicitud() que puedes crear en tu TS para procesar solicitudForm.value -->
-                        <button type="submit" class="btn btn-success btn-lg px-5" [disabled]="solicitudForm.invalid"
-                            (click)="enviarSolicitud()">
+                        <!-- Botón principal para enviar el formulario -->
+                        <button type="button" class="btn btn-success btn-lg px-5" (click)="enviarSolicitud()">
                             <i class="bi bi-send-check-fill me-2"></i> Finalizar y Enviar
+                        </button>
+                    </div>
+                </div>
+                }
+                @case (6) {
+                <div class="text-center mb-5 p-4 rounded-3"
+                    style="background: linear-gradient(135deg, #e8f8f5, #d4efdf);">
+                    <i class="bi bi-check2-circle text-success" style="font-size: 4rem;"></i>
+                    <h2 class="fw-bold mt-2" style="color: var(--secondary-green);">¡Solicitud Generada Exitosamente!
+                    </h2>
+                    <p class="lead mb-0">Sus datos han sido pre-registrados en nuestro sistema.</p>
+
+                    <div class="mt-4 p-3 bg-white rounded-3 shadow-sm d-inline-block border border-success border-2">
+                        <span class="text-muted text-uppercase fw-bold small d-block mb-1">Folio de Seguimiento</span>
+                        <span class="fs-3 fw-bold text-dark">{{ folioAsignado() }}</span>
+                    </div>
+                </div>
+
+                <!-- Resumen de Datos -->
+                <div class="section-card">
+                    <div class="section-title">
+                        <div class="d-flex align-items-center">
+                            <span class="step-badge"><i class="bi bi-card-text"></i></span>
+                            <span class="ms-3">Resumen de Datos Ingresados</span>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped">
+                            <tbody class="align-middle">
+                                <tr>
+                                    <th class="bg-light" style="width: 30%;">Institución</th>
+                                    <td>{{ solicitudForm.controls.escuela.value }}</td>
+                                </tr>
+                                <tr>
+                                    <th class="bg-light">Nivel y Grado</th>
+                                    <td class="text-capitalize">{{ solicitudForm.controls.nivel.value }} - {{
+                                        solicitudForm.controls.grado.value }}</td>
+                                </tr>
+                                <tr>
+                                    <th class="bg-light">Fecha y Hora de Visita</th>
+                                    <td><strong>{{ solicitudForm.controls.fecha.value }}</strong> a las <strong>{{
+                                            solicitudForm.controls.hora.value }}</strong></td>
+                                </tr>
+                                <tr>
+                                    <th class="bg-light">Número de Alumnos</th>
+                                    <td>{{ totalAlumnos() }} alumnos</td>
+                                </tr>
+                                <tr>
+                                    <th class="bg-light">Monto Total Estimado</th>
+                                    <td class="text-success fw-bold">{{ montoTotal().toLocaleString('es-MX', { style:
+                                        'currency', currency: 'MXN' }) }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Aceptación de Políticas y Descargas -->
+                <div class="section-card bg-light border-0 shadow-sm">
+                    <div class="d-flex flex-column flex-md-row justify-content-between align-items-center gap-3 mb-4">
+                        <div class="form-check form-switch fs-5">
+                            <input class="form-check-input" type="checkbox" id="aceptoPoliticas"
+                                [checked]="politicasAceptadas()"
+                                (change)="politicasAceptadas.set(!politicasAceptadas())" style="cursor: pointer;">
+                            <label class="form-check-label fw-semibold" for="aceptoPoliticas" style="cursor: pointer;">
+                                He leído y acepto las políticas de servicio y reglamento del jardín.
+                            </label>
+                        </div>
+
+                        <button type="button" class="btn btn-outline-primary" (click)="descargarPoliticas()">
+                            <i class="bi bi-file-earmark-pdf-fill me-2"></i> Descargar Políticas PDF
+                        </button>
+                    </div>
+
+                    <div class="alert alert-warning border-0 shadow-sm mb-0">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                        <strong>Importante:</strong> Es indispensable descargar el formato de resumen de su solicitud.
+                        Este documento
+                        contiene su folio y es necesario para cualquier aclaración o seguimiento futuro.
+                    </div>
+                </div>
+
+                <!-- Botonera Final -->
+                <div class="d-flex flex-column flex-md-row justify-content-between gap-3 mt-5 border-top pt-4">
+                    <button type="button" class="btn btn-outline-secondary btn-lg px-4"
+                        (click)="regresarACorrecciones()">
+                        <i class="bi bi-pencil-square me-2"></i> Regresar a corregir
+                    </button>
+
+                    <div class="d-flex flex-column flex-md-row gap-3">
+                        <button type="button" class="btn btn-danger btn-lg px-4 shadow-sm"
+                            (click)="descargarResumenPDF()">
+                            <i class="bi bi-file-pdf-fill me-2"></i> Descargar Resumen (Folio)
+                        </button>
+
+                        <button type="button" class="btn btn-success btn-lg px-5 shadow-sm"
+                            [disabled]="!politicasAceptadas()" (click)="salirAlMenu()">
+                            <i class="bi bi-check-circle-fill me-2"></i> Aceptar y Salir
                         </button>
                     </div>
                 </div>
