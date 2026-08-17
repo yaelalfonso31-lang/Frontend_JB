@@ -11,13 +11,17 @@ export const routes: Routes = [
         loadComponent: () => import('./reservas/solicitud-wizard/solicitud-wizard').then(m => m.SolicitudWizardComponent)
     },
     {
+        path: 'programa-servicio',
+        loadComponent: () => import('./reservas/Programa-servicio/Programa-servicio').then(m => m.ProgramaServicioComponent)
+    },
+    {
         path: '',
-        redirectTo: 'login',
+        redirectTo: '/login',
         pathMatch: 'full'
     },
     {
         // Ruta comodín para capturar URLs no válidas y mandarlas al login
         path: '**',
-        redirectTo: 'login'
+        redirectTo: '/login'
     }
 ];
