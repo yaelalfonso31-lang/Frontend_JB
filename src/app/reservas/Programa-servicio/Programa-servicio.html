@@ -1,0 +1,261 @@
+<div class="container py-4">
+  <div class="form-container shadow-lg">
+    <header class="encabezado-institucional d-flex justify-content-between align-items-center p-4 gap-4">
+      <img ngSrc="assets/logo-BUAP.jpg" width="180" height="100" alt="Logo BUAP" class="logo-institucional flex-shrink-0">
+      <div class="text-center flex-grow-1">
+        <h3 class="mb-1 fw-bold text-dark">JARDIN BOTANICO UNIVERSITARIO BUAP</h3>
+        <h5 class="mb-1 text-secondary">AREA DE EDUCACION Y DIVULGACION</h5>
+        <h5 class="mb-0 text-secondary">PROGRAMA PARA ACTIVIDADES DE SERVICIO</h5>
+      </div>
+      <img ngSrc="assets/logo.jpg" width="130" height="100" alt="Logo Jardín Botánico BUAP" class="logo-institucional flex-shrink-0">
+    </header>
+
+    <div class="form-content p-4 p-md-5">
+      <form [formGroup]="programaForm">
+
+        <!-- ================= DATOS GENERALES ================= -->
+        <div class="section-card" formGroupName="datosGenerales">
+          <div class="section-title">
+            <div class="d-flex align-items-center">
+              <span class="step-badge"><i class="bi bi-card-checklist"></i></span>
+              <span class="ms-3">Datos Generales</span>
+            </div>
+          </div>
+
+          <div class="mb-4">
+            <label for="escuela" class="form-label text-muted fw-semibold">
+              <i class="bi bi-mortarboard me-1"></i> Escuela *
+            </label>
+            <div class="input-group">
+              <span class="input-group-text bg-light"><i class="bi bi-bank"></i></span>
+              <input type="text" class="form-control" id="escuela" formControlName="escuela"
+              placeholder="Ej. Escuela Normal Superior Federalizada del Estado de Puebla">
+            </div>
+          </div>
+
+          <div class="row g-3 mb-4">
+            <div class="col-md-6">
+              <label for="fecha" class="form-label text-muted fw-semibold">
+                <i class="bi bi-calendar-day me-1"></i> Fecha *
+              </label>
+              <div class="input-group shadow-sm">
+                <span class="input-group-text bg-white text-success border-end-0"><i class="bi bi-calendar3"></i></span>
+                <input type="text" class="form-control border-start-0 bg-white" id="fecha" formControlName="fecha"
+                  #fechaInput placeholder="Seleccione una fecha..." style="cursor: pointer;">
+              </div>
+            </div>
+            <div class="col-md-3">
+              <label for="horaInicio" class="form-label text-muted fw-semibold">
+                <i class="bi bi-clock me-1"></i> Inicio *
+              </label>
+              <div class="input-group shadow-sm">
+                <span class="input-group-text bg-white text-success border-end-0"><i
+                    class="bi bi-clock-history"></i></span>
+                <input type="text" class="form-control border-start-0 bg-white" id="horaInicio"
+                  formControlName="horaInicio" #horaInicioInput placeholder="9:00" style="cursor: pointer;">
+              </div>
+            </div>
+            <div class="col-md-3">
+              <label for="horaTermino" class="form-label text-muted fw-semibold">
+                <i class="bi bi-clock-fill me-1"></i> Término *
+              </label>
+              <div class="input-group shadow-sm">
+                <span class="input-group-text bg-white text-success border-end-0"><i
+                    class="bi bi-clock-history"></i></span>
+                <input type="text" class="form-control border-start-0 bg-white" id="horaTermino"
+                  formControlName="horaTermino" #horaTerminoInput placeholder="10:55" style="cursor: pointer;">
+              </div>
+            </div>
+          </div>
+
+          <div class="row g-3 mb-4">
+            <div class="col-md-6">
+              <label for="gradoEdades" class="form-label text-muted fw-semibold">
+                <i class="bi bi-diagram-2 me-1"></i> Grado Escolar o Edades *
+              </label>
+              <input type="text" class="form-control shadow-sm" id="gradoEdades" formControlName="gradoEdades"
+                placeholder="Ej. Licenciatura en Educación Preescolar Tercer Semestre">
+            </div>
+            <div class="col-md-3">
+              <label for="servicioEducativo" class="form-label text-muted fw-semibold">
+                <i class="bi bi-flower1 me-1"></i> Servicio Educativo *
+              </label>
+              <input type="text" class="form-control shadow-sm" id="servicioEducativo"
+                formControlName="servicioEducativo" placeholder="Ej. Visita Guiada, Taller, Conferencia">
+            </div>
+            <div class="col-md-3">
+              <label for="folio" class="form-label text-muted fw-semibold">
+                <i class="bi bi-upc-scan me-1"></i> Folio *
+              </label>
+              <input type="text" class="form-control shadow-sm" id="folio" formControlName="folio" placeholder="Ej. 001">
+            </div>
+          </div>
+
+          <!-- Número de personas reservadas -->
+          <div class="row g-3 p-3 rounded-3 mb-2 bg-light border">
+            <div class="col-6 col-md-3">
+              <label for="estudiantes" class="form-label fw-semibold text-secondary">
+                <i class="bi bi-people me-1"></i> Estudiantes
+              </label>
+              <input type="number" class="form-control text-center" id="estudiantes" formControlName="estudiantes">
+            </div>
+            <div class="col-6 col-md-3">
+              <label for="adultos" class="form-label fw-semibold text-secondary">
+                <i class="bi bi-person-video3 me-1"></i> Adultos / Maestros
+              </label>
+              <input type="number" class="form-control text-center" id="adultos" formControlName="adultos">
+            </div>
+            <div class="col-6 col-md-3">
+              <label for="secciones" class="form-label fw-semibold text-secondary">
+                <i class="bi bi-diagram-3 me-1"></i> Secciones a dividir
+              </label>
+              <input type="number" class="form-control text-center" id="secciones" formControlName="secciones">
+            </div>
+            <div class="col-6 col-md-3">
+              <label class="form-label fw-semibold text-success">
+                <i class="bi bi-hash me-1"></i> Total de Personas
+              </label>
+              <input type="text" class="form-control text-center fw-bold text-success bg-white" readonly
+                [value]="totalPersonas()">
+            </div>
+          </div>
+        </div>
+
+        <!-- ================= PROGRAMA (BLOQUES DINÁMICOS) ================= -->
+        <div class="section-card">
+          <div class="section-title">
+            <div class="d-flex align-items-center">
+              <span class="step-badge"><i class="bi bi-list-columns-reverse"></i></span>
+              <span class="ms-3">Programa</span>
+            </div>
+          </div>
+
+          <div class="alert alert-success d-flex align-items-center border-0 shadow-sm mb-4" role="alert">
+            <i class="bi bi-info-circle-fill fs-4 me-3"></i>
+            <div>
+              Arma el itinerario de la visita por bloques: actividades generales (horario / lugar /
+              actividad) o bloques por grupo (horario / actividad y responsable).
+            </div>
+          </div>
+
+          <div formArrayName="bloques">
+            @for (bloque of bloques.controls; track $index; let i = $index) {
+            <div [formGroupName]="i" class="programa-bloque rounded-3 overflow-hidden border mb-4 shadow-sm">
+
+              <!-- Encabezado del bloque -->
+              <div class="bloque-header d-flex align-items-center gap-2 p-3">
+                <select class="form-select form-select-sm bloque-tipo-select" formControlName="tipo">
+                  <option value="tabla">General</option>
+                  <option value="grupo">Grupo</option>
+                </select>
+                <input type="text" class="form-control form-control-sm titulo-input flex-grow-1"
+                  formControlName="titulo" placeholder="Título del bloque (Ej. Grupo 1: ...)">
+
+                <div class="d-flex gap-1">
+                  <button type="button" class="btn btn-sm btn-outline-light" title="Subir bloque" [disabled]="i === 0"
+                    (click)="moverBloque(i, -1)">
+                    <i class="bi bi-arrow-up"></i>
+                  </button>
+                  <button type="button" class="btn btn-sm btn-outline-light" title="Bajar bloque"
+                    [disabled]="i === bloques.length - 1" (click)="moverBloque(i, 1)">
+                    <i class="bi bi-arrow-down"></i>
+                  </button>
+                  <button type="button" class="btn btn-sm btn-outline-light" title="Eliminar bloque"
+                    (click)="eliminarBloque(i)">
+                    <i class="bi bi-trash-fill"></i>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Filas del bloque -->
+              <div class="table-responsive bg-white">
+                <table class="table table-bordered mb-0 align-middle">
+                  <thead>
+                    <tr>
+                      <th style="width: 18%;">Horario</th>
+                      @if (bloque.get('tipo')?.value === 'tabla') {
+                      <th style="width: 32%;">Lugar</th>
+                      <th>Actividad</th>
+                      } @else {
+                      <th>Actividad / Responsable(s)</th>
+                      }
+                      <th style="width: 50px;"></th>
+                    </tr>
+                  </thead>
+                  <tbody formArrayName="filas">
+                    @for (fila of getFilas(bloque).controls; track $index; let j = $index) {
+                    <tr [formGroupName]="j">
+                      <td>
+                        <input type="text" class="form-control form-control-sm" formControlName="horario"
+                          placeholder="9:00 - 9:10">
+                      </td>
+                      @if (bloque.get('tipo')?.value === 'tabla') {
+                      <td>
+                        <input type="text" class="form-control form-control-sm" formControlName="lugar"
+                          placeholder="Entrada JB">
+                      </td>
+                      <td>
+                        <input type="text" class="form-control form-control-sm" formControlName="actividad"
+                          placeholder="Recepción">
+                      </td>
+                      } @else {
+                      <td>
+                        <input type="text" class="form-control form-control-sm mb-1" formControlName="actividad"
+                          placeholder="Visita Guiada">
+                        <input type="text" class="form-control form-control-sm" formControlName="responsables"
+                          placeholder="Nombre del responsable">
+                      </td>
+                      }
+                      <td class="text-center">
+                        <button type="button" class="btn btn-sm btn-outline-danger px-2" (click)="eliminarFila(i, j)">
+                          <i class="bi bi-trash-fill"></i>
+                        </button>
+                      </td>
+                    </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+
+              <div class="p-2 bg-light text-center">
+                <button type="button" class="btn btn-sm btn-outline-success" (click)="agregarFila(i)">
+                  <i class="bi bi-plus-lg me-1"></i> Agregar fila
+                </button>
+              </div>
+            </div>
+            }
+          </div>
+
+          <div class="d-flex flex-wrap gap-2 mt-2">
+            <button type="button" class="btn btn-outline-success" (click)="agregarBloque('tabla')">
+              <i class="bi bi-plus-lg me-1"></i> Bloque general (horario / lugar / actividad)
+            </button>
+            <button type="button" class="btn btn-outline-success" (click)="agregarBloque('grupo')">
+              <i class="bi bi-plus-lg me-1"></i> Bloque por grupo
+            </button>
+          </div>
+        </div>
+
+        <!-- ================= ACCIONES ================= -->
+        <div class="section-card bg-light border-0 shadow-sm">
+          <div class="d-flex flex-column flex-md-row justify-content-between align-items-center gap-3">
+            <div>
+              <span class="text-muted text-uppercase fw-bold small d-block">Folio</span>
+              <span class="fs-4 fw-bold text-dark">{{ datosGenerales.get('folio')?.value }}</span>
+            </div>
+
+            <div class="d-flex flex-column flex-md-row gap-2">
+              <button type="button" class="btn btn-outline-secondary btn-lg px-4" (click)="imprimirPrograma()">
+                <i class="bi bi-printer-fill me-2"></i> Imprimir
+              </button>
+              <button type="button" class="btn btn-success btn-lg px-5" (click)="descargarProgramaPDF()">
+                <i class="bi bi-file-earmark-pdf-fill me-2"></i> Descargar PDF
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </form>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,127 @@
+/* ==========================================================================
+   ENCABEZADO INSTITUCIONAL
+   ========================================================================== */
+.encabezado-institucional {
+  background-color: #f8f9fa;
+  border-bottom: 3px solid var(--primary-green);
+  margin-bottom: 2rem;
+
+  h3 {
+    font-size: 1.25rem;
+    letter-spacing: 0.5px;
+  }
+
+  h5 {
+    font-size: 0.95rem;
+    letter-spacing: 0.3px;
+  }
+
+  .logo-institucional {
+    flex-shrink: 0;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+}
+
+/* ==========================================================================
+   BLOQUES DEL PROGRAMA
+   ========================================================================== */
+.programa-bloque {
+  border: 1px solid var(--border-color);
+  background: white;
+  transition: box-shadow 0.2s ease;
+
+  .bloque-header {
+    background-color: var(--primary-green);
+
+    .bloque-tipo-select {
+      max-width: 110px;
+      background-color: rgba(255, 255, 255, 0.15);
+      color: white;
+      border: 1px solid rgba(255, 255, 255, 0.4);
+
+      option {
+        color: var(--text-dark);
+      }
+    }
+
+    .titulo-input {
+      background-color: rgba(255, 255, 255, 0.12);
+      color: white;
+      font-weight: 700;
+      border: 1px solid rgba(255, 255, 255, 0.35);
+
+      &::placeholder {
+        color: rgba(255, 255, 255, 0.75);
+      }
+
+      &:focus {
+        background-color: rgba(255, 255, 255, 0.22);
+        box-shadow: none;
+        border-color: white;
+        color: white;
+      }
+    }
+  }
+
+  table {
+    thead th {
+      background-color: #F4F6F6;
+      color: var(--text-dark);
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    td {
+      vertical-align: middle;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .programa-bloque .bloque-header {
+    flex-wrap: wrap;
+
+    .bloque-tipo-select {
+      max-width: 100%;
+      flex-basis: 100%;
+    }
+  }
+}
+
+/* ==========================================================================
+   IMPRESIÓN
+   ========================================================================== */
+@media print {
+
+  .btn,
+  .step-badge,
+  .bloque-header .d-flex.gap-1,
+  .bloque-tipo-select {
+    display: none !important;
+  }
+
+  .form-control,
+  .titulo-input {
+    border: none !important;
+    background: transparent !important;
+    color: var(--text-dark) !important;
+    padding: 0.2rem 0 !important;
+  }
+
+  .bloque-header {
+    background-color: var(--light-green) !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+
+    .titulo-input {
+      color: var(--secondary-green) !important;
+    }
+  }
+
+  .form-container {
+    box-shadow: none !important;
+    border: none !important;
+  }
+}
