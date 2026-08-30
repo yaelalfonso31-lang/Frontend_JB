@@ -4,46 +4,43 @@ import { Router } from '@angular/router';
 import { NgOptimizedImage } from '@angular/common';
 
 @Component({
-  selector: 'app-login',
+  selector: 'app-recuperar-password',
+  standalone: true,
   imports: [ReactiveFormsModule, NgOptimizedImage],
-  templateUrl: './login.html',
-  styleUrl: './login.scss',
+  templateUrl: './recuperar-password.html',
+  styleUrl: './recuperar-password.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class LoginComponent {
+export class RecuperarPasswordComponent {
   private fb = inject(FormBuilder);
   private router = inject(Router);
 
-  loginForm = this.fb.nonNullable.group({
-    email: ['', [Validators.required, Validators.email]],
-    password: ['', [Validators.required]]
+  recoveryForm = this.fb.nonNullable.group({
+    email: ['', [Validators.required, Validators.email]]
   });
 
   isLoading = signal<boolean>(false);
+  isEmailSent = signal<boolean>(false);
   errorMessage = signal<string | null>(null);
 
   onSubmit(): void {
-    if (this.loginForm.valid) {
+    if (this.recoveryForm.valid) {
       this.isLoading.set(true);
       this.errorMessage.set(null);
 
-      // Simulación de autenticación
+      // Simulación de envío de correo
       setTimeout(() => {
-        console.log('Autenticando...', this.loginForm.getRawValue());
+        console.log('Enviando enlace a:', this.recoveryForm.getRawValue().email);
         this.isLoading.set(false);
-        // this.router.navigate(['/panel-admin']);
+        this.isEmailSent.set(true);
       }, 1500);
     } else {
-      this.loginForm.markAllAsTouched();
+      this.recoveryForm.markAllAsTouched();
     }
   }
 
-  irAlFormulario(): void {
-    // Ruta hacia la solicitud de visitas
-    this.router.navigate(['/solicitud-visita']);
-  }
-
-  irARecuperarPassword(): void {
-    this.router.navigate(['/auth/recuperar-password']);
+  irAlLogin(): void {
+    // Cambio de pantalla hacia la vista de Login
+    this.router.navigate(['/auth/login']);
   }
 }
