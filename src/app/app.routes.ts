@@ -15,6 +15,37 @@ export const routes: Routes = [
         loadComponent: () => import('./reservas/Programa-servicio/Programa-servicio').then(m => m.ProgramaServicioComponent)
     },
     {
+        path: 'administrador',
+        loadComponent: () => import('./administrador/administrador').then(m => m.AdministradorComponent),
+        children: [
+            {
+                path: 'dashboard',
+                loadComponent: () => import('./administrador/dashboard/dashboard').then(m => m.DashboardComponent)
+            },
+            {
+                path: 'colaboradores',
+                loadComponent: () => import('./administrador/gestion-colaboradores/lista-colaboradores/lista-colaboradores').then(m => m.ListaColaboradoresComponent)
+            },
+            {
+                path: 'aprobacion',
+                loadComponent: () => import('./administrador/gestion-colaboradores/aprobacion-colaboradores/aprobacion-colaboradores').then(m => m.AprobacionColaboradoresComponent)
+            },
+            {
+                path: 'solicitudes',
+                loadComponent: () => import('./administrador/monitor-solicitudes/monitor-solicitudes').then(m => m.MonitorSolicitudesComponent)
+            },
+            {
+                path: 'configuracion',
+                loadComponent: () => import('./administrador/configuracion-sistema/configuracion-sistema').then(m => m.ConfiguracionSistemaComponent)
+            },
+            {
+                path: '',
+                redirectTo: '/administrador/dashboard',
+                pathMatch: 'full'
+            }
+        ]
+    },
+    {
         path: '',
         redirectTo: '/login',
         pathMatch: 'full'
