@@ -1,0 +1,130 @@
+<div class="aprobacion-container">
+  <h1>Aprobación de Nuevos Colaboradores</h1>
+
+  <div class="tabs">
+    <button class="tab-btn active">
+      Pendientes ({{ solicitudesPendientes.length }})
+    </button>
+    <button class="tab-btn">
+      Aprobados ({{ solicitudesAprobadas.length }})
+    </button>
+    <button class="tab-btn">
+      Rechazados ({{ solicitudesRechazadas.length }})
+    </button>
+  </div>
+
+  <div class="solicitudes-grid">
+    @for (solicitud of solicitudesPendientes; track solicitud.id) {
+      <div class="solicitud-card" (click)="selectSolicitud(solicitud)">
+        <div class="card-header">
+          <h3>{{ solicitud.nombre }}</h3>
+          <span class="status-badge status-pendiente">Pendiente</span>
+        </div>
+
+        <div class="card-body">
+          <p><strong>Email:</strong> {{ solicitud.email }}</p>
+          <p><strong>Teléfono:</strong> {{ solicitud.telefono }}</p>
+          @if (solicitud.razonSocial) {
+            <p><strong>Organización:</strong> {{ solicitud.razonSocial }}</p>
+          }
+          <p><strong>Experiencia:</strong> {{ solicitud.experiencia }}</p>
+          <p class="fecha"><small>Solicitud: {{ solicitud.fechaSolicitud }}</small></p>
+        </div>
+
+        <div class="card-actions">
+          <button
+            class="btn btn-success"
+            (click)="aprobarSolicitud(solicitud.id); $event.stopPropagation()"
+          >
+            ✓ Aprobar
+          </button>
+          <button
+            class="btn btn-danger"
+            (click)="rechazarSolicitud(solicitud.id); $event.stopPropagation()"
+          >
+            ✕ Rechazar
+          </button>
+        </div>
+      </div>
+    }
+
+    @if (solicitudesPendientes.length === 0) {
+      <div class="empty-state">
+        <p>No hay solicitudes pendientes de aprobación</p>
+      </div>
+    }
+  </div>
+
+  <!-- Modal de Detalles -->
+  @if (selectedSolicitud(); as solicitud) {
+    <div class="modal-overlay" (click)="closeDetail()">
+      <div class="modal-content" (click)="$event.stopPropagation()">
+        <button class="btn-close" (click)="closeDetail()">✕</button>
+
+        <h2>Detalles de la Solicitud</h2>
+
+        <div class="detail-section">
+          <h3>Información Personal</h3>
+          <div class="detail-row">
+            <span class="label">Nombre:</span>
+            <span>{{ solicitud.nombre }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="label">Email:</span>
+            <span>{{ solicitud.email }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="label">Teléfono:</span>
+            <span>{{ solicitud.telefono }}</span>
+          </div>
+        </div>
+
+        @if (solicitud.razonSocial) {
+          <div class="detail-section">
+            <h3>Información Profesional</h3>
+            <div class="detail-row">
+              <span class="label">Organización:</span>
+              <span>{{ solicitud.razonSocial }}</span>
+            </div>
+            <div class="detail-row">
+              <span class="label">Experiencia:</span>
+              <span>{{ solicitud.experiencia }}</span>
+            </div>
+          </div>
+        }
+
+        <div class="detail-section">
+          <h3>Detalles de la Solicitud</h3>
+          <div class="detail-row">
+            <span class="label">Fecha de Solicitud:</span>
+            <span>{{ solicitud.fechaSolicitud }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="label">Estado:</span>
+            <span [class]="'status-badge status-' + solicitud.estado">
+              {{ solicitud.estado | uppercase }}
+            </span>
+          </div>
+        </div>
+
+        <div class="modal-actions">
+          <button
+            class="btn btn-success"
+            (click)="aprobarSolicitud(solicitud.id)"
+          >
+            ✓ Aprobar
+          </button>
+          <button
+            class="btn btn-danger"
+            (click)="rechazarSolicitud(solicitud.id)"
+          >
+            ✕ Rechazar
+          </button>
+          <button class="btn btn-secondary" (click)="closeDetail()">
+            Cerrar
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+</div>
