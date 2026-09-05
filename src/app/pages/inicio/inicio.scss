@@ -1,0 +1,63 @@
+.landing-wrapper {
+    background-color: #fcfcfc;
+    min-height: 100vh;
+}
+
+.text-shadow {
+    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.6);
+}
+
+.text-shadow-sm {
+    text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.6);
+}
+
+.hero-section {
+    /* Sustituye la URL por la imagen de fondo que desees usar */
+    background: url('/fondoJB.jpg') center/cover no-repeat;
+    min-height: 70vh;
+    margin-top: -1px;
+    /* Para fusionar perfecto con el navbar */
+
+    .hero-overlay {
+        top: 0;
+        left: 0;
+        /* Un gradiente verde muy oscuro y sutil */
+        background: linear-gradient(135deg, rgba(27, 55, 31, 0.85) 0%, rgba(30, 132, 69, 0.65) 100%);
+    }
+
+    .hero-btn {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        font-size: 1.1rem;
+
+        &:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2) !important;
+        }
+
+        &:active {
+            transform: translateY(0);
+        }
+    }
+}
+
+.info-section {
+    .card-hover {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border-radius: 12px;
+
+        &:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1) !important;
+        }
+
+        .icon-wrapper {
+            width: 80px;
+            height: 80px;
+            background-color: #e8f5e9;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    }
+}

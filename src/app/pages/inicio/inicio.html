@@ -1,0 +1,89 @@
+<div class="landing-wrapper">
+
+    <!-- Barra de Navegación -->
+    <nav class="navbar bg-white shadow-sm py-3">
+        <div class="container d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center gap-3">
+                <!-- Reemplaza las rutas según el nombre exacto de tus imágenes -->
+                <img ngSrc="/logo-buap.png" width="140" height="50" alt="Logo BUAP" class="img-fluid" priority>
+                <div class="vr d-none d-md-block" style="height: 40px; color: var(--primary-green);"></div>
+                <img ngSrc="/logo.jpg" width="60" height="60" alt="Logo Jardín Botánico BUAP" class="img-fluid rounded"
+                    priority>
+            </div>
+
+            <!-- Botón discreto para personal/admin -->
+            <button class="btn btn-outline-secondary btn-sm rounded-pill px-4" (click)="irALogin()">
+                <i class="bi bi-person-lock me-1"></i> Acceso Personal
+            </button>
+        </div>
+    </nav>
+
+    <!-- Sección Principal (Hero) -->
+    <section class="hero-section position-relative d-flex align-items-center justify-content-center text-center">
+        <!-- Capa oscura para legibilidad -->
+        <div class="hero-overlay position-absolute w-100 h-100"></div>
+
+        <div class="container position-relative z-1 text-white px-3">
+            <h1 class="display-3 fw-bold mb-3 text-shadow">Jardín Botánico Universitario</h1>
+            <p class="lead mb-5 fs-4 text-shadow-sm mx-auto" style="max-width: 800px;">
+                Un espacio dedicado a la conservación, la investigación y la educación ambiental. Conecta con la
+                biodiversidad en el corazón de la ciudad.
+            </p>
+
+            <div class="d-flex flex-column flex-sm-row justify-content-center gap-4 mt-4">
+                <!-- Botón 1: Formulario -->
+                <button class="btn btn-success btn-lg px-5 py-3 rounded-pill shadow-lg hero-btn"
+                    (click)="irASolicitud()">
+                    <i class="bi bi-calendar2-check-fill me-2"></i> Agendar Visita o Taller
+                </button>
+
+                <!-- Botón 2: Consultar Estado -->
+                <button class="btn btn-light btn-lg px-5 py-3 rounded-pill shadow-lg hero-btn text-success fw-bold"
+                    (click)="irAEstadoSolicitud()">
+                    <i class="bi bi-search me-2"></i> Consultar mi Solicitud
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sección de Información Relevante -->
+    <section class="info-section container py-5 mt-4">
+        <div class="text-center mb-5">
+            <h2 class="fw-bold" style="color: var(--secondary-green);">Planea tu visita</h2>
+            <p class="text-muted">Conoce los detalles para disfrutar al máximo nuestro espacio natural.</p>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm text-center p-4 card-hover">
+                    <div class="icon-wrapper mx-auto mb-3 text-success">
+                        <i class="bi bi-clock-history" style="font-size: 2.5rem;"></i>
+                    </div>
+                    <h5 class="fw-bold">Horarios</h5>
+                    <p class="text-muted mb-0">De Lunes a Viernes<br>09:00 hrs a 15:00 hrs.</p>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm text-center p-4 card-hover">
+                    <div class="icon-wrapper mx-auto mb-3 text-success">
+                        <i class="bi bi-geo-alt-fill" style="font-size: 2.5rem;"></i>
+                    </div>
+                    <h5 class="fw-bold">Ubicación</h5>
+                    <p class="text-muted mb-0">Ciudad Universitaria BUAP<br>Acceso sugerido por Puerta 1.</p>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm text-center p-4 card-hover">
+                    <div class="icon-wrapper mx-auto mb-3 text-success">
+                        <i class="bi bi-telephone-fill" style="font-size: 2.5rem;"></i>
+                    </div>
+                    <h5 class="fw-bold">Contacto</h5>
+                    <p class="text-muted mb-0">Tel: 222 229 5500 ext. 7033<br>WhatsApp: +52 222 529 7312</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</div>

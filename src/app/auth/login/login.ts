@@ -40,6 +40,6 @@ export class LoginComponent {
 
   irAlFormulario(): void {
     // Ruta hacia la solicitud de visitas
-    this.router.navigate(['/solicitud-visita']);
+    this.router.navigate(['/inicio']);
   }
 }
