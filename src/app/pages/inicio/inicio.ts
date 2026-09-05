@@ -18,8 +18,7 @@ export class InicioComponent {
   }
 
   irAEstadoSolicitud(): void {
-    // Esta ruta la crearemos más adelante
-    this.router.navigate(['/estado-solicitud']);
+    this.router.navigate(['/consultar-solicitud']);
   }
 
   irALogin(): void {

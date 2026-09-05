@@ -16,6 +16,10 @@ export const routes: Routes = [
         loadComponent: () => import('./reservas/solicitud-wizard/solicitud-wizard').then(m => m.SolicitudWizardComponent)
     },
     {
+        path: 'consultar-solicitud',
+        loadComponent: () => import('./reservas/consultar-solicitud/consultar-solicitud').then(m => m.ConsultarSolicitudComponent)
+    },
+    {
         path: 'programa-servicio',
         loadComponent: () => import('./reservas/Programa-servicio/Programa-servicio').then(m => m.ProgramaServicioComponent)
     },
