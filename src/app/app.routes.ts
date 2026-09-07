@@ -24,6 +24,14 @@ export const routes: Routes = [
         loadComponent: () => import('./reservas/Programa-servicio/Programa-servicio').then(m => m.ProgramaServicioComponent)
     },
     {
+        path: 'recuperar-password',
+        loadComponent: () => import('./auth/recuperar-password/recuperar-password').then(m => m.RecuperarPasswordComponent)
+    },
+    {
+        path: 'registro-colaborador',
+        loadComponent: () => import('./auth/registro-colaborador/registro-colaborador').then(m => m.RegistroColaboradorComponent)
+    },
+    {
         path: 'administrador',
         loadComponent: () => import('./administrador/administrador').then(m => m.AdministradorComponent),
         children: [

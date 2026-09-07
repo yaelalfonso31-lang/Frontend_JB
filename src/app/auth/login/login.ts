@@ -42,4 +42,8 @@ export class LoginComponent {
     // Ruta hacia la solicitud de visitas
     this.router.navigate(['/inicio']);
   }
+
+  irARecuperarPassword(): void {
+    this.router.navigate(['/recuperar-password']);
+  }
 }

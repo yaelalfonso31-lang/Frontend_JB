@@ -37,7 +37,9 @@
                         <label class="remember-me">
                             <input type="checkbox"> Recordarme
                         </label>
-                        <a href="#" class="forgot-password">¿Olvidaste tu contraseña?</a>
+                        <button type="button" class="forgot-password-btn" (click)="irARecuperarPassword()">
+                            ¿Olvidaste tu contraseña?
+                        </button>
                     </div>
 
                     @if (errorMessage()) {
