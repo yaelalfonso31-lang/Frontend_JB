@@ -1,0 +1,284 @@
+.configuracion-container {
+  padding: 2rem;
+  max-width: 900px;
+  margin: 0 auto;
+
+  h1 {
+    font-size: 2rem;
+    color: #333;
+    margin-bottom: 2rem;
+  }
+}
+
+.config-section {
+  background: white;
+  border-radius: 8px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid #f0f0f0;
+
+  h2 {
+    margin: 0;
+    font-size: 1.3rem;
+    color: #333;
+  }
+
+  .section-icon {
+    font-size: 1.5rem;
+  }
+}
+
+.section-description {
+  color: #666;
+  font-size: 0.95rem;
+  margin-bottom: 1rem;
+  line-height: 1.5;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+
+  label {
+    font-weight: 600;
+    color: #333;
+    font-size: 0.95rem;
+  }
+}
+
+.form-input {
+  padding: 0.75rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 0.95rem;
+  font-family: inherit;
+
+  &:focus {
+    outline: none;
+    border-color: #2e7d32;
+    box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.1);
+  }
+}
+
+.input-group {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+
+  .form-input {
+    flex: 1;
+  }
+}
+
+.input-suffix {
+  color: #666;
+  font-weight: 500;
+}
+
+.form-description {
+  font-size: 0.85rem;
+  color: #999;
+  margin: 0;
+  margin-top: 0.25rem;
+}
+
+.form-card {
+  background: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 6px;
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+
+  h3 {
+    margin: 0 0 1rem 0;
+    font-size: 1rem;
+    color: #333;
+  }
+}
+
+.form-inline {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  align-items: flex-end;
+
+  .form-field {
+    flex: 1;
+    min-width: 200px;
+  }
+}
+
+.form-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: auto;
+}
+
+.btn {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  font-size: 0.95rem;
+
+  &.btn-primary {
+    background: #2e7d32;
+    color: white;
+
+    &:hover {
+      background: #1b5e20;
+    }
+  }
+
+  &.btn-secondary {
+    background: #6c757d;
+    color: white;
+
+    &:hover {
+      background: #5a6268;
+    }
+  }
+
+  &.btn-success {
+    background: #28a745;
+    color: white;
+
+    &:hover {
+      background: #218838;
+    }
+  }
+
+  &.btn-outline {
+    background: white;
+    border: 1px solid #ddd;
+    color: #333;
+
+    &:hover {
+      background: #f8f9fa;
+      border-color: #999;
+    }
+  }
+}
+
+.dias-festivos-list {
+  margin-top: 2rem;
+
+  h3 {
+    font-size: 1.1rem;
+    color: #333;
+    margin-bottom: 1rem;
+  }
+}
+
+.table-responsive {
+  overflow-x: auto;
+}
+
+.dias-table {
+  width: 100%;
+  border-collapse: collapse;
+
+  thead {
+    background: #f8f9fa;
+    border-bottom: 1px solid #dee2e6;
+
+    th {
+      padding: 0.75rem;
+      text-align: left;
+      font-weight: 600;
+      color: #333;
+      font-size: 0.9rem;
+    }
+  }
+
+  tbody {
+    tr {
+      border-bottom: 1px solid #dee2e6;
+
+      &:hover {
+        background: #f9f9f9;
+      }
+
+      td {
+        padding: 0.75rem;
+        font-size: 0.9rem;
+        color: #333;
+      }
+    }
+  }
+}
+
+.btn-delete-small {
+  background: none;
+  border: 1px solid #ddd;
+  padding: 0.35rem 0.6rem;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+
+  &:hover {
+    border-color: #dc3545;
+    background: #fff5f5;
+  }
+}
+
+.empty-message {
+  text-align: center;
+  padding: 2rem;
+  color: #999;
+  background: #f8f9fa;
+  border-radius: 4px;
+
+  p {
+    margin: 0;
+  }
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.info-card {
+  background: #f8f9fa;
+  border-radius: 6px;
+  padding: 1rem;
+  text-align: center;
+}
+
+.info-label {
+  font-size: 0.85rem;
+  color: #666;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+
+.info-value {
+  font-size: 1.3rem;
+  color: #333;
+  font-weight: bold;
+
+  &.status-active {
+    color: #28a745;
+  }
+}

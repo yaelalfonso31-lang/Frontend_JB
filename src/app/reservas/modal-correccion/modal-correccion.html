@@ -1,0 +1,57 @@
+<!-- Backdrop oscuro -->
+<div class="modal-backdrop" (click)="cerrar.emit()">
+
+    <!-- Contenedor del Modal (detenemos la propagación para que el clic aquí no lo cierre) -->
+    <div class="modal-content" (click)="$event.stopPropagation()">
+
+        <div class="modal-header">
+            <h3>Corrección requerida</h3>
+            <button class="btn-close" (click)="cerrar.emit()" aria-label="Cerrar">&times;</button>
+        </div>
+
+        <div class="modal-body">
+            <p class="instrucciones">
+                Folio: <strong>{{ folio }}</strong><br>
+                Por favor, actualiza únicamente los siguientes datos requeridos por la administración.
+            </p>
+
+            <form #correccionForm="ngForm" class="form-correccion">
+                @for (campo of campos; track campo.id) {
+                <div class="form-group">
+                    <label [for]="campo.id">{{ campo.etiqueta }}</label>
+
+                    <!-- Mensaje de retroalimentación de la administración -->
+                    <div class="alerta-campo">
+                        <i class="icon-info"></i> {{ campo.mensajeError }}
+                    </div>
+
+                    <!-- Renderizado dinámico del tipo de input -->
+                    @if (campo.tipo === 'text') {
+                    <input type="text" [id]="campo.id" [name]="campo.id" [(ngModel)]="valoresFormulario[campo.id]"
+                        class="form-control" required>
+                    }
+                    @if (campo.tipo === 'number') {
+                    <input type="number" [id]="campo.id" [name]="campo.id" [(ngModel)]="valoresFormulario[campo.id]"
+                        class="form-control" required>
+                    }
+                    @if (campo.tipo === 'textarea') {
+                    <textarea [id]="campo.id" [name]="campo.id" [(ngModel)]="valoresFormulario[campo.id]"
+                        class="form-control" rows="3" required></textarea>
+                    }
+                    @if (campo.tipo === 'file') {
+                    <!-- Nota: Para archivos, el binding bidireccional es diferente, aquí lo dejamos preparado visualmente -->
+                    <input type="file" [id]="campo.id" class="form-control-file" accept=".pdf,.png,.jpg">
+                    }
+                </div>
+                }
+            </form>
+        </div>
+
+        <div class="modal-footer">
+            <button class="btn-cancelar" (click)="cerrar.emit()">Cancelar</button>
+            <button class="btn-guardar" (click)="enviarCorrecciones()" [disabled]="!correccionForm.valid">
+                Enviar Corrección
+            </button>
+        </div>
+    </div>
+</div>
