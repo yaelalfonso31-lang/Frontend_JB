@@ -30,6 +30,8 @@ export const routes: Routes = [
     {
         path: 'registro-colaborador',
         loadComponent: () => import('./auth/registro-colaborador/registro-colaborador').then(m => m.RegistroColaboradorComponent)
+    },
+    {
         path: 'administrador',
         loadComponent: () => import('./administrador/administrador').then(m => m.AdministradorComponent),
         children: [

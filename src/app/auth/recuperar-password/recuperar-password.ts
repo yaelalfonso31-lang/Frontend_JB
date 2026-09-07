@@ -2,6 +2,7 @@ import { Component, ChangeDetectionStrategy, inject, signal } from '@angular/cor
 import { FormBuilder, ReactiveFormsModule, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NgOptimizedImage } from '@angular/common';
+import { AuthService } from '../services/auth.service'; 
 
 @Component({
   selector: 'app-recuperar-password',
@@ -14,6 +15,7 @@ import { NgOptimizedImage } from '@angular/common';
 export class RecuperarPasswordComponent {
   private fb = inject(FormBuilder);
   private router = inject(Router);
+  private authService = inject(AuthService);
 
   currentStep = signal<number>(1);
   isLoading = signal<boolean>(false);
@@ -43,11 +45,19 @@ export class RecuperarPasswordComponent {
       this.isLoading.set(true);
       this.errorMessage.set(null);
 
-      setTimeout(() => {
-        console.log('Código enviado a:', this.step1Form.value.email);
-        this.isLoading.set(false);
-        this.currentStep.set(2);
-      }, 1200);
+      const email = this.step1Form.value.email!;
+
+      // Petición real al backend mediante HttpClient
+      this.authService.solicitarCodigo(email).subscribe({
+        next: (res) => {
+          this.isLoading.set(false);
+          this.currentStep.set(2); // Avanza al siguiente paso
+        },
+        error: (err) => {
+          this.isLoading.set(false);
+          this.errorMessage.set(err.error?.message || 'Error al enviar el correo de recuperación.');
+        }
+      });
     } else {
       this.step1Form.markAllAsTouched();
     }
