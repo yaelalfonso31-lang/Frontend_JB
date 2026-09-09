@@ -24,8 +24,8 @@ export const routes: Routes = [
         loadComponent: () => import('./reservas/Programa-servicio/Programa-servicio').then(m => m.ProgramaServicioComponent)
     },
     {
-        path: 'recuperar-password',
-        loadComponent: () => import('./auth/recuperar-password/recuperar-password').then(m => m.RecuperarPasswordComponent)
+        path: 'recuperar-contra',
+        loadComponent: () => import('./auth/recuperar-contra/recuperar-contra').then(m => m.RecuperarPasswordComponent)
     },
     {
         path: 'registro-colaborador',

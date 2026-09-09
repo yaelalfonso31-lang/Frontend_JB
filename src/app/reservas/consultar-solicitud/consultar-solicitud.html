@@ -1,126 +1,116 @@
-<div class="consulta-container">
-    <!-- Encabezado -->
-    <header class="consulta-header">
-        <h2>Consultar mi Solicitud</h2>
-        <p>Ingresa tu folio y correo electrónico para conocer el estado de tu trámite de visita.</p>
-    </header>
+<div class="consulta-wrapper">
+    <div class="overlay"></div>
 
-    <!-- Sección del Buscador -->
-    <section class="search-section">
-        <form (ngSubmit)="buscarSolicitud()" #consultaForm="ngForm" class="consulta-form">
-            <div class="form-group">
-                <label for="folio">Folio de la solicitud</label>
-                <input type="text" id="folio" name="folio" [(ngModel)]="folio" required placeholder="Ej. JB-2026-1234"
-                    class="form-control">
-            </div>
+    <div class="consulta-content">
+        <!-- Encabezado fuera de la tarjeta -->
+        <div class="header-section">
+            <img ngSrc="/assets/logo-BUAP.jpg" width="140" height="50" alt="Logo BUAP" class="logo-buap" priority>
+            <h1>Rastreo de Solicitudes</h1>
+            <p>Conoce el estado de tu trámite de visita escolar o recorrido guiado.</p>
+        </div>
 
-            <div class="form-group">
-                <label for="correo">Correo electrónico</label>
-                <input type="email" id="correo" name="correo" [(ngModel)]="correo" required placeholder="tu@correo.com"
-                    class="form-control">
-            </div>
+        <!-- Tarjeta estilo Glassmorphism -->
+        <div class="glass-card">
 
-            <button type="submit" [disabled]="!consultaForm.valid" class="btn-buscar">
-                Consultar Estado
-            </button>
-        </form>
-    </section>
+            <form (ngSubmit)="buscarSolicitud()" #consultaForm="ngForm">
+                <div class="consulta-form-grid">
+                    <div class="form-group">
+                        <label for="folio">Folio de la solicitud</label>
+                        <input type="text" id="folio" name="folio" [(ngModel)]="folio" required
+                            placeholder="Ej. JB-2026-1234"
+                            [class.is-invalid]="consultaForm.controls['folio']?.invalid && consultaForm.controls['folio']?.touched">
+                    </div>
 
-    <!-- Sección de Resultados (Solo se muestra si hay una solicitud encontrada) -->
-    @if (solicitudEncontrada) {
-    <section class="result-section">
-        <div class="status-card">
-            <div class="card-header">
-                <h3>Detalles de la Visita</h3>
-
-                <!-- Badge dinámico para el estado -->
-                <span class="status-badge" [ngClass]="obtenerClaseEstado(solicitudEncontrada.estado)">
-                    {{ solicitudEncontrada.estado }}
-                </span>
-            </div>
-
-            <div class="details-grid">
-                <div class="detail-item">
-                    <span class="label">Folio:</span>
-                    <span class="value">{{ solicitudEncontrada.folio }}</span>
+                    <div class="form-group">
+                        <label for="correo">Correo electrónico</label>
+                        <input type="email" id="correo" name="correo" [(ngModel)]="correo" required
+                            placeholder="tu@correo.com"
+                            [class.is-invalid]="consultaForm.controls['correo']?.invalid && consultaForm.controls['correo']?.touched">
+                    </div>
                 </div>
-                <div class="detail-item">
-                    <span class="label">Servicio:</span>
-                    <span class="value">{{ solicitudEncontrada.servicio }}</span>
-                </div>
-                <div class="detail-item">
-                    <span class="label">Fecha agendada:</span>
-                    <span class="value">{{ solicitudEncontrada.fecha | date:'longDate' }}</span>
-                </div>
-                <div class="detail-item">
-                    <span class="label">Número de visitantes:</span>
-                    <span class="value">{{ solicitudEncontrada.asistentes }} personas</span>
-                </div>
-            </div>
 
-            <!-- Alerta específica si requiere corrección -->
-            @if (solicitudEncontrada.estado === 'Requiere Corrección') {
-            <div class="alert-box warning">
-                <i class="icon-warning"></i>
-                <div class="alert-content">
-                    <strong>Atención requerida:</strong>
+                <button type="submit" [disabled]="!consultaForm.valid" class="btn-submit">
+                    Consultar Estado
+                </button>
+            </form>
+
+            <!-- Sección de Resultados -->
+            @if (solicitudEncontrada) {
+            <div class="results-container">
+                <div class="status-header">
+                    <h3>Detalles de la Visita</h3>
+                    <span class="status-badge" [ngClass]="obtenerClaseEstado(solicitudEncontrada.estado)">
+                        {{ solicitudEncontrada.estado }}
+                    </span>
+                </div>
+
+                <div class="details-grid">
+                    <div class="detail-item">
+                        <span class="label">Folio</span>
+                        <span class="value">{{ solicitudEncontrada.folio }}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="label">Servicio</span>
+                        <span class="value">{{ solicitudEncontrada.servicio }}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="label">Fecha agendada</span>
+                        <span class="value">{{ solicitudEncontrada.fecha | date:'longDate' }}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="label">Visitantes</span>
+                        <span class="value">{{ solicitudEncontrada.asistentes }} personas</span>
+                    </div>
+                </div>
+
+                <!-- Alertas adaptadas -->
+                @if (solicitudEncontrada.estado === 'Requiere Corrección') {
+                <div class="alert-glass warning">
+                    <strong>Atención requerida</strong>
                     <p>{{ solicitudEncontrada.mensajeCorreccion }}</p>
-
-                    <!-- 1. VINCULAMOS EL EVENTO CLICK AQUÍ -->
                     <button class="btn-corregir" (click)="abrirModalCorreccion()">Actualizar Datos</button>
                 </div>
+                }
+
+                @if (solicitudEncontrada.estado === 'Rechazada') {
+                <div class="alert-glass danger">
+                    <strong>Solicitud declinada</strong>
+                    <p>{{ solicitudEncontrada.mensajeRechazo }}</p>
+                </div>
+                }
             </div>
             }
 
-            <!-- Alerta específica si fue rechazada -->
-            @if (solicitudEncontrada.estado === 'Rechazada') {
-            <div class="alert-box danger">
-                <i class="icon-error"></i>
-                <div class="alert-content">
-                    <strong>Solicitud declinada:</strong>
-                    <p>{{ solicitudEncontrada.mensajeRechazo }}</p>
+            @if (busquedaRealizada && !solicitudEncontrada) {
+            <div class="results-container">
+                <div class="alert-glass danger"
+                    style="text-align: center; border: none; background: rgba(255, 82, 82, 0.15);">
+                    <p>No encontramos ninguna solicitud con ese folio y correo. Por favor, verifica tus datos.</p>
                 </div>
             </div>
             }
-        </div>
-    </section>
-    }
 
-    <!-- Mensaje de error si la búsqueda se realizó pero no hubo coincidencias -->
-    @if (busquedaRealizada && !solicitudEncontrada) {
-    <section class="error-section">
-        <div class="alert-box danger empty-state">
-            <p>No encontramos ninguna solicitud con ese folio y correo. Por favor, verifica que tus datos estén escritos
-                correctamente.</p>
+            @if (mensajeExito) {
+            <div class="results-container">
+                <div class="alert-glass success">
+                    <strong>¡Corrección enviada!</strong>
+                    <p>Hemos recibido tus actualizaciones. Nuestro equipo revisará los cambios a la brevedad.</p>
+                </div>
+            </div>
+            }
+
+            <!-- Botón regresar (usando estilo secundario transparente) -->
+            <div style="text-align: center; margin-top: 2.5rem;">
+                <button class="btn-secondary" (click)="regresarInicio()">
+                    Volver al inicio
+                </button>
+            </div>
         </div>
-    </section>
-    }
+    </div>
 
     @if (mostrarModalCorreccion) {
     <app-modal-correccion [folio]="solicitudEncontrada!.folio" [campos]="camposACorregir"
         (cerrar)="mostrarModalCorreccion = false" (guardar)="procesarCorreccion($event)">
     </app-modal-correccion>
     }
-
-    <!-- Mensaje de éxito al enviar correcciones -->
-    @if (mensajeExito) {
-    <section class="success-section">
-        <div class="alert-box success">
-            <i class="icon-success"></i>
-            <div class="alert-content">
-                <strong>¡Corrección enviada con éxito!</strong>
-                <p>Hemos recibido tus actualizaciones. Nuestro equipo revisará los cambios y te notificará sobre el
-                    estado de tu solicitud.</p>
-            </div>
-        </div>
-    </section>
-    }
-
-    <!--Botón regresar al inicio -->
-    <div class="text-center mt-4">
-        <button class="btn btn-success" (click)="regresarInicio()">
-            <i class="icon-arrow-left"></i> Regresar al inicio
-        </button>
-    </div>
-
 </div>

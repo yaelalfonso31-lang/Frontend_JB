@@ -1,0 +1,123 @@
+$primary-green: #2e7d32;
+$primary-hover: #1b5e20;
+$error-color: #ff5252;
+
+.login-wrapper {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: url('/fondoJB.jpg') no-repeat center center;
+    background-size: cover;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #ffffff;
+}
+
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, rgba(10, 30, 10, 0.85) 0%, rgba(20, 60, 20, 0.6) 100%);
+    z-index: 1;
+}
+
+.login-content {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    width: 100%;
+    max-width: 500px;
+    padding: 2rem;
+}
+
+.login-card {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 3rem 2.5rem;
+    border-radius: 16px;
+    width: 100%;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+
+    h2 {
+        font-size: 1.8rem;
+        margin-bottom: 0.5rem;
+        font-weight: 700;
+    }
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+
+    label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-size: 0.9rem;
+        color: #e0e0e0;
+    }
+
+    input {
+        width: 100%;
+        padding: 0.9rem;
+        background: rgba(255, 255, 255, 0.9);
+        border: 2px solid transparent;
+        border-radius: 8px;
+        font-size: 1rem;
+        color: #333;
+        transition: all 0.3s ease;
+
+        &:focus {
+            outline: none;
+            background: #ffffff;
+            border-color: $primary-green;
+            box-shadow: 0 0 0 4px rgba(46, 125, 50, 0.3);
+        }
+
+        &.is-invalid {
+            border-color: $error-color;
+        }
+    }
+}
+
+.btn-submit {
+    width: 100%;
+    padding: 1rem;
+    background-color: $primary-green;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.1s;
+
+    &:hover:not(:disabled) {
+        background-color: $primary-hover;
+    }
+
+    &:active:not(:disabled) {
+        transform: scale(0.98);
+    }
+
+    &:disabled {
+        background-color: rgba(255, 255, 255, 0.3);
+        color: #ccc;
+        cursor: not-allowed;
+    }
+}
+
+.forgot-password {
+    color: #a5d6a7;
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: color 0.3s;
+
+    &:hover {
+        color: #ffffff;
+        text-decoration: underline;
+    }
+}

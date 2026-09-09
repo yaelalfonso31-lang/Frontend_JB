@@ -44,6 +44,8 @@ export class LoginComponent {
   }
 
   irARecuperarPassword(): void {
-    this.router.navigate(['/recuperar-password']);
+    // Ruta hacia la página de recuperación de contraseña
+    this.router.navigate(['/recuperar-contra']);
+
   }
 }
