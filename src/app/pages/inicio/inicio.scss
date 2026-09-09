@@ -1,16 +1,78 @@
+$primary-green: #2e7d32;
+$primary-hover: #1b5e20;
+
 .landing-wrapper {
-    background-color: #fcfcfc;
+    position: relative;
     min-height: 100vh;
+
+    /* Nuevo Fondo: Degradado "Mesh" Botánico */
+    background-color: #0b2111;
+    background-image:
+        radial-gradient(circle at 15% 20%, rgba(46, 125, 50, 0.4) 0%, transparent 45%),
+        radial-gradient(circle at 85% 80%, rgba(27, 94, 32, 0.5) 0%, transparent 45%),
+        linear-gradient(135deg, #051407 0%, #11361b 100%);
+
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #ffffff;
+    overflow-x: hidden;
 }
 
-.text-shadow {
-    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.6);
+// Filtro superpuesto idéntico al login
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, rgba(10, 30, 10, 0.85) 0%, rgba(20, 60, 20, 0.6) 100%);
+    z-index: 1;
 }
 
-.text-shadow-sm {
-    text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.6);
+// Navbar flotante con desenfoque
+.glass-navbar {
+    position: relative;
+    z-index: 10;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 1.2rem 0;
+
+    .nav-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .logos-wrapper {
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+
+        .logo-buap,
+        .logo-jb {
+            border-radius: 6px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .divider {
+            width: 2px;
+            height: 45px;
+            background: rgba(255, 255, 255, 0.3);
+        }
+    }
 }
 
+.content-wrapper {
+    position: relative;
+    z-index: 2;
+    padding: 4rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+// Hero Section
 .hero-section {
     /* Sustituye la URL por la imagen de fondo que desees usar */
     background: url('/assets/fondoJB.jpg') center/cover no-repeat;
@@ -18,46 +80,173 @@
     margin-top: -1px;
     /* Para fusionar perfecto con el navbar */
 
-    .hero-overlay {
-        top: 0;
-        left: 0;
-        /* Un gradiente verde muy oscuro y sutil */
-        background: linear-gradient(135deg, rgba(27, 55, 31, 0.85) 0%, rgba(30, 132, 69, 0.65) 100%);
+    .display-title {
+        font-size: 4.5rem;
+        font-weight: 800;
+        margin-bottom: 1.5rem;
+        text-shadow: 2px 4px 8px rgba(0, 0, 0, 0.5);
+        // Efecto de texto con ligero gradiente
+        background: linear-gradient(to right, #ffffff, #c8e6c9);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
     }
 
-    .hero-btn {
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-        font-size: 1.1rem;
+    .hero-subtitle {
+        font-size: 1.3rem;
+        line-height: 1.6;
+        color: #e8f5e9;
+        margin-bottom: 3rem;
+        text-shadow: 1px 2px 4px rgba(0, 0, 0, 0.4);
+    }
+}
 
-        &:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2) !important;
-        }
+// Botones de Acción
+.action-buttons {
+    display: flex;
+    gap: 1.5rem;
+    justify-content: center;
+    flex-wrap: wrap;
+
+    button {
+        padding: 1.1rem 2.5rem;
+        font-size: 1.1rem;
+        font-weight: 600;
+        border-radius: 50px;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
 
         &:active {
-            transform: translateY(0);
+            transform: scale(0.98);
+        }
+    }
+
+    .btn-primary-glass {
+        background: $primary-green;
+        color: white;
+        border: none;
+        box-shadow: 0 4px 15px rgba($primary-green, 0.5);
+
+        &:hover {
+            background: $primary-hover;
+            box-shadow: 0 6px 20px rgba($primary-green, 0.7);
+            transform: translateY(-3px);
+        }
+    }
+
+    .btn-secondary-glass {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(8px);
+        color: white;
+        border: 2px solid rgba(255, 255, 255, 0.4);
+
+        &:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: #ffffff;
+            transform: translateY(-3px);
         }
     }
 }
 
-.info-section {
-    .card-hover {
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-        border-radius: 12px;
+// Tarjetas de Información
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+    width: 100%;
+    max-width: 1100px;
+    animation: fadeInUp 0.8s ease-out 0.2s both;
+
+    .glass-info-card {
+        background: rgba(255, 255, 255, 0.08);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        border-radius: 16px;
+        padding: 2.5rem 2rem;
+        text-align: center;
+        transition: transform 0.3s ease, background 0.3s ease, border-color 0.3s ease;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
 
         &:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1) !important;
+            transform: translateY(-8px);
+            background: rgba(255, 255, 255, 0.12);
+            border-color: rgba(255, 255, 255, 0.4);
         }
 
-        .icon-wrapper {
+        .icon-circle {
             width: 80px;
             height: 80px;
-            background-color: #e8f5e9;
+            margin: 0 auto 1.5rem auto;
+            background: rgba(46, 125, 50, 0.3);
+            border: 1px solid rgba(165, 214, 167, 0.4);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
+            font-size: 2.2rem;
+            color: #a5d6a7;
         }
+
+        h5 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 0.8rem;
+            color: #ffffff;
+        }
+
+        p {
+            margin: 0;
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.85);
+            line-height: 1.6;
+        }
+    }
+}
+
+// Responsividad
+@media (max-width: 768px) {
+    .hero-section .display-title {
+        font-size: 3rem;
+    }
+
+    .action-buttons {
+        flex-direction: column;
+        width: 100%;
+
+        button {
+            width: 100%;
+        }
+    }
+
+    .content-wrapper {
+        padding: 2rem 1rem;
+    }
+}
+
+// Keyframes para animaciones suaves
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
     }
 }

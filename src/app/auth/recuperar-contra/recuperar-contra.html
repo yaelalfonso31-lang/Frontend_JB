@@ -1,0 +1,59 @@
+<div class="login-wrapper">
+    <div class="overlay"></div>
+
+    <div class="login-content justify-content-center">
+        <div class="login-card" style="margin: 0 auto;">
+
+            <div class="text-center mb-4">
+                <img ngSrc="/assets/logo.jpg" width="90" height="90" alt="Logo Jardín Botánico"
+                    class="logo mb-3 rounded" priority>
+                <h2>Recuperar Contraseña</h2>
+                <p style="color: #e8f5e9; font-size: 0.95rem;">
+                    Ingresa tu correo electrónico registrado y te enviaremos un enlace para restablecer tu acceso.
+                </p>
+            </div>
+
+            <!-- Pantalla de Éxito -->
+            @if (isSuccess()) {
+            <div class="alert text-center border-0 shadow-sm" style="background-color: #e8f5e9; color: #1b5e20;">
+                <i class="bi bi-envelope-check-fill fs-1 d-block mb-2 text-success"></i>
+                <h5 class="fw-bold">¡Enlace enviado!</h5>
+                <p class="mb-0 small">Por favor, revisa tu bandeja de entrada y sigue las instrucciones.</p>
+            </div>
+
+            <button type="button" class="btn-submit mt-4" (click)="volverAlLogin()">
+                Volver al inicio de sesión
+            </button>
+            }
+            <!-- Formulario de Recuperación -->
+            @else {
+            <form [formGroup]="recoveryForm" (ngSubmit)="onSubmit()">
+                <div class="form-group">
+                    <label for="email">Correo Electrónico Institucional</label>
+                    <input id="email" type="email" formControlName="email" placeholder="ejemplo@botanico.com"
+                        [class.is-invalid]="recoveryForm.controls.email.invalid && recoveryForm.controls.email.touched">
+
+                    @if (recoveryForm.controls.email.invalid && recoveryForm.controls.email.touched) {
+                    <small class="text-danger mt-1 d-block">Por favor, ingresa un correo válido.</small>
+                    }
+                </div>
+
+                <button type="submit" [disabled]="isLoading()" class="btn-submit mt-4">
+                    @if (!isLoading()) {
+                    <span>Enviar enlace</span>
+                    }
+                    @if (isLoading()) {
+                    <span>Procesando...</span>
+                    }
+                </button>
+
+                <div class="text-center mt-4">
+                    <a href="javascript:void(0)" class="forgot-password" (click)="volverAlLogin()">
+                        <i class="bi bi-arrow-left me-1"></i> Regresar al login
+                    </a>
+                </div>
+            </form>
+            }
+        </div>
+    </div>
+</div>

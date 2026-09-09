@@ -59,4 +59,10 @@ export class LoginComponent {
   irAlFormulario(): void {
     this.router.navigate(['/inicio']);
   }
+
+  irARecuperarPassword(): void {
+    // Ruta hacia la página de recuperación de contraseña
+    this.router.navigate(['/recuperar-contra']);
+
+  }
 }
