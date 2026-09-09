@@ -1,5 +1,6 @@
-import { Component, ChangeDetectionStrategy, signal } from '@angular/core';
+import { Component, ChangeDetectionStrategy, signal, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { HttpClient } from '@angular/common/http';
 
 interface SolicitudColaborador {
   id: number;
@@ -20,41 +21,23 @@ interface SolicitudColaborador {
   styleUrl: './aprobacion-colaboradores.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class AprobacionColaboradoresComponent {
-  solicitudes = signal<SolicitudColaborador[]>([
-    {
-      id: 1,
-      nombre: 'Roberto Martínez',
-      email: 'roberto@example.com',
-      telefono: '3005551234',
-      razonSocial: 'ONG Amigos',
-      experiencia: 'Coordinador de proyectos con 5 años de experiencia',
-      fechaSolicitud: '2024-08-28',
-      estado: 'pendiente'
-    },
-    {
-      id: 2,
-      nombre: 'Daniela Rodríguez',
-      email: 'daniela@example.com',
-      telefono: '3005555678',
-      razonSocial: 'Fundación Educativa',
-      experiencia: 'Especialista en educación infantil',
-      fechaSolicitud: '2024-08-27',
-      estado: 'pendiente'
-    },
-    {
-      id: 3,
-      nombre: 'Felipe González',
-      email: 'felipe@example.com',
-      telefono: '3005559999',
-      razonSocial: 'Centro Comunitario',
-      experiencia: 'Trabajador social con certificación',
-      fechaSolicitud: '2024-08-26',
-      estado: 'pendiente'
-    }
-  ]);
-
+export class AprobacionColaboradoresComponent implements OnInit {
+  private http = inject(HttpClient);
+  
+  // Inicializamos el signal vacío
+  solicitudes = signal<SolicitudColaborador[]>([]);
   selectedSolicitud = signal<SolicitudColaborador | null>(null);
+
+  ngOnInit(): void {
+    this.cargarSolicitudes();
+  }
+
+  cargarSolicitudes(): void {
+    this.http.get<SolicitudColaborador[]>('/api/colaboradores/solicitudes').subscribe({
+      next: (data) => this.solicitudes.set(data),
+      error: (err) => console.error('Error al cargar solicitudes', err)
+    });
+  }
 
   selectSolicitud(solicitud: SolicitudColaborador) {
     this.selectedSolicitud.set(solicitud);
@@ -64,20 +47,26 @@ export class AprobacionColaboradoresComponent {
     this.selectedSolicitud.set(null);
   }
 
+  cambiarEstado(id: number, nuevoEstado: 'aprobado' | 'rechazado') {
+    this.http.put(`/api/colaboradores/solicitudes/${id}/estado`, { estado: nuevoEstado }).subscribe({
+      next: () => {
+        // Actualizamos el estado localmente para no tener que recargar toda la tabla
+        const current = this.solicitudes();
+        this.solicitudes.set(
+          current.map(s => (s.id === id ? { ...s, estado: nuevoEstado } : s))
+        );
+        this.closeDetail();
+      },
+      error: (err) => console.error(`Error al cambiar estado a ${nuevoEstado}`, err)
+    });
+  }
+
   aprobarSolicitud(id: number) {
-    const current = this.solicitudes();
-    this.solicitudes.set(
-      current.map(s => (s.id === id ? { ...s, estado: 'aprobado' } : s))
-    );
-    this.closeDetail();
+    this.cambiarEstado(id, 'aprobado');
   }
 
   rechazarSolicitud(id: number) {
-    const current = this.solicitudes();
-    this.solicitudes.set(
-      current.map(s => (s.id === id ? { ...s, estado: 'rechazado' } : s))
-    );
-    this.closeDetail();
+    this.cambiarEstado(id, 'rechazado');
   }
 
   get solicitudesPendientes() {

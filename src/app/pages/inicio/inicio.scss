@@ -74,9 +74,11 @@ $primary-hover: #1b5e20;
 
 // Hero Section
 .hero-section {
-    max-width: 900px;
-    margin-bottom: 4rem;
-    animation: fadeInDown 0.8s ease-out;
+    /* Sustituye la URL por la imagen de fondo que desees usar */
+    background: url('/assets/fondoJB.jpg') center/cover no-repeat;
+    min-height: 70vh;
+    margin-top: -1px;
+    /* Para fusionar perfecto con el navbar */
 
     .display-title {
         font-size: 4.5rem;

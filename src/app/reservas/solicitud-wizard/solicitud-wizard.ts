@@ -1,8 +1,9 @@
 import { Component, ChangeDetectionStrategy, inject, signal, computed, AfterViewInit, ElementRef, viewChild } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators, FormArray, AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { NgOptimizedImage, CurrencyPipe, DatePipe } from '@angular/common'; // Agregamos pipes
-import { Router } from '@angular/router'; // Inyectar Router para salir
+import { NgOptimizedImage, CurrencyPipe, DatePipe } from '@angular/common';
+import { Router } from '@angular/router';
+import { HttpClient } from '@angular/common/http'; // <-- Importación del cliente HTTP agregada
 import flatpickr from 'flatpickr';
 import { Spanish } from 'flatpickr/dist/l10n/es.js';
 import jsPDF from 'jspdf';
@@ -37,11 +38,13 @@ export function serviciosValidator(): ValidatorFn {
 export class SolicitudWizardComponent implements AfterViewInit {
   private fb = inject(FormBuilder).nonNullable;
   private router = inject(Router);
+  private http = inject(HttpClient); // <-- Inyección del cliente HTTP
 
   fechaInput = viewChild<ElementRef>('fechaInput');
   horaInput = viewChild<ElementRef>('horaInput');
 
   pasoActual = signal<number>(1);
+  archivoFisico: File | null = null;
 
   folioAsignado = signal<string>('');
   fechaGeneracion = signal<Date>(new Date());
@@ -81,7 +84,6 @@ export class SolicitudWizardComponent implements AfterViewInit {
     nivel: ['', Validators.required],
     grado: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(50)]],
 
-    // NUEVO: Array de servicios y campo de notas
     servicios: [[] as string[], [serviciosValidator()]],
     notas: ['', [Validators.maxLength(500)]],
 
@@ -93,7 +95,7 @@ export class SolicitudWizardComponent implements AfterViewInit {
     num_padres: [0, [Validators.required, Validators.min(0), Validators.max(50)]],
     lunch: ['', Validators.required],
 
-    comprobante: ['', Validators.required],
+    comprobante: [''],
     titular: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(100), Validators.pattern(/^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑüÜ\s\.,&'-]+$/)]],
     monto_pagar: ['', [Validators.required, Validators.pattern(this.regexMonto)]],
     concepto_pago: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(150)]]
@@ -106,7 +108,6 @@ export class SolicitudWizardComponent implements AfterViewInit {
     return (vals.num_grupos || 1) * (vals.estudiantes_grupo || 0);
   });
 
-  // NUEVO: Sumatoria de los precios basada en el arreglo 'servicios'
   montoTotal = computed(() => {
     const vals = this.formValues();
     const seleccionados = vals.servicios || [];
@@ -120,6 +121,12 @@ export class SolicitudWizardComponent implements AfterViewInit {
   });
 
   montoAnticipo = computed(() => this.montoTotal() * 0.5);
+
+  capturarArchivo(event: any) {
+    if (event.target.files && event.target.files.length > 0) {
+      this.archivoFisico = event.target.files[0];
+    }
+  }
 
   ngAfterViewInit() {
     if (this.fechaInput()?.nativeElement) {
@@ -147,7 +154,6 @@ export class SolicitudWizardComponent implements AfterViewInit {
     }
   }
 
-  // NUEVO: Método para controlar el estado de los checkboxes
   toggleServicio(id: string, event: Event) {
     const isChecked = (event.target as HTMLInputElement).checked;
     const ctrl = this.solicitudForm.controls.servicios;
@@ -192,7 +198,8 @@ export class SolicitudWizardComponent implements AfterViewInit {
     }
 
     if (paso === 3) {
-      return ctrl.comprobante.valid && ctrl.titular.valid && ctrl.monto_pagar.valid && ctrl.concepto_pago.valid;
+      const tieneArchivo = this.archivoFisico !== null;
+      return tieneArchivo && ctrl.titular.valid && ctrl.monto_pagar.valid && ctrl.concepto_pago.valid;
     }
 
     return true;
@@ -205,72 +212,81 @@ export class SolicitudWizardComponent implements AfterViewInit {
     }
   }
 
+  // --- LOGICA REEMPLAZADA PARA ENVIAR REALMENTE EL FORMULARIO A PYTHON ---
   enviarSolicitud() {
+    const archivo = this.archivoFisico;
+
     if (this.solicitudForm.valid) {
-      // 1. Generar el Folio de Seguimiento
-      const hoy = new Date();
-      const y = hoy.getFullYear();
-      const m = String(hoy.getMonth() + 1).padStart(2, '0');
-      const d = String(hoy.getDate()).padStart(2, '0');
+      if (!archivo) {
+        alert('Por favor, selecciona el archivo del comprobante de pago.');
+        return;
+      }
 
-      // Generar un número aleatorio de 3 dígitos para simular el registro del sistema
-      const numSistema = String(Math.floor(Math.random() * 1000)).padStart(3, '0');
+      const formVal = this.solicitudForm.getRawValue();
+      
+      // --- LA SOLUCIÓN ---
+      // Clonamos el formulario e inyectamos el monto computado con el nombre que exige Python
+      const datosParaPython = {
+        ...formVal,
+        monto_estimado: this.montoTotal()
+      };
+      
+      // Creamos el empaque multipart
+      const formData = new FormData();
+      // Mandamos nuestro nuevo objeto 'datosParaPython'
+      formData.append('datos', JSON.stringify(datosParaPython));
+      // Metemos la imagen
+      formData.append('comprobante', archivo);
 
-      // 2. Asignar los valores a las señales
-      this.folioAsignado.set(`${y}${m}${d}-${numSistema}`);
-      this.fechaGeneracion.set(hoy);
-
-      console.log('Datos enviados correctamente:', this.solicitudForm.getRawValue());
-
-      // 3. Enviar al usuario al Paso 6
-      this.irAPaso(6);
-
-    } else {
-      // Si el formulario es inválido, revelamos los errores
-      this.solicitudForm.markAllAsTouched();
-
-      // Mostramos una alerta para que el usuario no se quede atascado sin saber por qué
-      alert('No se puede enviar la solicitud. Existen campos incompletos o con errores en los pasos anteriores (como la Selección de Servicios o el Reporte de Pago). Por favor, revisa tus datos.');
-
-      // Opcional: Imprimir en consola el estado de los controles para que tú, como desarrollador, veas qué falla
-      console.error('El formulario es inválido. Revisa el estado de los controles.');
+      // Enviamos el formData
+      // Enviamos el formData
+      this.http.post('/api/solicitudes', formData)
+        .subscribe({
+          next: (respuesta: any) => {
+            console.log('¡Éxito!', respuesta);
+            
+            // 1. Guardamos el folio en la memoria de tu interfaz
+            this.folioAsignado.set(respuesta.folio);
+            
+            // 2. Le decimos a Angular que brinque al paso 6
+            this.irAPaso(6);
+          },
+          error: (err) => {
+            console.error('Error del servidor:', err);
+            alert('Hubo un problema de conexión al guardar.');
+          }
+        });
     }
   }
 
   regresarACorrecciones() {
-    this.politicasAceptadas.set(false); // Resetear checkbox
+    this.politicasAceptadas.set(false);
     this.irAPaso(1);
   }
 
-  // NUEVO: Finalizar y salir al menú principal
   salirAlMenu() {
-    // Redirigir al inicio o login
     this.router.navigate(['/login']);
   }
 
-  // NUEVO: Descargar PDF de Resumen
   descargarResumenPDF() {
     const doc = new jsPDF();
     const vals = this.solicitudForm.getRawValue();
     const folio = this.folioAsignado();
 
-    // Encabezado
-    doc.setFillColor(143, 186, 66); // primary-green
+    doc.setFillColor(143, 186, 66);
     doc.rect(0, 0, 210, 25, 'F');
     doc.setTextColor(255, 255, 255);
     doc.setFontSize(16);
     doc.text('RESUMEN DE SOLICITUD - JARDÍN BOTÁNICO', 14, 16);
 
-    // Datos del Folio
     doc.setTextColor(44, 62, 80);
     doc.setFontSize(12);
     doc.text(`Folio Asignado: ${folio}`, 14, 40);
     doc.text(`Fecha de Emisión: ${this.fechaGeneracion().toLocaleDateString()}`, 14, 48);
 
-    // Tabla de Datos
     autoTable(doc, {
       startY: 55,
-      headStyles: { fillColor: [27, 55, 31] }, // secondary-green
+      headStyles: { fillColor: [27, 55, 31] },
       body: [
         ['Institución / Escuela', vals.escuela],
         ['Nivel y Grado', `${vals.nivel} - ${vals.grado}`],
@@ -282,20 +298,13 @@ export class SolicitudWizardComponent implements AfterViewInit {
       ],
     });
 
-    // Guardar el archivo
     doc.save(`Solicitud_${folio}.pdf`);
   }
 
-  // NUEVO: Descargar Políticas (Simula descargar un archivo estático)
   descargarPoliticas() {
-    // Si tienes un PDF físico en tu carpeta public/ o assets/, fuerza su descarga:
     const link = document.createElement('a');
-    link.href = '/Reglamento_JardinBotanico.pdf'; // Asegúrate de tener este archivo
+    link.href = '/Reglamento_JardinBotanico.pdf'; 
     link.download = 'Politicas_y_Reglamento.pdf';
     link.click();
   }
-
-
-
-
 }
