@@ -1,0 +1,84 @@
+// Variables de color (puedes ajustarlas según tu paleta global)
+$azul-buap: #003b5c;
+$gris-texto: #555555;
+$blanco: #ffffff;
+
+.institucional-header {
+    background-color: $blanco;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    border-bottom: 3px solid $azul-buap;
+    padding: 12px 0;
+    width: 100%;
+    position: sticky; // Para que se quede fijo en la parte superior si haces scroll
+    top: 0;
+    z-index: 1000;
+}
+
+.header-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1400px; // Limita el ancho en pantallas muy grandes
+    margin: 0 auto;
+    padding: 0 24px;
+}
+
+.logo-container {
+    display: flex;
+    align-items: center;
+    flex: 1; // Permite que los logos ocupen el mismo espacio lateral
+
+    &.right-logo {
+        justify-content: flex-end;
+    }
+
+    .logo {
+        max-height: 65px; // Ajusta este valor si las imágenes son muy grandes o pequeñas
+        width: auto;
+        object-fit: contain;
+        transition: transform 0.3s ease;
+
+        &:hover {
+            transform: scale(1.02); // Pequeño efecto sutil al pasar el mouse
+        }
+    }
+}
+
+.header-title {
+    text-align: center;
+    flex: 2; // Le da más espacio al texto central
+
+    h1 {
+        margin: 0;
+        font-size: 1.4rem;
+        font-weight: 600;
+        color: $azul-buap;
+        letter-spacing: 0.5px;
+    }
+
+    p {
+        margin: 4px 0 0;
+        font-size: 0.85rem;
+        color: $gris-texto;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-weight: 500;
+    }
+}
+
+// Adaptación para dispositivos móviles
+@media (max-width: 768px) {
+    .header-container {
+        padding: 0 16px;
+    }
+
+    .header-title {
+        // En pantallas muy pequeñas, ocultamos el texto o reducimos su tamaño 
+        // para darle prioridad a los logos institucionales
+        display: none;
+    }
+
+    .logo-container .logo {
+        max-height: 50px;
+    }
+}
