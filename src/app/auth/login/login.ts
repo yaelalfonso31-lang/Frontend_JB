@@ -1,6 +1,6 @@
 import { Component, ChangeDetectionStrategy, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterOutlet } from '@angular/router';
 import { NgOptimizedImage } from '@angular/common';
 import { HttpClient } from '@angular/common/http'; // <-- Importar HttpClient
 
@@ -8,6 +8,11 @@ import { HttpClient } from '@angular/common/http'; // <-- Importar HttpClient
   selector: 'app-login',
   standalone: true,
   imports: [ReactiveFormsModule, NgOptimizedImage],
+import { HeaderComponent } from "../../shared/header/header";
+
+@Component({
+  selector: 'app-login',
+  imports: [ReactiveFormsModule, NgOptimizedImage, HeaderComponent, RouterOutlet],
   templateUrl: './login.html',
   styleUrl: './login.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
