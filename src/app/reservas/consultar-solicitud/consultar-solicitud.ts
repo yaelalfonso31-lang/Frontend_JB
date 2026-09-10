@@ -3,7 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { ModalCorreccionComponent, CampoCorreccion } from '../modal-correccion/modal-correccion';
-
+import { HeaderComponent } from '../../shared/header/header';
+import { RouterOutlet } from '@angular/router';
 export interface SolicitudVisita {
   folio: string;
   correo: string;
@@ -18,7 +19,7 @@ export interface SolicitudVisita {
 @Component({
   selector: 'app-consultar-solicitud',
   standalone: true,
-  imports: [CommonModule, FormsModule, ModalCorreccionComponent],
+  imports: [CommonModule, FormsModule, ModalCorreccionComponent, HeaderComponent, RouterOutlet],
   templateUrl: './consultar-solicitud.html',
   styleUrls: ['./consultar-solicitud.scss']
 })

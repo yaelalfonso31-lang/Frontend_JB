@@ -1,18 +1,12 @@
 import { Component, ChangeDetectionStrategy, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router, RouterOutlet } from '@angular/router';
+import { Router } from '@angular/router';
 import { NgOptimizedImage } from '@angular/common';
 import { HttpClient } from '@angular/common/http'; // <-- Importar HttpClient
 
 @Component({
   selector: 'app-login',
-  standalone: true,
-  imports: [ReactiveFormsModule, NgOptimizedImage],
-import { HeaderComponent } from "../../shared/header/header";
-
-@Component({
-  selector: 'app-login',
-  imports: [ReactiveFormsModule, NgOptimizedImage, HeaderComponent, RouterOutlet],
+  imports: [ReactiveFormsModule, NgOptimizedImage,],
   templateUrl: './login.html',
   styleUrl: './login.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -43,7 +37,7 @@ export class LoginComponent {
           console.log('Login exitoso:', respuesta);
           this.isLoading.set(false);
           // Redirigir al panel de administración si el login es exitoso
-          this.router.navigate(['/panel-admin']); 
+          this.router.navigate(['/panel-admin']);
         },
         error: (err) => {
           console.error('Error de autenticación:', err);

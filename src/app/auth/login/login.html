@@ -4,12 +4,14 @@
 
 
     <div class="login-content">
-        <app-header></app-header>
-        <router-outlet></router-outlet>
 
-        <!-- Lado Izquierdo: Bienvenida y Logo -->
         <div class="welcome-section">
-            <img ngSrc="assets/logo.jpg" width="120" height="120" alt="Logo Jardín Botánico" class="logo" priority>
+            <div class="logos-container">
+                <img ngSrc="assets/logo.jpg" width="230" height="100" alt="Logo Jardín Botánico" class="logo logo-jb"
+                    priority>
+                <img ngSrc="assets/logo-BUAP.jpg" width="100" height="100" alt="Logo BUAP" class="logo logo-buap"
+                    priority>
+            </div>
             <h1>Bienvenido<br>al Sistema</h1>
             <p>
                 Plataforma operativa y de control de accesos del Jardín Botánico.

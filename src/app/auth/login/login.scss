@@ -45,13 +45,40 @@ $error-color: #ff5252;
     flex-direction: column;
     justify-content: center;
 
-    .logo {
-        max-width: 120px;
-        margin-bottom: 2rem;
-        border-radius: 8px;
-        /* Opcional si el logo es cuadrado */
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    .logos-container {
+        display: flex;
+        align-items: center; // alineación vertical centrada
+        gap: 1.5rem; // separación entre logos
+        margin-bottom: 2rem; // espacio debajo de los logos
+        flex-wrap: wrap; // por si el espacio es reducido en móvil
+
     }
+
+    .logo {
+        height: auto;
+        object-fit: contain;
+        border-radius: 8px;
+        background: rgba(164, 155, 155, 0.35);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        border-radius: 12px;
+        padding: 1rem 1.5rem;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+
+    }
+
+    .logo-jb {
+        width: 230px;
+        max-width: 100%;
+
+    }
+
+    .logo-buap {
+        width: 230px;
+        max-width: 100%;
+    }
+
 
     h1 {
         font-size: 4rem;
@@ -260,5 +287,12 @@ $error-color: #ff5252;
 
     &:active {
         transform: scale(0.98);
+    }
+}
+
+@media (max-width: 768px) {
+    .welcome-section .logos-container {
+        justify-content: center;
+        gap: 1rem;
     }
 }

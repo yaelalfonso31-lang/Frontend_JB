@@ -8,6 +8,8 @@ import flatpickr from 'flatpickr';
 import { Spanish } from 'flatpickr/dist/l10n/es.js';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
+import { HeaderComponent } from '../../shared/header/header';
+import { RouterOutlet } from '@angular/router';
 
 // Validador personalizado para las reglas de los servicios
 export function serviciosValidator(): ValidatorFn {
@@ -30,7 +32,7 @@ export function serviciosValidator(): ValidatorFn {
 @Component({
   selector: 'app-solicitud-wizard',
   standalone: true,
-  imports: [ReactiveFormsModule, NgOptimizedImage],
+  imports: [ReactiveFormsModule, NgOptimizedImage, HeaderComponent, RouterOutlet],
   templateUrl: './solicitud-wizard.html',
   styleUrl: './solicitud-wizard.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -223,14 +225,14 @@ export class SolicitudWizardComponent implements AfterViewInit {
       }
 
       const formVal = this.solicitudForm.getRawValue();
-      
+
       // --- LA SOLUCIÓN ---
       // Clonamos el formulario e inyectamos el monto computado con el nombre que exige Python
       const datosParaPython = {
         ...formVal,
         monto_estimado: this.montoTotal()
       };
-      
+
       // Creamos el empaque multipart
       const formData = new FormData();
       // Mandamos nuestro nuevo objeto 'datosParaPython'
@@ -244,10 +246,10 @@ export class SolicitudWizardComponent implements AfterViewInit {
         .subscribe({
           next: (respuesta: any) => {
             console.log('¡Éxito!', respuesta);
-            
+
             // 1. Guardamos el folio en la memoria de tu interfaz
             this.folioAsignado.set(respuesta.folio);
-            
+
             // 2. Le decimos a Angular que brinque al paso 6
             this.irAPaso(6);
           },
@@ -265,7 +267,7 @@ export class SolicitudWizardComponent implements AfterViewInit {
   }
 
   salirAlMenu() {
-    this.router.navigate(['/login']);
+    this.router.navigate(['/inicio']);
   }
 
   descargarResumenPDF() {
@@ -303,7 +305,7 @@ export class SolicitudWizardComponent implements AfterViewInit {
 
   descargarPoliticas() {
     const link = document.createElement('a');
-    link.href = '/Reglamento_JardinBotanico.pdf'; 
+    link.href = '/Reglamento_JardinBotanico.pdf';
     link.download = 'Politicas_y_Reglamento.pdf';
     link.click();
   }

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -9,6 +9,16 @@ import { CommonModule } from '@angular/common';
   styleUrls: ['./header.scss']
 })
 export class HeaderComponent {
-  // Aquí puedes inyectar servicios en el futuro si necesitas 
-  // mostrar el nombre del usuario logueado o un botón de cerrar sesión
+  isHidden = false;
+  private lastScroll = 0;
+
+  @HostListener('window:scroll', [])
+  onWindowScroll() {
+    const current = window.pageYOffset;
+
+    // Si bajas más de 100px y vas hacia abajo → ocultar
+    // Si subes → mostrar
+    this.isHidden = current > this.lastScroll && current > 100;
+    this.lastScroll = current;
+  }
 }

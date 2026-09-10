@@ -1,3 +1,5 @@
+<app-header></app-header>
+<router-outlet></router-outlet>
 <div class="container py-4">
     <!-- Indicador de progreso dinámico -->
     <div class="progress-steps mb-4">
@@ -35,8 +37,6 @@
                 @case (6) { RESUMEN DE LA SOLICITUD }
                 }
             </h1>
-            <img ngSrc="assets/logo.jpg" width="123" height="100" alt="Logo Jardín Botánico BUAP"
-                class="logo-institucional">
         </header>
 
         <div class="form-content p-4 p-md-5">
@@ -1003,7 +1003,7 @@
 
                 <!-- Navegación -->
                 <div class="d-flex justify-content-between mt-4">
-                    <button type="button" class="btn btn-outline-secondary btn-lg px-4" disabled>
+                    <button type="button" class="btn btn-outline-secondary btn-lg px-4" (click)="salirAlMenu()">
                         <i class="bi bi-arrow-left me-2"></i> Regresar a la pagina principal
                     </button>
 
@@ -1211,551 +1211,546 @@
 
                     <<div class="mb-4 p-4 border rounded-3 bg-light">
                         <label for="comprobante" class="form-label fw-bold">
-                            <i class="bi bi-cloud-arrow-up-fill me-2 text-primary"></i>Adjuntar Ficha de Depósito (50% de anticipo) *
+                            <i class="bi bi-cloud-arrow-up-fill me-2 text-primary"></i>Adjuntar Ficha de Depósito (50%
+                            de anticipo) *
                         </label>
-                        <input type="file" id="comprobante" class="form-control form-control-lg" 
+                        <input type="file" id="comprobante" class="form-control form-control-lg"
                             formControlName="comprobante" accept=".pdf,.jpg,.jpeg,.png"
                             (change)="capturarArchivo($event)">
-                            formControlName="comprobante" accept=".pdf,.jpg,.jpeg,.png">
+                        formControlName="comprobante" accept=".pdf,.jpg,.jpeg,.png">
                         <small class="text-muted mt-2 d-block"><i class="bi bi-info-circle me-1"></i>Formatos
                             permitidos: PDF, JPG, PNG
                             (máx. 5MB)</small>
-                    </div>
-
-                    <fieldset>
-                        <legend class="fw-bold text-secondary" style="font-size: 1.1rem;">Información que debe incluir
-                            en su reporte de
-                            pago</legend>
-
-                        <div class="row g-4">
-                            <div class="col-md-6">
-                                <label for="titular" class="form-label fw-semibold">
-                                    <i class="bi bi-person-vcard me-1"></i>Nombre del titular/Institución *
-                                </label>
-                                <input type="text" class="form-control" id="titular" formControlName="titular"
-                                    placeholder="Nombre completo o institución">
-                            </div>
-                            <div class="col-md-6">
-                                <label for="monto" class="form-label fw-semibold">
-                                    <i class="bi bi-currency-dollar me-1"></i>Monto a pagar *
-                                </label>
-                                <div class="input-group">
-                                    <span class="input-group-text">$</span>
-                                    <input type="text" class="form-control" id="monto" formControlName="monto_pagar"
-                                        placeholder="350.00 MXN">
-                                </div>
-                                <small class="text-muted">Incluir moneda (ej. $350.00 MXN)</small>
-                            </div>
-                            <div class="col-12">
-                                <label for="concepto" class="form-label fw-semibold">
-                                    <i class="bi bi-tag me-1"></i>Concepto del pago *
-                                </label>
-                                <input type="text" class="form-control" id="concepto" formControlName="concepto_pago"
-                                    placeholder="Ejemplo: 30 visitas guiadas - Grupo 3° Primaria">
-                            </div>
-                        </div>
-                    </fieldset>
                 </div>
 
-                <!-- Ejemplos de comprobantes -->
-                <div class="section-card">
-                    <div class="section-title">
-                        <div class="d-flex align-items-center">
-                            <span class="step-badge"><i class="bi bi-images"></i></span>
-                            <span class="ms-3">Ejemplos de comprobantes</span>
-                        </div>
-                    </div>
-
-                    <p class="text-muted mb-3">Su comprobante debe verse como alguno de los siguientes ejemplos:</p>
+                <fieldset>
+                    <legend class="fw-bold text-secondary" style="font-size: 1.1rem;">Información que debe incluir
+                        en su reporte de
+                        pago</legend>
 
                     <div class="row g-4">
                         <div class="col-md-6">
-                            <div class="card shadow-sm border-0 h-100">
-                                <!-- Asumiendo que ya redimensionaste las imágenes -->
-                                <img ngSrc="assets/FichaPago1.jpg" width="384" height="690"
-                                    class="card-img-top rounded-top" alt="Ejemplo de ficha de depósito en sucursal"
-                                    style="object-fit: cover; height: auto; width: 100%;">
-                                <div class="card-body text-center">
-                                    <h6 class="fw-bold">Ejemplo de ficha de depósito</h6>
-                                    <p class="text-muted small mb-0">Depósito realizado en sucursal bancaria</p>
-                                </div>
+                            <label for="titular" class="form-label fw-semibold">
+                                <i class="bi bi-person-vcard me-1"></i>Nombre del titular/Institución *
+                            </label>
+                            <input type="text" class="form-control" id="titular" formControlName="titular"
+                                placeholder="Nombre completo o institución">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="monto" class="form-label fw-semibold">
+                                <i class="bi bi-currency-dollar me-1"></i>Monto a pagar *
+                            </label>
+                            <div class="input-group">
+                                <span class="input-group-text">$</span>
+                                <input type="text" class="form-control" id="monto" formControlName="monto_pagar"
+                                    placeholder="350.00 MXN">
                             </div>
+                            <small class="text-muted">Incluir moneda (ej. $350.00 MXN)</small>
                         </div>
-                        <div class="col-md-6">
-                            <div class="card shadow-sm border-0 h-100">
-                                <img ngSrc="assets/FichaPago2.jpg" width="352" height="764"
-                                    class="card-img-top rounded-top" alt="Ejemplo de captura de transferencia digital"
-                                    style="object-fit: cover; height: auto; width: 100%;">
-                                <div class="card-body text-center">
-                                    <h6 class="fw-bold">Ejemplo de transferencia electrónica</h6>
-                                    <p class="text-muted small mb-0">Captura de pantalla de transferencia digital</p>
-                                </div>
-                            </div>
+                        <div class="col-12">
+                            <label for="concepto" class="form-label fw-semibold">
+                                <i class="bi bi-tag me-1"></i>Concepto del pago *
+                            </label>
+                            <input type="text" class="form-control" id="concepto" formControlName="concepto_pago"
+                                placeholder="Ejemplo: 30 visitas guiadas - Grupo 3° Primaria">
+                        </div>
+                    </div>
+                </fieldset>
+        </div>
+
+        <!-- Ejemplos de comprobantes -->
+        <div class="section-card">
+            <div class="section-title">
+                <div class="d-flex align-items-center">
+                    <span class="step-badge"><i class="bi bi-images"></i></span>
+                    <span class="ms-3">Ejemplos de comprobantes</span>
+                </div>
+            </div>
+
+            <p class="text-muted mb-3">Su comprobante debe verse como alguno de los siguientes ejemplos:</p>
+
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <div class="card shadow-sm border-0 h-100">
+                        <!-- Asumiendo que ya redimensionaste las imágenes -->
+                        <img ngSrc="assets/FichaPago1.jpg" width="384" height="690" class="card-img-top rounded-top"
+                            alt="Ejemplo de ficha de depósito en sucursal"
+                            style="object-fit: cover; height: auto; width: 100%;">
+                        <div class="card-body text-center">
+                            <h6 class="fw-bold">Ejemplo de ficha de depósito</h6>
+                            <p class="text-muted small mb-0">Depósito realizado en sucursal bancaria</p>
                         </div>
                     </div>
                 </div>
-
-                <!-- Envío de reporte -->
-                <div class="alert alert-info d-flex align-items-start border-0 shadow-sm" role="alert"
-                    style="background: linear-gradient(135deg, #d1ecf1, #bee5eb); border-left: 6px solid #0c5460 !important;">
-                    <i class="bi bi-send-fill fs-3 me-3 text-primary"></i>
-                    <div>
-                        <h5 class="fw-bold mb-1">Envía tu reporte de pago</h5>
-                        <p class="mb-0">Correo: <strong><a
-                                    href="mailto:jardinbotanico.cfdi@correo.buap.mx">jardinbotanico.cfdi@correo.buap.mx</a></strong>
-                        </p>
-                        <p class="mb-0 mt-1">Su reserva quedará <strong>completamente confirmada</strong> una vez que se
-                            reciba esta
-                            información.</p>
-                        <p class="mb-0 text-danger fw-bold">Recuerde informar si requiere factura.</p>
-                    </div>
-                </div>
-
-                <!-- Navegación entre pasos -->
-                <div class="d-flex justify-content-between mt-4">
-                    <button type="button" class="btn btn-outline-secondary btn-lg px-4" (click)="irAPaso(2)">
-                        <i class="bi bi-arrow-left me-2"></i> Anterior
-                    </button>
-                    <!-- Puedes agregar [disabled]="solicitudForm.get('comprobante')?.invalid" si quisieras forzar la validación antes de avanzar -->
-                    <button type="button" class="btn btn-success btn-lg px-5" [disabled]="!esPasoValido(3)"
-                        (click)="irAPaso(4)">
-                        Siguiente <i class="bi bi-arrow-right ms-2"></i>
-                    </button>
-                </div>
-
-
-                }
-
-                @case (4) {
-                <!-- Introducción -->
-                <div class="alert alert-success d-flex align-items-center border-0 shadow-sm mb-4"
-                    style="background: linear-gradient(135deg, #d5f5e3, #abebc6); border-left: 6px solid #145a32 !important;">
-                    <i class="bi bi-heart-fill fs-2 me-3 text-success"></i>
-                    <div>
-                        <h5 class="fw-bold mb-1">Estimado visitante</h5>
-                        <p class="mb-0">El Jardín Botánico intenta ser un espacio de conexión entre la naturaleza y el
-                            ser humano. Por
-                            favor, ayúdanos a lograrlo tomando en cuenta las siguientes indicaciones.</p>
-                    </div>
-                </div>
-
-                <!-- Reglas Negativas -->
-                <div class="section-card">
-                    <div class="section-title">
-                        <div class="d-flex align-items-center">
-                            <span class="step-badge bg-danger text-white"><i class="bi bi-x-lg"></i></span>
-                            <span class="ms-3 text-danger">No está permitido</span>
-                        </div>
-                    </div>
-
-                    <div class="row g-3">
-                        <div class="col-md-6">
-                            <ul class="list-unstyled">
-                                <li class="mb-2 d-flex align-items-start">
-                                    <i class="bi bi-x-circle-fill text-danger me-2 mt-1"></i> Llevarse semillas y/o
-                                    partes de plantas
-                                </li>
-                                <li class="mb-2 d-flex align-items-start">
-                                    <i class="bi bi-x-circle-fill text-danger me-2 mt-1"></i> Dañar las plantas (pisar,
-                                    rayonear,
-                                    arrancar flores, frutos y hojas)
-                                </li>
-                                <li class="mb-2 d-flex align-items-start">
-                                    <i class="bi bi-x-circle-fill text-danger me-2 mt-1"></i> Entrar con mascotas
-                                </li>
-                                <li class="mb-2 d-flex align-items-start">
-                                    <i class="bi bi-x-circle-fill text-danger me-2 mt-1"></i> Entrar con bicicletas
-                                </li>
-                                <li class="mb-2 d-flex align-items-start">
-                                    <i class="bi bi-x-circle-fill text-danger me-2 mt-1"></i> Entrar con balones
-                                </li>
-                                <li class="mb-2 d-flex align-items-start">
-                                    <i class="bi bi-x-circle-fill text-danger me-2 mt-1"></i> Pescar, ni arrojar objetos
-                                    al lago
-                                </li>
-                                <li class="mb-2 d-flex align-items-start">
-                                    <i class="bi bi-x-circle-fill text-danger me-2 mt-1"></i> Hacer fogatas
-                                </li>
-                            </ul>
-                        </div>
-                        <div class="col-md-6">
-                            <ul class="list-unstyled">
-                                <li class="mb-2 d-flex align-items-start">
-                                    <i class="bi bi-x-circle-fill text-danger me-2 mt-1"></i> Ingresar con
-                                    radios/grabadoras
-                                </li>
-                                <li class="mb-2 d-flex align-items-start">
-                                    <i class="bi bi-x-circle-fill text-danger me-2 mt-1"></i> Tomar fotos con fines
-                                    comerciales
-                                </li>
-                                <li class="mb-2 d-flex align-items-start">
-                                    <i class="bi bi-x-circle-fill text-danger me-2 mt-1"></i> Dar comida a las aves y
-                                    otros animales
-                                    silvestres
-                                </li>
-                                <li class="mb-2 d-flex align-items-start">
-                                    <i class="bi bi-x-circle-fill text-danger me-2 mt-1"></i> Ingresar con bebidas
-                                    alcohólicas
-                                </li>
-                                <li class="mb-2 d-flex align-items-start">
-                                    <i class="bi bi-x-circle-fill text-danger me-2 mt-1"></i> Hacer picnics
-                                </li>
-                                <li class="mb-2 d-flex align-items-start">
-                                    <i class="bi bi-x-circle-fill text-danger me-2 mt-1"></i> Fumar
-                                </li>
-                                <li class="mb-2 d-flex align-items-start">
-                                    <i class="bi bi-x-circle-fill text-danger me-2 mt-1"></i> Llevarse las etiquetas de
-                                    las plantas
-                                </li>
-                            </ul>
+                <div class="col-md-6">
+                    <div class="card shadow-sm border-0 h-100">
+                        <img ngSrc="assets/FichaPago2.jpg" width="352" height="764" class="card-img-top rounded-top"
+                            alt="Ejemplo de captura de transferencia digital"
+                            style="object-fit: cover; height: auto; width: 100%;">
+                        <div class="card-body text-center">
+                            <h6 class="fw-bold">Ejemplo de transferencia electrónica</h6>
+                            <p class="text-muted small mb-0">Captura de pantalla de transferencia digital</p>
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
 
-                <!-- Reglas Positivas -->
-                <div class="section-card">
-                    <div class="section-title">
-                        <div class="d-flex align-items-center">
-                            <span class="step-badge bg-success text-white"><i class="bi bi-check-lg"></i></span>
-                            <span class="ms-3">Así mismo</span>
-                        </div>
-                    </div>
+        <!-- Envío de reporte -->
+        <div class="alert alert-info d-flex align-items-start border-0 shadow-sm" role="alert"
+            style="background: linear-gradient(135deg, #d1ecf1, #bee5eb); border-left: 6px solid #0c5460 !important;">
+            <i class="bi bi-send-fill fs-3 me-3 text-primary"></i>
+            <div>
+                <h5 class="fw-bold mb-1">Envía tu reporte de pago</h5>
+                <p class="mb-0">Correo: <strong><a
+                            href="mailto:jardinbotanico.cfdi@correo.buap.mx">jardinbotanico.cfdi@correo.buap.mx</a></strong>
+                </p>
+                <p class="mb-0 mt-1">Su reserva quedará <strong>completamente confirmada</strong> una vez que se
+                    reciba esta
+                    información.</p>
+                <p class="mb-0 text-danger fw-bold">Recuerde informar si requiere factura.</p>
+            </div>
+        </div>
 
+        <!-- Navegación entre pasos -->
+        <div class="d-flex justify-content-between mt-4">
+            <button type="button" class="btn btn-outline-secondary btn-lg px-4" (click)="irAPaso(2)">
+                <i class="bi bi-arrow-left me-2"></i> Anterior
+            </button>
+            <!-- Puedes agregar [disabled]="solicitudForm.get('comprobante')?.invalid" si quisieras forzar la validación antes de avanzar -->
+            <button type="button" class="btn btn-success btn-lg px-5" [disabled]="!esPasoValido(3)"
+                (click)="irAPaso(4)">
+                Siguiente <i class="bi bi-arrow-right ms-2"></i>
+            </button>
+        </div>
+
+
+        }
+
+        @case (4) {
+        <!-- Introducción -->
+        <div class="alert alert-success d-flex align-items-center border-0 shadow-sm mb-4"
+            style="background: linear-gradient(135deg, #d5f5e3, #abebc6); border-left: 6px solid #145a32 !important;">
+            <i class="bi bi-heart-fill fs-2 me-3 text-success"></i>
+            <div>
+                <h5 class="fw-bold mb-1">Estimado visitante</h5>
+                <p class="mb-0">El Jardín Botánico intenta ser un espacio de conexión entre la naturaleza y el
+                    ser humano. Por
+                    favor, ayúdanos a lograrlo tomando en cuenta las siguientes indicaciones.</p>
+            </div>
+        </div>
+
+        <!-- Reglas Negativas -->
+        <div class="section-card">
+            <div class="section-title">
+                <div class="d-flex align-items-center">
+                    <span class="step-badge bg-danger text-white"><i class="bi bi-x-lg"></i></span>
+                    <span class="ms-3 text-danger">No está permitido</span>
+                </div>
+            </div>
+
+            <div class="row g-3">
+                <div class="col-md-6">
                     <ul class="list-unstyled">
-                        <li class="mb-3 d-flex align-items-start bg-light p-3 rounded-3">
-                            <i class="bi bi-check-circle-fill text-success fs-4 me-3"></i>
-                            <div>Por favor, llévate tu basura o deposítala en los contenedores.</div>
+                        <li class="mb-2 d-flex align-items-start">
+                            <i class="bi bi-x-circle-fill text-danger me-2 mt-1"></i> Llevarse semillas y/o
+                            partes de plantas
                         </li>
-                        <li class="mb-3 d-flex align-items-start bg-light p-3 rounded-3">
-                            <i class="bi bi-check-circle-fill text-success fs-4 me-3"></i>
-                            <div>Caminar únicamente por los senderos de adoquín y los senderos secundarios que el guía
-                                les indique.
-                            </div>
+                        <li class="mb-2 d-flex align-items-start">
+                            <i class="bi bi-x-circle-fill text-danger me-2 mt-1"></i> Dañar las plantas (pisar,
+                            rayonear,
+                            arrancar flores, frutos y hojas)
                         </li>
-                        <li class="mb-3 d-flex align-items-start bg-light p-3 rounded-3">
-                            <i class="bi bi-check-circle-fill text-success fs-4 me-3"></i>
-                            <div>Respetar al guía y/o facilitador.</div>
+                        <li class="mb-2 d-flex align-items-start">
+                            <i class="bi bi-x-circle-fill text-danger me-2 mt-1"></i> Entrar con mascotas
                         </li>
-                        <li
-                            class="d-flex align-items-start bg-warning bg-opacity-25 p-3 rounded-3 border border-warning">
-                            <i class="bi bi-person-badge-fill text-warning fs-4 me-3"></i>
-                            <div><strong>Estimado profesor:</strong> para un mejor aprovechamiento de las visitas, le
-                                pedimos que
-                                acompañe a su grupo durante todas las actividades. Recuerde, el responsable del
-                                comportamiento adecuado
-                                de su grupo es usted.</div>
+                        <li class="mb-2 d-flex align-items-start">
+                            <i class="bi bi-x-circle-fill text-danger me-2 mt-1"></i> Entrar con bicicletas
+                        </li>
+                        <li class="mb-2 d-flex align-items-start">
+                            <i class="bi bi-x-circle-fill text-danger me-2 mt-1"></i> Entrar con balones
+                        </li>
+                        <li class="mb-2 d-flex align-items-start">
+                            <i class="bi bi-x-circle-fill text-danger me-2 mt-1"></i> Pescar, ni arrojar objetos
+                            al lago
+                        </li>
+                        <li class="mb-2 d-flex align-items-start">
+                            <i class="bi bi-x-circle-fill text-danger me-2 mt-1"></i> Hacer fogatas
                         </li>
                     </ul>
                 </div>
-
-                <!-- Advertencia importante -->
-                <div class="alert alert-danger d-flex align-items-center justify-content-between border-0 shadow-lg"
-                    role="alert"
-                    style="background: linear-gradient(135deg, #fff5f5, #ffe3e3); border-left: 6px solid #dc3545 !important;">
-                    <div class="d-flex align-items-center">
-                        <i class="bi bi-exclamation-triangle-fill fs-3 me-3"></i>
-                        <div>
-                            <strong>¡IMPORTANTE!</strong> Por su seguridad: No ingresar al lago bajo ninguna
-                            circunstancia
-                        </div>
-                    </div>
-                    <span class="badge bg-success fs-6 rounded-pill px-4 py-2">¡MUCHAS GRACIAS POR RESPETARLO!</span>
+                <div class="col-md-6">
+                    <ul class="list-unstyled">
+                        <li class="mb-2 d-flex align-items-start">
+                            <i class="bi bi-x-circle-fill text-danger me-2 mt-1"></i> Ingresar con
+                            radios/grabadoras
+                        </li>
+                        <li class="mb-2 d-flex align-items-start">
+                            <i class="bi bi-x-circle-fill text-danger me-2 mt-1"></i> Tomar fotos con fines
+                            comerciales
+                        </li>
+                        <li class="mb-2 d-flex align-items-start">
+                            <i class="bi bi-x-circle-fill text-danger me-2 mt-1"></i> Dar comida a las aves y
+                            otros animales
+                            silvestres
+                        </li>
+                        <li class="mb-2 d-flex align-items-start">
+                            <i class="bi bi-x-circle-fill text-danger me-2 mt-1"></i> Ingresar con bebidas
+                            alcohólicas
+                        </li>
+                        <li class="mb-2 d-flex align-items-start">
+                            <i class="bi bi-x-circle-fill text-danger me-2 mt-1"></i> Hacer picnics
+                        </li>
+                        <li class="mb-2 d-flex align-items-start">
+                            <i class="bi bi-x-circle-fill text-danger me-2 mt-1"></i> Fumar
+                        </li>
+                        <li class="mb-2 d-flex align-items-start">
+                            <i class="bi bi-x-circle-fill text-danger me-2 mt-1"></i> Llevarse las etiquetas de
+                            las plantas
+                        </li>
+                    </ul>
                 </div>
-
-                <!-- Navegación entre pasos -->
-                <div class="d-flex justify-content-between mt-4">
-                    <button type="button" class="btn btn-outline-secondary btn-lg px-4" (click)="irAPaso(3)">
-                        <i class="bi bi-arrow-left me-2"></i> Anterior
-                    </button>
-                    <button type="button" class="btn btn-success btn-lg px-5" (click)="irAPaso(5)">
-                        Siguiente <i class="bi bi-arrow-right ms-2"></i>
-                    </button>
-                </div>
-                }
-
-                @case (5) {
-                <!-- Bienvenida -->
-                <div class="text-center mb-5 p-4 rounded-3"
-                    style="background: linear-gradient(135deg, #d5f5e3, #a9dfbf);">
-                    <h2 class="fw-bold" style="color: var(--primary-green);">
-                        <i class="bi bi-emoji-sunglasses-fill me-2"></i>¡Damos la bienvenida a su grupo!
-                    </h2>
-                    <p class="lead mb-0">Nos emociona recibirles en este espacio dedicado a la conservación y la
-                        biodiversidad.</p>
-                    <p class="mb-0">Para que su visita sea segura, cómoda y enriquecedora, les invitamos a seguir estas
-                        recomendaciones.
-                    </p>
-                </div>
-
-                <!-- Recomendaciones en Grid -->
-                <div class="row g-4">
-                    <!-- Preparación de la Visita -->
-                    <div class="col-md-6">
-                        <div class="terms-card h-100 shadow-sm border-0 p-4 rounded-3"
-                            style="background-color: #f8f9fa; border-top: 6px solid var(--primary-green) !important;">
-                            <h5 class="fw-bold" style="color: var(--primary-green);">
-                                <i class="bi bi-clipboard-check me-2"></i>Preparación de la Visita
-                            </h5>
-                            <p class="text-muted fst-italic small">Unos pasos previos garantizan que toda la experiencia
-                                fluya mejor
-                                desde el principio.</p>
-                            <ul class="list-unstyled mt-3">
-                                <li class="mb-2 d-flex align-items-start">
-                                    <i class="bi bi-1-circle-fill text-success me-2 mt-1"></i>
-                                    <div><strong>Información para el grupo:</strong> Recomendamos compartir el programa
-                                        y los objetivos
-                                        de la visita con todas las personas del grupo antes de su llegada, así como el
-                                        código de
-                                        comportamiento.</div>
-                                </li>
-                                <li class="mb-2 d-flex align-items-start">
-                                    <i class="bi bi-2-circle-fill text-success me-2 mt-1"></i>
-                                    <div><strong>Identificación:</strong> Cada persona deberá portar un gafete o
-                                        etiqueta con su nombre
-                                        de forma visible.</div>
-                                </li>
-                                <li class="d-flex align-items-start">
-                                    <i class="bi bi-3-circle-fill text-success me-2 mt-1"></i>
-                                    <div><strong>Puntualidad:</strong> El servicio educativo se realizará conforme a los
-                                        tiempos
-                                        señalados en su programa para garantizar la calidad del recorrido.</div>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-
-                    <!-- Comodidad y protección personal -->
-                    <div class="col-md-6">
-                        <div class="terms-card h-100 shadow-sm border-0 p-4 rounded-3"
-                            style="background-color: #f8f9fa; border-top: 6px solid #f39c12 !important;">
-                            <h5 class="fw-bold" style="color: #f39c12;">
-                                <i class="bi bi-sun-fill me-2"></i>Comodidad y protección personal
-                            </h5>
-                            <p class="text-muted fst-italic small">El jardín es un espacio al aire libre, estar bien
-                                preparados hará la
-                                visita mucho más agradable.</p>
-                            <ul class="list-unstyled mt-3">
-                                <li class="mb-2 d-flex align-items-start">
-                                    <i class="bi bi-check-circle-fill text-warning me-2 mt-1"></i>
-                                    <div><strong>Vestimenta:</strong> Sugerimos el uso de ropa cómoda y calzado adecuado
-                                        para caminar
-                                        por senderos.</div>
-                                </li>
-                                <li class="mb-2 d-flex align-items-start">
-                                    <i class="bi bi-check-circle-fill text-warning me-2 mt-1"></i>
-                                    <div><strong>Protección personal:</strong> Es recomendable el uso de repelente de
-                                        insectos y
-                                        bloqueador solar.</div>
-                                </li>
-                                <li class="d-flex align-items-start">
-                                    <i class="bi bi-check-circle-fill text-warning me-2 mt-1"></i>
-                                    <div><strong>Previsión climática:</strong> El clima puede cambiar repentinamente;
-                                        sugerimos
-                                        consultar el pronóstico del tiempo para traer equipo para lluvia (impermeable o
-                                        sombrilla) o
-                                        protección para el calor (gorras o sombreros).</div>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-
-                    <!-- Sustentabilidad -->
-                    <div class="col-md-6">
-                        <div class="terms-card h-100 shadow-sm border-0 p-4 rounded-3"
-                            style="background-color: #f8f9fa; border-top: 6px solid #2ecc71 !important;">
-                            <h5 class="fw-bold" style="color: #2ecc71;">
-                                <i class="bi bi-recycle me-2"></i>Sustentabilidad y manejo de residuos
-                            </h5>
-                            <p class="text-muted fst-italic small">Como centro de Educación Ambiental, promovemos
-                                hábitos responsables
-                                con el entorno.</p>
-                            <ul class="list-unstyled mt-3">
-                                <li class="mb-2 d-flex align-items-start">
-                                    <i class="bi bi-check-circle-fill text-success me-2 mt-1"></i>
-                                    <div><strong>Alimentación consciente:</strong> Les invitamos a traer lunches
-                                        nutritivos y evitar
-                                        alimentos ultra procesados.</div>
-                                </li>
-                                <li class="d-flex align-items-start">
-                                    <i class="bi bi-check-circle-fill text-success me-2 mt-1"></i>
-                                    <div><strong>Responsabilidad ambiental:</strong> El manejo de la basura es
-                                        responsabilidad de cada
-                                        integrante del grupo. Les pedimos llevar sus residuos de vuelta o depositarlos
-                                        correctamente
-                                        para mantener este jardín en óptimas condiciones.</div>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-
-                    <!-- Logística y accesibilidad -->
-                    <div class="col-md-6">
-                        <div class="terms-card h-100 shadow-sm border-0 p-4 rounded-3"
-                            style="background-color: #f8f9fa; border-top: 6px solid #3498db !important;">
-                            <h5 class="fw-bold" style="color: #3498db;">
-                                <i class="bi bi-geo-alt me-2"></i>Logística y accesibilidad
-                            </h5>
-                            <p class="text-muted fst-italic small">Planear con anticipación el acceso y movilidad del
-                                grupo asegura una
-                                llegada sin contratiempos.</p>
-                            <ul class="list-unstyled mt-3">
-                                <li class="mb-2 d-flex align-items-start">
-                                    <i class="bi bi-check-circle-fill text-primary me-2 mt-1"></i>
-                                    <div><strong>Transporte:</strong> En caso de llegar al jardín en autobús o
-                                        camionetas, les sugerimos
-                                        ingresar por la Puerta 1 (24 sur y Av. San Claudio, junto a gasolinera). El
-                                        lugar asignado para
-                                        el estacionamiento es el Estadio Universitario. En caso de cambios, el personal
-                                        de seguridad les
-                                        indicará la zona disponible.</div>
-                                </li>
-                                <li class="d-flex align-items-start">
-                                    <i class="bi bi-check-circle-fill text-primary me-2 mt-1"></i>
-                                    <div><strong>Inclusión:</strong> Si alguna persona del grupo tiene necesidades
-                                        específicas de
-                                        movilidad o comunicación, les agradecemos informarnos con antelación para
-                                        brindarles la mejor
-                                        atención.</div>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Mensaje final -->
-                <div class="text-center mt-5 p-4 rounded-3"
-                    style="background: linear-gradient(135deg, #fdebd0, #fad7a0); border: 2px solid #e67e22;">
-                    <h4 class="fw-bold" style="color: #e67e22;">
-                        <i class="bi bi-emoji-smile-fill me-2"></i>¡Disfruten su estancia!
-                    </h4>
-                    <p class="mb-0 fw-bold">El seguimiento de estas recomendaciones mejora la calidad y el
-                        aprovechamiento de su visita.
-                    </p>
-                </div>
-
-                <!-- Botones de finalización -->
-                <div class="d-flex justify-content-between mt-4">
-                    <button type="button" class="btn btn-outline-secondary btn-lg px-4" (click)="irAPaso(4)">
-                        <i class="bi bi-arrow-left me-2"></i> Anterior
-                    </button>
-
-                    <div class="d-flex gap-2">
-                        <!-- Botón opcional para regresar al inicio y revisar datos -->
-                        <button type="button" class="btn btn-outline-success btn-lg px-4" (click)="irAPaso(1)">
-                            <i class="bi bi-search me-2"></i> Revisar Datos
-                        </button>
-
-                        <!-- Botón principal para enviar el formulario -->
-                        <!-- Llama a una función enviarSolicitud() que puedes crear en tu TS para procesar solicitudForm.value -->
-                        <!-- Botón principal para enviar el formulario -->
-                        <button type="button" class="btn btn-success btn-lg px-5" (click)="enviarSolicitud()">
-                            <i class="bi bi-send-check-fill me-2"></i> Finalizar y Enviar
-                        </button>
-                    </div>
-                </div>
-                }
-                @case (6) {
-                <div class="text-center mb-5 p-4 rounded-3"
-                    style="background: linear-gradient(135deg, #e8f8f5, #d4efdf);">
-                    <i class="bi bi-check2-circle text-success" style="font-size: 4rem;"></i>
-                    <h2 class="fw-bold mt-2" style="color: var(--secondary-green);">¡Solicitud Generada Exitosamente!
-                    </h2>
-                    <p class="lead mb-0">Sus datos han sido pre-registrados en nuestro sistema.</p>
-
-                    <div class="mt-4 p-3 bg-white rounded-3 shadow-sm d-inline-block border border-success border-2">
-                        <span class="text-muted text-uppercase fw-bold small d-block mb-1">Folio de Seguimiento</span>
-                        <span class="fs-3 fw-bold text-dark">{{ folioAsignado() }}</span>
-                    </div>
-                </div>
-
-                <!-- Resumen de Datos -->
-                <div class="section-card">
-                    <div class="section-title">
-                        <div class="d-flex align-items-center">
-                            <span class="step-badge"><i class="bi bi-card-text"></i></span>
-                            <span class="ms-3">Resumen de Datos Ingresados</span>
-                        </div>
-                    </div>
-
-                    <div class="table-responsive">
-                        <table class="table table-bordered table-striped">
-                            <tbody class="align-middle">
-                                <tr>
-                                    <th class="bg-light" style="width: 30%;">Institución</th>
-                                    <td>{{ solicitudForm.controls.escuela.value }}</td>
-                                </tr>
-                                <tr>
-                                    <th class="bg-light">Nivel y Grado</th>
-                                    <td class="text-capitalize">{{ solicitudForm.controls.nivel.value }} - {{
-                                        solicitudForm.controls.grado.value }}</td>
-                                </tr>
-                                <tr>
-                                    <th class="bg-light">Fecha y Hora de Visita</th>
-                                    <td><strong>{{ solicitudForm.controls.fecha.value }}</strong> a las <strong>{{
-                                            solicitudForm.controls.hora.value }}</strong></td>
-                                </tr>
-                                <tr>
-                                    <th class="bg-light">Número de Alumnos</th>
-                                    <td>{{ totalAlumnos() }} alumnos</td>
-                                </tr>
-                                <tr>
-                                    <th class="bg-light">Monto Total Estimado</th>
-                                    <td class="text-success fw-bold">{{ montoTotal().toLocaleString('es-MX', { style:
-                                        'currency', currency: 'MXN' }) }}</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <!-- Aceptación de Políticas y Descargas -->
-                <div class="section-card bg-light border-0 shadow-sm">
-                    <div class="d-flex flex-column flex-md-row justify-content-between align-items-center gap-3 mb-4">
-                        <div class="form-check form-switch fs-5">
-                            <input class="form-check-input" type="checkbox" id="aceptoPoliticas"
-                                [checked]="politicasAceptadas()"
-                                (change)="politicasAceptadas.set(!politicasAceptadas())" style="cursor: pointer;">
-                            <label class="form-check-label fw-semibold" for="aceptoPoliticas" style="cursor: pointer;">
-                                He leído y acepto las políticas de servicio y reglamento del jardín.
-                            </label>
-                        </div>
-
-                        <button type="button" class="btn btn-outline-primary" (click)="descargarPoliticas()">
-                            <i class="bi bi-file-earmark-pdf-fill me-2"></i> Descargar Políticas PDF
-                        </button>
-                    </div>
-
-                    <div class="alert alert-warning border-0 shadow-sm mb-0">
-                        <i class="bi bi-exclamation-triangle-fill me-2"></i>
-                        <strong>Importante:</strong> Es indispensable descargar el formato de resumen de su solicitud.
-                        Este documento
-                        contiene su folio y es necesario para cualquier aclaración o seguimiento futuro.
-                    </div>
-                </div>
-
-                <!-- Botonera Final -->
-                <div class="d-flex flex-column flex-md-row justify-content-between gap-3 mt-5 border-top pt-4">
-                    <button type="button" class="btn btn-outline-secondary btn-lg px-4"
-                        (click)="regresarACorrecciones()">
-                        <i class="bi bi-pencil-square me-2"></i> Regresar a corregir
-                    </button>
-
-                    <div class="d-flex flex-column flex-md-row gap-3">
-                        <button type="button" class="btn btn-danger btn-lg px-4 shadow-sm"
-                            (click)="descargarResumenPDF()">
-                            <i class="bi bi-file-pdf-fill me-2"></i> Descargar Resumen (Folio)
-                        </button>
-
-                        <button type="button" class="btn btn-success btn-lg px-5 shadow-sm"
-                            [disabled]="!politicasAceptadas()" (click)="salirAlMenu()">
-                            <i class="bi bi-check-circle-fill me-2"></i> Aceptar y Salir
-                        </button>
-                    </div>
-                </div>
-                }
-
-                }
-            </form>
+            </div>
         </div>
+
+        <!-- Reglas Positivas -->
+        <div class="section-card">
+            <div class="section-title">
+                <div class="d-flex align-items-center">
+                    <span class="step-badge bg-success text-white"><i class="bi bi-check-lg"></i></span>
+                    <span class="ms-3">Así mismo</span>
+                </div>
+            </div>
+
+            <ul class="list-unstyled">
+                <li class="mb-3 d-flex align-items-start bg-light p-3 rounded-3">
+                    <i class="bi bi-check-circle-fill text-success fs-4 me-3"></i>
+                    <div>Por favor, llévate tu basura o deposítala en los contenedores.</div>
+                </li>
+                <li class="mb-3 d-flex align-items-start bg-light p-3 rounded-3">
+                    <i class="bi bi-check-circle-fill text-success fs-4 me-3"></i>
+                    <div>Caminar únicamente por los senderos de adoquín y los senderos secundarios que el guía
+                        les indique.
+                    </div>
+                </li>
+                <li class="mb-3 d-flex align-items-start bg-light p-3 rounded-3">
+                    <i class="bi bi-check-circle-fill text-success fs-4 me-3"></i>
+                    <div>Respetar al guía y/o facilitador.</div>
+                </li>
+                <li class="d-flex align-items-start bg-warning bg-opacity-25 p-3 rounded-3 border border-warning">
+                    <i class="bi bi-person-badge-fill text-warning fs-4 me-3"></i>
+                    <div><strong>Estimado profesor:</strong> para un mejor aprovechamiento de las visitas, le
+                        pedimos que
+                        acompañe a su grupo durante todas las actividades. Recuerde, el responsable del
+                        comportamiento adecuado
+                        de su grupo es usted.</div>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Advertencia importante -->
+        <div class="alert alert-danger d-flex align-items-center justify-content-between border-0 shadow-lg"
+            role="alert"
+            style="background: linear-gradient(135deg, #fff5f5, #ffe3e3); border-left: 6px solid #dc3545 !important;">
+            <div class="d-flex align-items-center">
+                <i class="bi bi-exclamation-triangle-fill fs-3 me-3"></i>
+                <div>
+                    <strong>¡IMPORTANTE!</strong> Por su seguridad: No ingresar al lago bajo ninguna
+                    circunstancia
+                </div>
+            </div>
+            <span class="badge bg-success fs-6 rounded-pill px-4 py-2">¡MUCHAS GRACIAS POR RESPETARLO!</span>
+        </div>
+
+        <!-- Navegación entre pasos -->
+        <div class="d-flex justify-content-between mt-4">
+            <button type="button" class="btn btn-outline-secondary btn-lg px-4" (click)="irAPaso(3)">
+                <i class="bi bi-arrow-left me-2"></i> Anterior
+            </button>
+            <button type="button" class="btn btn-success btn-lg px-5" (click)="irAPaso(5)">
+                Siguiente <i class="bi bi-arrow-right ms-2"></i>
+            </button>
+        </div>
+        }
+
+        @case (5) {
+        <!-- Bienvenida -->
+        <div class="text-center mb-5 p-4 rounded-3" style="background: linear-gradient(135deg, #d5f5e3, #a9dfbf);">
+            <h2 class="fw-bold" style="color: var(--primary-green);">
+                <i class="bi bi-emoji-sunglasses-fill me-2"></i>¡Damos la bienvenida a su grupo!
+            </h2>
+            <p class="lead mb-0">Nos emociona recibirles en este espacio dedicado a la conservación y la
+                biodiversidad.</p>
+            <p class="mb-0">Para que su visita sea segura, cómoda y enriquecedora, les invitamos a seguir estas
+                recomendaciones.
+            </p>
+        </div>
+
+        <!-- Recomendaciones en Grid -->
+        <div class="row g-4">
+            <!-- Preparación de la Visita -->
+            <div class="col-md-6">
+                <div class="terms-card h-100 shadow-sm border-0 p-4 rounded-3"
+                    style="background-color: #f8f9fa; border-top: 6px solid var(--primary-green) !important;">
+                    <h5 class="fw-bold" style="color: var(--primary-green);">
+                        <i class="bi bi-clipboard-check me-2"></i>Preparación de la Visita
+                    </h5>
+                    <p class="text-muted fst-italic small">Unos pasos previos garantizan que toda la experiencia
+                        fluya mejor
+                        desde el principio.</p>
+                    <ul class="list-unstyled mt-3">
+                        <li class="mb-2 d-flex align-items-start">
+                            <i class="bi bi-1-circle-fill text-success me-2 mt-1"></i>
+                            <div><strong>Información para el grupo:</strong> Recomendamos compartir el programa
+                                y los objetivos
+                                de la visita con todas las personas del grupo antes de su llegada, así como el
+                                código de
+                                comportamiento.</div>
+                        </li>
+                        <li class="mb-2 d-flex align-items-start">
+                            <i class="bi bi-2-circle-fill text-success me-2 mt-1"></i>
+                            <div><strong>Identificación:</strong> Cada persona deberá portar un gafete o
+                                etiqueta con su nombre
+                                de forma visible.</div>
+                        </li>
+                        <li class="d-flex align-items-start">
+                            <i class="bi bi-3-circle-fill text-success me-2 mt-1"></i>
+                            <div><strong>Puntualidad:</strong> El servicio educativo se realizará conforme a los
+                                tiempos
+                                señalados en su programa para garantizar la calidad del recorrido.</div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Comodidad y protección personal -->
+            <div class="col-md-6">
+                <div class="terms-card h-100 shadow-sm border-0 p-4 rounded-3"
+                    style="background-color: #f8f9fa; border-top: 6px solid #f39c12 !important;">
+                    <h5 class="fw-bold" style="color: #f39c12;">
+                        <i class="bi bi-sun-fill me-2"></i>Comodidad y protección personal
+                    </h5>
+                    <p class="text-muted fst-italic small">El jardín es un espacio al aire libre, estar bien
+                        preparados hará la
+                        visita mucho más agradable.</p>
+                    <ul class="list-unstyled mt-3">
+                        <li class="mb-2 d-flex align-items-start">
+                            <i class="bi bi-check-circle-fill text-warning me-2 mt-1"></i>
+                            <div><strong>Vestimenta:</strong> Sugerimos el uso de ropa cómoda y calzado adecuado
+                                para caminar
+                                por senderos.</div>
+                        </li>
+                        <li class="mb-2 d-flex align-items-start">
+                            <i class="bi bi-check-circle-fill text-warning me-2 mt-1"></i>
+                            <div><strong>Protección personal:</strong> Es recomendable el uso de repelente de
+                                insectos y
+                                bloqueador solar.</div>
+                        </li>
+                        <li class="d-flex align-items-start">
+                            <i class="bi bi-check-circle-fill text-warning me-2 mt-1"></i>
+                            <div><strong>Previsión climática:</strong> El clima puede cambiar repentinamente;
+                                sugerimos
+                                consultar el pronóstico del tiempo para traer equipo para lluvia (impermeable o
+                                sombrilla) o
+                                protección para el calor (gorras o sombreros).</div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Sustentabilidad -->
+            <div class="col-md-6">
+                <div class="terms-card h-100 shadow-sm border-0 p-4 rounded-3"
+                    style="background-color: #f8f9fa; border-top: 6px solid #2ecc71 !important;">
+                    <h5 class="fw-bold" style="color: #2ecc71;">
+                        <i class="bi bi-recycle me-2"></i>Sustentabilidad y manejo de residuos
+                    </h5>
+                    <p class="text-muted fst-italic small">Como centro de Educación Ambiental, promovemos
+                        hábitos responsables
+                        con el entorno.</p>
+                    <ul class="list-unstyled mt-3">
+                        <li class="mb-2 d-flex align-items-start">
+                            <i class="bi bi-check-circle-fill text-success me-2 mt-1"></i>
+                            <div><strong>Alimentación consciente:</strong> Les invitamos a traer lunches
+                                nutritivos y evitar
+                                alimentos ultra procesados.</div>
+                        </li>
+                        <li class="d-flex align-items-start">
+                            <i class="bi bi-check-circle-fill text-success me-2 mt-1"></i>
+                            <div><strong>Responsabilidad ambiental:</strong> El manejo de la basura es
+                                responsabilidad de cada
+                                integrante del grupo. Les pedimos llevar sus residuos de vuelta o depositarlos
+                                correctamente
+                                para mantener este jardín en óptimas condiciones.</div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Logística y accesibilidad -->
+            <div class="col-md-6">
+                <div class="terms-card h-100 shadow-sm border-0 p-4 rounded-3"
+                    style="background-color: #f8f9fa; border-top: 6px solid #3498db !important;">
+                    <h5 class="fw-bold" style="color: #3498db;">
+                        <i class="bi bi-geo-alt me-2"></i>Logística y accesibilidad
+                    </h5>
+                    <p class="text-muted fst-italic small">Planear con anticipación el acceso y movilidad del
+                        grupo asegura una
+                        llegada sin contratiempos.</p>
+                    <ul class="list-unstyled mt-3">
+                        <li class="mb-2 d-flex align-items-start">
+                            <i class="bi bi-check-circle-fill text-primary me-2 mt-1"></i>
+                            <div><strong>Transporte:</strong> En caso de llegar al jardín en autobús o
+                                camionetas, les sugerimos
+                                ingresar por la Puerta 1 (24 sur y Av. San Claudio, junto a gasolinera). El
+                                lugar asignado para
+                                el estacionamiento es el Estadio Universitario. En caso de cambios, el personal
+                                de seguridad les
+                                indicará la zona disponible.</div>
+                        </li>
+                        <li class="d-flex align-items-start">
+                            <i class="bi bi-check-circle-fill text-primary me-2 mt-1"></i>
+                            <div><strong>Inclusión:</strong> Si alguna persona del grupo tiene necesidades
+                                específicas de
+                                movilidad o comunicación, les agradecemos informarnos con antelación para
+                                brindarles la mejor
+                                atención.</div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mensaje final -->
+        <div class="text-center mt-5 p-4 rounded-3"
+            style="background: linear-gradient(135deg, #fdebd0, #fad7a0); border: 2px solid #e67e22;">
+            <h4 class="fw-bold" style="color: #e67e22;">
+                <i class="bi bi-emoji-smile-fill me-2"></i>¡Disfruten su estancia!
+            </h4>
+            <p class="mb-0 fw-bold">El seguimiento de estas recomendaciones mejora la calidad y el
+                aprovechamiento de su visita.
+            </p>
+        </div>
+
+        <!-- Botones de finalización -->
+        <div class="d-flex justify-content-between mt-4">
+            <button type="button" class="btn btn-outline-secondary btn-lg px-4" (click)="irAPaso(4)">
+                <i class="bi bi-arrow-left me-2"></i> Anterior
+            </button>
+
+            <div class="d-flex gap-2">
+                <!-- Botón opcional para regresar al inicio y revisar datos -->
+                <button type="button" class="btn btn-outline-success btn-lg px-4" (click)="irAPaso(1)">
+                    <i class="bi bi-search me-2"></i> Revisar Datos
+                </button>
+
+                <!-- Botón principal para enviar el formulario -->
+                <!-- Llama a una función enviarSolicitud() que puedes crear en tu TS para procesar solicitudForm.value -->
+                <!-- Botón principal para enviar el formulario -->
+                <button type="button" class="btn btn-success btn-lg px-5" (click)="enviarSolicitud()">
+                    <i class="bi bi-send-check-fill me-2"></i> Finalizar y Enviar
+                </button>
+            </div>
+        </div>
+        }
+        @case (6) {
+        <div class="text-center mb-5 p-4 rounded-3" style="background: linear-gradient(135deg, #e8f8f5, #d4efdf);">
+            <i class="bi bi-check2-circle text-success" style="font-size: 4rem;"></i>
+            <h2 class="fw-bold mt-2" style="color: var(--secondary-green);">¡Solicitud Generada Exitosamente!
+            </h2>
+            <p class="lead mb-0">Sus datos han sido pre-registrados en nuestro sistema.</p>
+
+            <div class="mt-4 p-3 bg-white rounded-3 shadow-sm d-inline-block border border-success border-2">
+                <span class="text-muted text-uppercase fw-bold small d-block mb-1">Folio de Seguimiento</span>
+                <span class="fs-3 fw-bold text-dark">{{ folioAsignado() }}</span>
+            </div>
+        </div>
+
+        <!-- Resumen de Datos -->
+        <div class="section-card">
+            <div class="section-title">
+                <div class="d-flex align-items-center">
+                    <span class="step-badge"><i class="bi bi-card-text"></i></span>
+                    <span class="ms-3">Resumen de Datos Ingresados</span>
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped">
+                    <tbody class="align-middle">
+                        <tr>
+                            <th class="bg-light" style="width: 30%;">Institución</th>
+                            <td>{{ solicitudForm.controls.escuela.value }}</td>
+                        </tr>
+                        <tr>
+                            <th class="bg-light">Nivel y Grado</th>
+                            <td class="text-capitalize">{{ solicitudForm.controls.nivel.value }} - {{
+                                solicitudForm.controls.grado.value }}</td>
+                        </tr>
+                        <tr>
+                            <th class="bg-light">Fecha y Hora de Visita</th>
+                            <td><strong>{{ solicitudForm.controls.fecha.value }}</strong> a las <strong>{{
+                                    solicitudForm.controls.hora.value }}</strong></td>
+                        </tr>
+                        <tr>
+                            <th class="bg-light">Número de Alumnos</th>
+                            <td>{{ totalAlumnos() }} alumnos</td>
+                        </tr>
+                        <tr>
+                            <th class="bg-light">Monto Total Estimado</th>
+                            <td class="text-success fw-bold">{{ montoTotal().toLocaleString('es-MX', { style:
+                                'currency', currency: 'MXN' }) }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Aceptación de Políticas y Descargas -->
+        <div class="section-card bg-light border-0 shadow-sm">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-center gap-3 mb-4">
+                <div class="form-check form-switch fs-5">
+                    <input class="form-check-input" type="checkbox" id="aceptoPoliticas"
+                        [checked]="politicasAceptadas()" (change)="politicasAceptadas.set(!politicasAceptadas())"
+                        style="cursor: pointer;">
+                    <label class="form-check-label fw-semibold" for="aceptoPoliticas" style="cursor: pointer;">
+                        He leído y acepto las políticas de servicio y reglamento del jardín.
+                    </label>
+                </div>
+
+                <button type="button" class="btn btn-outline-primary" (click)="descargarPoliticas()">
+                    <i class="bi bi-file-earmark-pdf-fill me-2"></i> Descargar Políticas PDF
+                </button>
+            </div>
+
+            <div class="alert alert-warning border-0 shadow-sm mb-0">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                <strong>Importante:</strong> Es indispensable descargar el formato de resumen de su solicitud.
+                Este documento
+                contiene su folio y es necesario para cualquier aclaración o seguimiento futuro.
+            </div>
+        </div>
+
+        <!-- Botonera Final -->
+        <div class="d-flex flex-column flex-md-row justify-content-between gap-3 mt-5 border-top pt-4">
+            <button type="button" class="btn btn-outline-secondary btn-lg px-4" (click)="regresarACorrecciones()">
+                <i class="bi bi-pencil-square me-2"></i> Regresar a corregir
+            </button>
+
+            <div class="d-flex flex-column flex-md-row gap-3">
+                <button type="button" class="btn btn-danger btn-lg px-4 shadow-sm" (click)="descargarResumenPDF()">
+                    <i class="bi bi-file-pdf-fill me-2"></i> Descargar Resumen (Folio)
+                </button>
+
+                <button type="button" class="btn btn-success btn-lg px-5 shadow-sm" [disabled]="!politicasAceptadas()"
+                    (click)="salirAlMenu()">
+                    <i class="bi bi-check-circle-fill me-2"></i> Aceptar y Salir
+                </button>
+            </div>
+        </div>
+        }
+
+        }
+        </form>
     </div>
 </div>

@@ -1,84 +1,351 @@
-// Variables de color (puedes ajustarlas según tu paleta global)
+// ==========================================
+// Variables
+// ==========================================
 $azul-buap: #003b5c;
-$gris-texto: #555555;
+$azul-buap-dark: #002a42;
+$verde-jb: #2e7d32;
+$verde-light: #a5d6a7;
+$gris-texto: #6b7280;
+$gris-suave: #f8fafc;
 $blanco: #ffffff;
 
+// ==========================================
+// Header principal
+// ==========================================
 .institucional-header {
-    background-color: $blanco;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-    border-bottom: 3px solid $azul-buap;
-    padding: 12px 0;
-    width: 100%;
-    position: sticky; // Para que se quede fijo en la parte superior si haces scroll
+    position: sticky;
     top: 0;
     z-index: 1000;
+    width: 100%;
+    background: linear-gradient(180deg, #ffffff 0%, #fbfdfb 100%);
+    border-bottom: 1px solid rgba(0, 59, 92, 0.08);
+    box-shadow: 0 2px 12px rgba(0, 59, 92, 0.06);
+    padding: 14px 0;
+    transition: transform 0.35s ease, box-shadow 0.3s ease;
+
+    // Línea decorativa inferior con degradado institucional
+    &::after {
+        content: '';
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: 3px;
+        background: linear-gradient(90deg,
+                $azul-buap 0%,
+                $verde-jb 50%,
+                $azul-buap 100%);
+    }
+
+    &:hover {
+        box-shadow: 0 4px 20px rgba(0, 59, 92, 0.1);
+    }
+
+    &.hidden {
+        transform: translateY(-100%);
+    }
 }
 
+// ==========================================
+// Contenedor
+// ==========================================
 .header-container {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    max-width: 1400px; // Limita el ancho en pantallas muy grandes
+    max-width: 1400px;
     margin: 0 auto;
-    padding: 0 24px;
+    padding: 0 32px;
+    gap: 2rem;
 }
 
+// ==========================================
+// Logos
+// ==========================================
 .logo-container {
     display: flex;
     align-items: center;
-    flex: 1; // Permite que los logos ocupen el mismo espacio lateral
+    flex: 0 0 auto;
+    text-decoration: none;
+    padding: 6px 10px;
+    border-radius: 10px;
+    transition: background-color 0.25s ease, transform 0.25s ease;
 
-    &.right-logo {
-        justify-content: flex-end;
+    &.left-logo .logo {
+        max-height: 100px; // mantienes BUAP igual
+    }
+
+    &.right-logo .logo {
+        max-height: 80px; // mantienes BUAP igual
+    }
+
+    &:hover {
+        background-color: rgba(46, 125, 50, 0.06);
+        transform: translateY(-1px);
+
+        .logo {
+            transform: scale(1.05);
+        }
     }
 
     .logo {
-        max-height: 65px; // Ajusta este valor si las imágenes son muy grandes o pequeñas
+        max-height: 60px;
         width: auto;
         object-fit: contain;
         transition: transform 0.3s ease;
-
-        &:hover {
-            transform: scale(1.02); // Pequeño efecto sutil al pasar el mouse
-        }
+        display: block;
     }
 }
 
+// ==========================================
+// Título central
+// ==========================================
 .header-title {
     text-align: center;
-    flex: 2; // Le da más espacio al texto central
+    flex: 1 1 auto;
+    min-width: 0; // evita desbordes en flex
 
     h1 {
         margin: 0;
-        font-size: 1.4rem;
-        font-weight: 600;
+        font-size: 1.55rem;
+        font-weight: 700;
         color: $azul-buap;
-        letter-spacing: 0.5px;
+        letter-spacing: 0.4px;
+        line-height: 1.5;
+        background: linear-gradient(90deg, $azul-buap 0%, $verde-jb 100%);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    // Divisor decorativo con hojita
+    .title-divider {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        margin: 6px 0 4px;
+
+        .line {
+            height: 1px;
+            width: 60px;
+            background: linear-gradient(90deg,
+                    transparent,
+                    rgba(46, 125, 50, 0.6),
+                    transparent);
+        }
+
+        .leaf {
+            font-size: 0.85rem;
+            color: $verde-jb;
+            opacity: 0.85;
+            line-height: 1;
+        }
     }
 
     p {
-        margin: 4px 0 0;
-        font-size: 0.85rem;
+        margin: 0;
+        font-size: 1.25rem;
         color: $gris-texto;
         text-transform: uppercase;
-        letter-spacing: 1px;
+        letter-spacing: 1.8px;
         font-weight: 500;
     }
 }
 
-// Adaptación para dispositivos móviles
-@media (max-width: 768px) {
+// ==========================================
+// Responsive
+// ==========================================
+
+// ------------------------------------------
+// Pantallas grandes / laptops pequeñas
+// ------------------------------------------
+@media (max-width: 1200px) {
     .header-container {
-        padding: 0 16px;
+        padding: 0 24px;
+        gap: 1.5rem;
+    }
+
+    .logo-container.left-logo .logo {
+        max-height: 85px;
+    }
+
+    .logo-container.right-logo .logo {
+        max-height: 70px;
+    }
+
+    .header-title h1 {
+        font-size: 1.2rem;
+    }
+}
+
+// ------------------------------------------
+// Tablets horizontales
+// ------------------------------------------
+@media (max-width: 992px) {
+    .header-container {
+        padding: 0 20px;
+        gap: 1rem;
+    }
+
+    .logo-container.left-logo .logo {
+        max-height: 70px;
+    }
+
+    .logo-container.right-logo .logo {
+        max-height: 58px;
+    }
+
+    .header-title h1 {
+        font-size: 1.05rem;
+    }
+
+    .header-title .title-divider .line {
+        width: 40px;
+    }
+
+    .header-title p {
+        font-size: 0.68rem;
+        letter-spacing: 1.3px;
+    }
+}
+
+// ------------------------------------------
+// Tablets verticales / móviles grandes
+// ------------------------------------------
+@media (max-width: 768px) {
+    .institucional-header {
+        padding: 10px 0;
+    }
+
+    .header-container {
+        padding: 0 14px;
+        gap: 0.6rem;
+        align-items: center;
+    }
+
+    .logo-container {
+        padding: 4px 6px;
+    }
+
+    .logo-container.left-logo .logo {
+        max-height: 56px;
+    }
+
+    .logo-container.right-logo .logo {
+        max-height: 48px;
     }
 
     .header-title {
-        // En pantallas muy pequeñas, ocultamos el texto o reducimos su tamaño 
-        // para darle prioridad a los logos institucionales
-        display: none;
+        flex: 1 1 auto;
+
+        h1 {
+            font-size: 0.95rem;
+            line-height: 1.15;
+        }
+
+        .title-divider {
+            margin: 4px 0 2px;
+
+            .line {
+                width: 26px;
+            }
+
+            .leaf {
+                font-size: 0.7rem;
+            }
+        }
+
+        p {
+            font-size: 0.58rem;
+            letter-spacing: 0.9px;
+        }
+    }
+}
+
+// ------------------------------------------
+// Móviles medianos
+// ------------------------------------------
+@media (max-width: 576px) {
+    .header-container {
+        padding: 0 10px;
+        gap: 0.4rem;
     }
 
-    .logo-container .logo {
-        max-height: 50px;
+    .logo-container {
+        padding: 2px 4px;
+    }
+
+    .logo-container.left-logo .logo {
+        max-height: 48px;
+    }
+
+    .logo-container.right-logo .logo {
+        max-height: 42px;
+    }
+
+    .header-title {
+        h1 {
+            font-size: 0.82rem;
+        }
+
+        .title-divider {
+            display: none; // muy estrecho para una línea decorativa
+        }
+
+        p {
+            font-size: 0.52rem;
+            letter-spacing: 0.6px;
+        }
+    }
+}
+
+// ------------------------------------------
+// Móviles pequeños
+// ------------------------------------------
+@media (max-width: 420px) {
+    .institucional-header {
+        padding: 8px 0;
+    }
+
+    .header-container {
+        padding: 0 8px;
+        gap: 0.3rem;
+    }
+
+    .logo-container.left-logo .logo {
+        max-height: 40px;
+    }
+
+    .logo-container.right-logo .logo {
+        max-height: 36px;
+    }
+
+    .header-title {
+        h1 {
+            font-size: 0.72rem;
+            letter-spacing: 0.2px;
+        }
+
+        p {
+            display: none; // ya no cabe legible
+        }
+    }
+}
+
+// ------------------------------------------
+// Móviles muy pequeños (iPhone SE / Galaxy Fold)
+// ------------------------------------------
+@media (max-width: 360px) {
+    .logo-container.left-logo .logo {
+        max-height: 34px;
+    }
+
+    .logo-container.right-logo .logo {
+        max-height: 30px;
+    }
+
+    .header-title h1 {
+        font-size: 0.65rem;
     }
 }

@@ -1,19 +1,27 @@
-<header class="institucional-header">
+<header class="institucional-header" [class.hidden]="isHidden">
     <div class="header-container">
-        <!-- Logo Jardín Botánico -->
-        <div class="logo-container left-logo">
-            <img src="assets/logo.jpg" alt="Logo Jardín Botánico Universitario" class="logo">
-        </div>
+
+        <!-- Logo BUAP -->
+        <a class="logo-container right-logo" routerLink="/">
+            <img src="assets/logo-BUAP.jpg" alt="Logo BUAP" class="logo">
+        </a>
 
         <!-- Título Central -->
         <div class="header-title">
             <h1>Jardín Botánico Universitario</h1>
+            <div class="title-divider">
+                <span class="line"></span>
+                <span class="leaf">🌿</span>
+                <span class="line"></span>
+            </div>
             <p>Benemérita Universidad Autónoma de Puebla</p>
         </div>
 
-        <!-- Logo BUAP -->
-        <div class="logo-container right-logo">
-            <img src="assets/logo-BUAP.jpg" alt="Logo BUAP" class="logo">
-        </div>
+        <!-- Logo Jardín Botánico -->
+        <a class="logo-container left-logo" routerLink="/">
+            <img src="assets/logo.jpg" alt="Logo Jardín Botánico Universitario" class="logo">
+        </a>
+
+
     </div>
 </header>
