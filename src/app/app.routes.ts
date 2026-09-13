@@ -63,6 +63,33 @@ export const routes: Routes = [
         ]
     },
     {
+        path: 'colaborador',
+        loadComponent: () => import('./colaborador/colaborador').then(m => m.ColaboradorComponent),
+        children: [
+            {
+                path: 'dashboard',
+                loadComponent: () => import('./colaborador/dashboard/dashboard').then(m => m.Dashboard)
+            },
+            {
+                path: 'solicitudes',
+                loadComponent: () => import('./colaborador/monitor-solicitudes/monitor-solicitudes').then(m => m.MonitorSolicitudes)
+            },
+            {
+                path: 'instalaciones',
+                loadComponent: () => import('./colaborador/instalaciones/instalaciones').then(m => m.Instalaciones)
+            },
+            {
+                path: 'calendario',
+                loadComponent: () => import('./colaborador/calendario/calendario').then(m => m.Calendario)
+            },
+            {
+                path: '',
+                redirectTo: '/colaborador/dashboard',
+                pathMatch: 'full'
+            }
+        ]
+    },
+    {
         path: '',
         redirectTo: '/login',
         pathMatch: 'full'

@@ -31,18 +31,32 @@ export class LoginComponent {
 
       const credenciales = this.loginForm.getRawValue();
 
-      // Petición HTTP al backend usando ruta relativa
       this.http.post('/api/login', credenciales).subscribe({
         next: (respuesta: any) => {
           console.log('Login exitoso:', respuesta);
           this.isLoading.set(false);
-          // Redirigir al panel de administración si el login es exitoso
-          this.router.navigate(['/panel-admin']);
+          
+          // Aquí viene la magia: Leemos el rol que manda Python
+          const rol = respuesta.usuario?.rol?.toLowerCase();
+
+          // Guardamos un pequeño rastro en localStorage (opcional pero útil)
+          localStorage.setItem('usuarioRol', rol);
+          localStorage.setItem('token', respuesta.token);
+
+          // Redirigimos según el rol
+          if (rol === 'colaborador') {
+            this.router.navigate(['/colaborador/dashboard']);
+          } else if (rol === 'administrador' || rol === 'admin') {
+            this.router.navigate(['/administrador/dashboard']);
+          } else {
+            // Si por algún motivo no trae rol, lo mandamos al admin por defecto o muestras error
+            console.warn('Rol no identificado, redirigiendo a admin por defecto');
+            this.router.navigate(['/administrador/dashboard']);
+          }
         },
         error: (err) => {
           console.error('Error de autenticación:', err);
           this.isLoading.set(false);
-          // Mostrar mensaje de error en el HTML
           if (err.status === 401) {
             this.errorMessage.set('Correo o contraseña incorrectos.');
           } else {
