@@ -34,8 +34,8 @@
                     </div>
 
                     <div class="text-end mb-4">
-                        <button type="button" class="btn-link-clean" (click)="irARecuperarPassword()">
-                        ¿Olvidaste tu contraseña?
+                        <button type="button" class="btn-link-clean" (click)="irARecuperarPassword($event)">
+                            ¿Olvidaste tu contraseña?
                         </button>
                     </div>
 
@@ -61,6 +61,16 @@
                         <p>¿Eres una escuela interesada en visitarnos?</p>
                         <button type="button" class="btn-secondary" (click)="irAlFormulario()">
                             Llenar Solicitud de Visita
+                        </button>
+                    </div>
+
+                    <div class="guest-section">
+                        <div class="divider">
+                            <span>o</span>
+                        </div>
+                        <p>¿Eres un colaborador?, Crea tu cuenta aquí</p>
+                        <button type="button" class="btn-secondary" (click)="irARegistrarColaborador()">
+                            Crear Cuenta de Colaborador
                         </button>
                     </div>
 
