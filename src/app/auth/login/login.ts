@@ -5,6 +5,7 @@ import { NgOptimizedImage } from '@angular/common';
 
 @Component({
   selector: 'app-login',
+  standalone: true,
   imports: [ReactiveFormsModule, NgOptimizedImage],
   templateUrl: './login.html',
   styleUrl: './login.scss',
@@ -27,12 +28,29 @@ export class LoginComponent {
       this.isLoading.set(true);
       this.errorMessage.set(null);
 
-      // Simulación de autenticación
+      // // Simulación de autenticación
+      // setTimeout(() => {
+      //   console.log('Autenticando...', this.loginForm.getRawValue());
+      //   this.isLoading.set(false);
+      //   // this.router.navigate(['/panel-admin']);
+      // }, 1500);
+      const { email, password } = this.loginForm.getRawValue();
+
+      // Simulación de autenticación según el rol
       setTimeout(() => {
-        console.log('Autenticando...', this.loginForm.getRawValue());
         this.isLoading.set(false);
-        // this.router.navigate(['/panel-admin']);
-      }, 1500);
+
+        if (email.toLowerCase() === 'admin@correo.com') {
+          // Redirige al Dashboard de Administrador
+          this.router.navigate(['/administrador/dashboard']);
+        } else if (email.toLowerCase() === 'colaborador@correo.com') {
+          // Redirige a la pantalla del Colaborador
+          this.router.navigate(['/programa-servicio']);
+        } else {
+          // Credenciales no reconocidas en el prototipo
+          this.errorMessage.set('Credenciales incorrectas. Usa "admin@correo.com" o "colaborador@correo.com".');
+        }
+      }, 1200);
     } else {
       this.loginForm.markAllAsTouched();
     }

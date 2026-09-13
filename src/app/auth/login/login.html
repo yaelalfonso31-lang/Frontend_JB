@@ -33,12 +33,9 @@
                             [class.is-invalid]="loginForm.controls.password.invalid && loginForm.controls.password.touched">
                     </div>
 
-                    <div class="form-options">
-                        <label class="remember-me">
-                            <input type="checkbox"> Recordarme
-                        </label>
-                        <button type="button" class="forgot-password-btn" (click)="irARecuperarPassword()">
-                            ¿Olvidaste tu contraseña?
+                    <div class="text-end mb-4">
+                        <button type="button" class="btn-link-clean" (click)="irARecuperarPassword()">
+                        ¿Olvidaste tu contraseña?
                         </button>
                     </div>
 
