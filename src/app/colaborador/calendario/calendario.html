@@ -1,0 +1,71 @@
+<div class="calendario-container" style="padding: 20px;">
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; flex-wrap: wrap; gap: 15px;">
+    <div>
+      <h1 style="margin: 0; color: #333;">Calendario de Visitas Aprobadas</h1>
+      <p style="margin: 5px 0 0 0; color: #666;">Agenda oficial de recorridos y grupos confirmados en el jardín.</p>
+    </div>
+
+    <!-- Botones de alternancia de vista -->
+    <div style="display: flex; background: #e0e0e0; border-radius: 6px; padding: 3px;">
+      <button 
+        (click)="cambiarVista('mensual')" 
+        [style.background]="vistaActual() === 'mensual' ? '#004d40' : 'transparent'"
+        [style.color]="vistaActual() === 'mensual' ? 'white' : '#333'"
+        style="border: none; padding: 8px 15px; border-radius: 4px; font-weight: bold; cursor: pointer; transition: all 0.2s;"
+      >
+        Vista Mensual
+      </button>
+      <button 
+        (click)="cambiarVista('semanal')" 
+        [style.background]="vistaActual() === 'semanal' ? '#004d40' : 'transparent'"
+        [style.color]="vistaActual() === 'semanal' ? 'white' : '#333'"
+        style="border: none; padding: 8px 15px; border-radius: 4px; font-weight: bold; cursor: pointer; transition: all 0.2s;"
+      >
+        Vista Semanal
+      </button>
+    </div>
+  </div>
+
+  <!-- Resumen informativo de la vista seleccionada -->
+  <div style="background: #e0f2f1; border-left: 5px solid #004d40; padding: 12px 15px; border-radius: 4px; margin-bottom: 20px; color: #004d40; font-size: 0.95rem;">
+    Mostrando agenda en <strong>{{ vistaActual() | titlecase }}</strong>. Actualmente hay <strong>{{ visitas().length }} visitas confirmadas</strong> en el periodo.
+  </div>
+
+  <!-- Agenda / Tabla de Visitas Aprobadas -->
+  <div style="background: white; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); overflow: hidden;">
+    <table style="width: 100%; border-collapse: collapse;">
+      <thead>
+        <tr style="background: #f8f9fa; text-align: left; border-bottom: 2px solid #dee2e6;">
+          <th style="padding: 12px;">Fecha</th>
+          <th style="padding: 12px;">Hora</th>
+          <th style="padding: 12px;">Institución / Solicitante</th>
+          <th style="padding: 12px;">Nivel Escolar</th>
+          <th style="padding: 12px;">Visitantes</th>
+          <th style="padding: 12px;">Estado</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (visita of visitas(); track visita.id) {
+          <tr style="border-bottom: 1px solid #eee;">
+            <td style="padding: 12px; font-weight: bold; color: #004d40;">{{ visita.fechaVisita }}</td>
+            <td style="padding: 12px;">{{ visita.horaVisita }}</td>
+            <td style="padding: 12px;"><strong>{{ visita.solicitante }}</strong></td>
+            <td style="padding: 12px;">{{ visita.escuela }}</td>
+            <td style="padding: 12px;">{{ visita.numeroVisitantes }} personas</td>
+            <td style="padding: 12px;">
+              <span style="background: #d4edda; color: #155724; padding: 4px 10px; border-radius: 12px; font-size: 0.85rem; font-weight: bold;">
+                {{ visita.estado | titlecase }}
+              </span>
+            </td>
+          </tr>
+        } @empty {
+          <tr>
+            <td colspan="6" style="padding: 20px; text-align: center; color: #777;">
+              No hay visitas aprobadas programadas para este periodo.
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>
