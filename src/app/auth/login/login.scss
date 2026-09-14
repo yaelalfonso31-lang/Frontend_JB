@@ -290,9 +290,27 @@ $error-color: #ff5252;
     }
 }
 
-@media (max-width: 768px) {
-    .welcome-section .logos-container {
-        justify-content: center;
-        gap: 1rem;
-    }
+.style-title {
+  color: var(--secondary-green, #ffffffd2);
+}
+
+.btn-link-clean {
+  background: transparent;
+  border: none;
+  padding: 0;
+  color: #a5d6a7; /* Verde más claro y brillante */
+  font-weight: 400;
+  font-size: 0.9rem;
+  cursor: pointer;
+  text-decoration: none;
+  transition: color 0.2s ease, text-decoration 0.2s ease;
+
+  &:hover {
+    color: #fafafa; /* Verde intermedio al pasar el ratón */
+    text-decoration: underline;
+  }
+
+  &:focus {
+    outline: none;
+  }
 }

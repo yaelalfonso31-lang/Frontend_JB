@@ -1,7 +1,8 @@
 import { Component, ChangeDetectionStrategy, inject, signal } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NgOptimizedImage } from '@angular/common';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-recuperar-contra',
@@ -11,37 +12,89 @@ import { NgOptimizedImage } from '@angular/common';
   styleUrl: './recuperar-contra.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class RecuperarPasswordComponent {
-  private fb = inject(FormBuilder).nonNullable;
+export class RecuperarContraComponent {
+  private fb = inject(FormBuilder);
   private router = inject(Router);
+  private authService = inject(AuthService);
 
-  // Formulario con un solo campo validado
-  recoveryForm = this.fb.group({
+  currentStep = signal<number>(1);
+  isLoading = signal<boolean>(false);
+  errorMessage = signal<string | null>(null);
+
+  step1Form = this.fb.nonNullable.group({
     email: ['', [Validators.required, Validators.email]]
   });
 
-  // Signals para el control de la interfaz
-  isLoading = signal<boolean>(false);
-  isSuccess = signal<boolean>(false);
+  step2Form = this.fb.nonNullable.group({
+    codigo: ['', [Validators.required, Validators.minLength(6), Validators.maxLength(6), Validators.pattern('^[0-9]+$')]]
+  });
 
-  onSubmit(): void {
-    if (this.recoveryForm.valid) {
+  step3Form = this.fb.nonNullable.group({
+    nuevaPassword: ['', [Validators.required, Validators.minLength(6)]],
+    confirmarPassword: ['', [Validators.required]]
+  }, { validators: this.passwordMatchValidator });
+
+  private passwordMatchValidator(group: AbstractControl): ValidationErrors | null {
+    const pass = group.get('nuevaPassword')?.value;
+    const confirmPass = group.get('confirmarPassword')?.value;
+    return pass === confirmPass ? null : { mismatch: true };
+  }
+
+  enviarCodigo(): void {
+    if (this.step1Form.valid) {
       this.isLoading.set(true);
+      this.errorMessage.set(null);
+      const email = this.step1Form.value.email!;
 
-      const email = this.recoveryForm.getRawValue().email;
-      console.log('Solicitando recuperación para:', email);
-
-      // Simulación de petición al backend
-      setTimeout(() => {
-        this.isLoading.set(false);
-        this.isSuccess.set(true);
-      }, 1500);
+      this.authService.solicitarCodigo(email).subscribe({
+        next: () => {
+          this.isLoading.set(false);
+          this.currentStep.set(2);
+        },
+        error: (err) => {
+          this.isLoading.set(false);
+          this.errorMessage.set(err.error?.message || 'Error al enviar el correo de recuperación.');
+        }
+      });
     } else {
-      this.recoveryForm.markAllAsTouched();
+      this.step1Form.markAllAsTouched();
     }
   }
 
-  volverAlLogin(): void {
+  validarCodigo(): void {
+    if (this.step2Form.valid) {
+      this.isLoading.set(true);
+      this.errorMessage.set(null);
+
+      setTimeout(() => {
+        this.isLoading.set(false);
+        this.currentStep.set(3);
+      }, 1000);
+    } else {
+      this.step2Form.markAllAsTouched();
+    }
+  }
+
+  actualizarPassword(): void {
+    if (this.step3Form.valid) {
+      this.isLoading.set(true);
+      this.errorMessage.set(null);
+
+      setTimeout(() => {
+        this.isLoading.set(false);
+        this.currentStep.set(4);
+      }, 1200);
+    } else {
+      this.step3Form.markAllAsTouched();
+    }
+  }
+
+  volverPaso(paso: number): void {
+    this.errorMessage.set(null);
+    this.currentStep.set(paso);
+  }
+
+  irAlLogin(): void {
     this.router.navigate(['/login']);
   }
 }

@@ -38,11 +38,8 @@
                             [class.is-invalid]="loginForm.controls.password.invalid && loginForm.controls.password.touched">
                     </div>
 
-                    <div class="form-options">
-                        <label class="remember-me">
-                            <input type="checkbox"> Recordarme
-                        </label>
-                        <button type="button" class="forgot-password-btn" (click)="irARecuperarPassword()">
+                    <div class="text-end mb-4">
+                        <button type="button" class="btn-link-clean" (click)="irARecuperarContra()">
                             ¿Olvidaste tu contraseña?
                         </button>
                     </div>
@@ -69,6 +66,16 @@
                         <p>¿Eres una escuela interesada en visitarnos?</p>
                         <button type="button" class="btn-secondary" (click)="irAlFormulario()">
                             Llenar Solicitud de Visita
+                        </button>
+                    </div>
+
+                    <div class="guest-section">
+                        <div class="divider">
+                            <span>o</span>
+                        </div>
+                        <p>¿Eres un colaborador?, Crea tu cuenta aquí</p>
+                        <button type="button" class="btn-secondary" (click)="irARegistrarColaborador()">
+                            Crear Cuenta de Colaborador
                         </button>
                     </div>
 
