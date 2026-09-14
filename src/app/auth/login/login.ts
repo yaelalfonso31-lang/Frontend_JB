@@ -61,10 +61,6 @@ export class LoginComponent {
     this.router.navigate(['/inicio']);
   }
 
-  // irARecuperarPassword(): void {
-  //   this.router.navigate(['/recuperar-password']);
-  // }
-
   irARecuperarPassword(event?: Event): void {
     if (event) {
       event.preventDefault();
