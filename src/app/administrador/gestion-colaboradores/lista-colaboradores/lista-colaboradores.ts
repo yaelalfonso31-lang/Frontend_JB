@@ -1,6 +1,7 @@
-import { Component, ChangeDetectionStrategy, signal, computed } from '@angular/core';
+import { Component, ChangeDetectionStrategy, signal, computed, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { HttpClient } from '@angular/common/http';
 
 interface Colaborador {
   id: number;
@@ -20,39 +21,24 @@ interface Colaborador {
   styleUrl: './lista-colaboradores.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ListaColaboradoresComponent {
-  colaboradores = signal<Colaborador[]>([
-    {
-      id: 1,
-      nombre: 'Juan Pérez',
-      email: 'juan@example.com',
-      telefono: '3001234567',
-      cargo: 'Coordinador',
-      estado: 'activo',
-      fechaRegistro: '2024-01-15'
-    },
-    {
-      id: 2,
-      nombre: 'María García',
-      email: 'maria@example.com',
-      telefono: '3007654321',
-      cargo: 'Asistente',
-      estado: 'activo',
-      fechaRegistro: '2024-02-20'
-    },
-    {
-      id: 3,
-      nombre: 'Carlos López',
-      email: 'carlos@example.com',
-      telefono: '3009876543',
-      cargo: 'Supervisor',
-      estado: 'inactivo',
-      fechaRegistro: '2024-01-10'
-    }
-  ]);
+export class ListaColaboradoresComponent implements OnInit {
+  private http = inject(HttpClient);
 
+  // Inicializamos vacío
+  colaboradores = signal<Colaborador[]>([]);
   searchTerm = signal('');
   filterEstado = signal<'todos' | 'activo' | 'inactivo'>('todos');
+
+  ngOnInit(): void {
+    this.cargarColaboradores();
+  }
+
+  cargarColaboradores() {
+    this.http.get<Colaborador[]>('/api/colaboradores').subscribe({
+      next: (data) => this.colaboradores.set(data),
+      error: (err) => console.error('Error al cargar colaboradores:', err)
+    });
+  }
 
   filteredColaboradores = computed(() => {
     return this.colaboradores().filter(col => {
@@ -78,22 +64,39 @@ export class ListaColaboradoresComponent {
 
   editarColaborador(id: number) {
     console.log('Editar colaborador:', id);
+    // Aquí luego podrías abrir un modal o navegar a una ruta de edición
   }
 
   eliminarColaborador(id: number) {
-    const currentList = this.colaboradores();
-    this.colaboradores.set(currentList.filter(col => col.id !== id));
+    if (confirm('¿Estás seguro de que deseas eliminar a este colaborador?')) {
+      this.http.delete(`/api/colaboradores/${id}`).subscribe({
+        next: () => {
+          const currentList = this.colaboradores();
+          this.colaboradores.set(currentList.filter(col => col.id !== id));
+        },
+        error: (err) => console.error('Error al eliminar:', err)
+      });
+    }
   }
 
   toggleEstado(id: number) {
     const currentList = this.colaboradores();
-    const updated = currentList.map(col => {
-      if (col.id === id) {
-        const nuevoEstado: 'activo' | 'inactivo' = col.estado === 'activo' ? 'inactivo' : 'activo';
-        return { ...col, estado: nuevoEstado };
-      }
-      return col;
-    });
-    this.colaboradores.set(updated);
+    const colaborador = currentList.find(c => c.id === id);
+    
+    if (colaborador) {
+      // Forzamos el tipo literal
+      const nuevoEstado: 'activo' | 'inactivo' = colaborador.estado === 'activo' ? 'inactivo' : 'activo';
+      
+      this.http.put(`/api/colaboradores/${id}/estado`, { estado: nuevoEstado }).subscribe({
+        next: () => {
+          // Le decimos explícitamente a TypeScript que el resultado es un arreglo de Colaboradores
+          const updated: Colaborador[] = currentList.map(col => 
+            col.id === id ? { ...col, estado: nuevoEstado } : col
+          );
+          this.colaboradores.set(updated);
+        },
+        error: (err) => console.error('Error al cambiar estado:', err)
+      });
+    }
   }
 }

@@ -1,6 +1,7 @@
-import { Component, ChangeDetectionStrategy, signal } from '@angular/core';
+import { Component, ChangeDetectionStrategy, signal, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { HttpClient } from '@angular/common/http';
 
 interface Solicitud {
   id: number;
@@ -20,58 +21,26 @@ interface Solicitud {
   styleUrl: './monitor-solicitudes.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class MonitorSolicitudesComponent {
-  solicitudes = signal<Solicitud[]>([
-    {
-      id: 1,
-      solicitante: 'Colegio San José',
-      escuela: 'Primaria',
-      fechaVisita: '2024-09-05',
-      estado: 'aprobada',
-      numeroVisitantes: 30,
-      proposito: 'Actividad educativa'
-    },
-    {
-      id: 2,
-      solicitante: 'Centro Educativo Aurora',
-      escuela: 'Secundaria',
-      fechaVisita: '2024-09-10',
-      estado: 'pendiente',
-      numeroVisitantes: 45,
-      proposito: 'Excursión pedagógica'
-    },
-    {
-      id: 3,
-      solicitante: 'Instituto Técnico',
-      escuela: 'Técnica',
-      fechaVisita: '2024-09-08',
-      estado: 'rechazada',
-      numeroVisitantes: 25,
-      proposito: 'Visita de observación'
-    },
-    {
-      id: 4,
-      solicitante: 'Escuela Campestre',
-      escuela: 'Primaria',
-      fechaVisita: '2024-09-12',
-      estado: 'aprobada',
-      numeroVisitantes: 35,
-      proposito: 'Actividad cultural'
-    },
-    {
-      id: 5,
-      solicitante: 'Colegio Adventista',
-      escuela: 'Primaria',
-      fechaVisita: '2024-09-15',
-      estado: 'pendiente',
-      numeroVisitantes: 50,
-      proposito: 'Programa de integración'
-    }
-  ]);
+export class MonitorSolicitudesComponent implements OnInit {
+  private http = inject(HttpClient);
+
+  // Inicializamos el signal vacío
+  solicitudes = signal<Solicitud[]>([]);
 
   filterFecha = signal('');
   filterEstado = signal<'todos' | 'aprobada' | 'pendiente' | 'rechazada'>('todos');
-  filterEscuela = signal<'todos' | 'Primaria' | 'Secundaria' | 'Técnica'>('todos');
+  filterEscuela = signal<string>('todos'); // Cambiado a string genérico por si la BD trae "Universidad" o "Preescolar"
+
+  ngOnInit(): void {
+    this.cargarSolicitudes();
+  }
+
+  cargarSolicitudes() {
+    this.http.get<Solicitud[]>('/api/monitor/solicitudes').subscribe({
+      next: (data) => this.solicitudes.set(data),
+      error: (err) => console.error('Error al cargar el monitor:', err)
+    });
+  }
 
   get filteredSolicitudes() {
     return this.solicitudes().filter(s => {
@@ -91,20 +60,20 @@ export class MonitorSolicitudesComponent {
     this.filterEstado.set(value);
   }
 
-  onFilterEscuela(value: 'todos' | 'Primaria' | 'Secundaria' | 'Técnica') {
+  onFilterEscuela(value: string) {
     this.filterEscuela.set(value);
   }
 
   exportarPDF() {
-    console.log('Exportar a PDF');
+    console.log('Exportar a PDF - Próximamente');
   }
 
   exportarExcel() {
-    console.log('Exportar a Excel');
+    console.log('Exportar a Excel - Próximamente');
   }
 
   exportarCSV() {
-    console.log('Exportar a CSV');
+    console.log('Exportar a CSV - Próximamente');
   }
 
   get estadisticas() {

@@ -24,8 +24,8 @@ export const routes: Routes = [
         loadComponent: () => import('./reservas/Programa-servicio/Programa-servicio').then(m => m.ProgramaServicioComponent)
     },
     {
-        path: 'recuperar-password',
-        loadComponent: () => import('./auth/recuperar-password/recuperar-password').then(m => m.RecuperarPasswordComponent)
+        path: 'recuperar-contra',
+        loadComponent: () => import('./auth/recuperar-contra/recuperar-contra').then(m => m.RecuperarContraComponent)
     },
     {
         path: 'registro-colaborador',
@@ -58,6 +58,33 @@ export const routes: Routes = [
             {
                 path: '',
                 redirectTo: '/administrador/dashboard',
+                pathMatch: 'full'
+            }
+        ]
+    },
+    {
+        path: 'colaborador',
+        loadComponent: () => import('./colaborador/colaborador').then(m => m.ColaboradorComponent),
+        children: [
+            {
+                path: 'dashboard',
+                loadComponent: () => import('./colaborador/dashboard/dashboard').then(m => m.Dashboard)
+            },
+            {
+                path: 'solicitudes',
+                loadComponent: () => import('./colaborador/monitor-solicitudes/monitor-solicitudes').then(m => m.MonitorSolicitudes)
+            },
+            {
+                path: 'instalaciones',
+                loadComponent: () => import('./colaborador/instalaciones/instalaciones').then(m => m.Instalaciones)
+            },
+            {
+                path: 'calendario',
+                loadComponent: () => import('./colaborador/calendario/calendario').then(m => m.Calendario)
+            },
+            {
+                path: '',
+                redirectTo: '/colaborador/dashboard',
                 pathMatch: 'full'
             }
         ]

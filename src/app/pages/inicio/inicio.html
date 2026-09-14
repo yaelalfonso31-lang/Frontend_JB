@@ -1,17 +1,8 @@
 <div class="landing-wrapper">
 
     <!-- Barra de Navegación -->
-    <nav class="navbar bg-white shadow-sm py-3">
-        <div class="container d-flex justify-content-between align-items-center">
-            <div class="d-flex align-items-center gap-3">
-                <!-- Reemplaza las rutas según el nombre exacto de tus imágenes -->
-                <img ngSrc="assets/logo-BUAP.jpg" width="140" height="50" alt="Logo BUAP" class="img-fluid" priority>
-                <div class="vr d-none d-md-block" style="height: 40px; color: var(--primary-green);"></div>
-                <img ngSrc="assets/logo.jpg" width="60" height="60" alt="Logo Jardín Botánico BUAP"
-                    class="img-fluid rounded" priority>
-            </div>
-        </div>
-    </nav>
+    <app-header></app-header>
+    <router-outlet></router-outlet>
 
     <!-- Sección Principal (Hero) -->
     <section class="hero-section position-relative d-flex align-items-center justify-content-center text-center">

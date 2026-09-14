@@ -2,17 +2,17 @@ import { Component, ChangeDetectionStrategy, inject, signal } from '@angular/cor
 import { FormBuilder, ReactiveFormsModule, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NgOptimizedImage } from '@angular/common';
-import { AuthService } from '../services/auth.service'; 
+import { AuthService } from '../services/auth.service';
 
 @Component({
-  selector: 'app-recuperar-password',
+  selector: 'app-recuperar-contra',
   standalone: true,
   imports: [ReactiveFormsModule, NgOptimizedImage],
-  templateUrl: './recuperar-password.html',
-  styleUrl: './recuperar-password.scss',
+  templateUrl: './recuperar-contra.html',
+  styleUrl: './recuperar-contra.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class RecuperarPasswordComponent {
+export class RecuperarContraComponent {
   private fb = inject(FormBuilder);
   private router = inject(Router);
   private authService = inject(AuthService);
@@ -44,14 +44,12 @@ export class RecuperarPasswordComponent {
     if (this.step1Form.valid) {
       this.isLoading.set(true);
       this.errorMessage.set(null);
-
       const email = this.step1Form.value.email!;
 
-      // Petición real al backend mediante HttpClient
       this.authService.solicitarCodigo(email).subscribe({
-        next: (res) => {
+        next: () => {
           this.isLoading.set(false);
-          this.currentStep.set(2); // Avanza al siguiente paso
+          this.currentStep.set(2);
         },
         error: (err) => {
           this.isLoading.set(false);
@@ -69,7 +67,6 @@ export class RecuperarPasswordComponent {
       this.errorMessage.set(null);
 
       setTimeout(() => {
-        console.log('Código validado:', this.step2Form.value.codigo);
         this.isLoading.set(false);
         this.currentStep.set(3);
       }, 1000);
@@ -84,7 +81,6 @@ export class RecuperarPasswordComponent {
       this.errorMessage.set(null);
 
       setTimeout(() => {
-        console.log('Contraseña actualizada con éxito');
         this.isLoading.set(false);
         this.currentStep.set(4);
       }, 1200);

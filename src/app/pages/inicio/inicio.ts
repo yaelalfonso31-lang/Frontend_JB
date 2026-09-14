@@ -1,11 +1,11 @@
 import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
-import { Router } from '@angular/router';
-import { NgOptimizedImage } from '@angular/common';
+import { Router, RouterOutlet } from '@angular/router';
+import { HeaderComponent } from '../../shared/header/header';
 
 @Component({
   selector: 'app-inicio',
   standalone: true,
-  imports: [NgOptimizedImage],
+  imports: [HeaderComponent, RouterOutlet],
   templateUrl: './inicio.html',
   styleUrl: './inicio.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
