@@ -6,7 +6,8 @@ import { HttpClient } from '@angular/common/http'; // <-- Importar HttpClient
 
 @Component({
   selector: 'app-login',
-  imports: [ReactiveFormsModule, NgOptimizedImage,],
+  standalone: true,
+  imports: [ReactiveFormsModule, NgOptimizedImage],
   templateUrl: './login.html',
   styleUrl: './login.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -64,6 +65,7 @@ export class LoginComponent {
           }
         }
       });
+
     } else {
       this.loginForm.markAllAsTouched();
     }
@@ -73,9 +75,13 @@ export class LoginComponent {
     this.router.navigate(['/inicio']);
   }
 
-  irARecuperarPassword(): void {
+  irARecuperarContra(): void {
     // Ruta hacia la página de recuperación de contraseña
     this.router.navigate(['/recuperar-contra']);
 
+  }
+
+  irARegistrarColaborador(): void {
+    this.router.navigate(['/registro-colaborador'])
   }
 }

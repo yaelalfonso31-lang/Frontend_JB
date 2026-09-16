@@ -1,123 +1,115 @@
-$primary-green: #2e7d32;
-$primary-hover: #1b5e20;
-$error-color: #ff5252;
+/* Integración con las variables globales del sistema */
+:host {
+  display: block;
+  padding: 2rem 1rem;
+  background-color: #f4f6f6;
+  min-height: 100vh;
+}
 
-.login-wrapper {
-    position: relative;
-    min-height: 100vh;
+.code-input {
+  letter-spacing: 4px;
+  font-size: 1.2rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+/* Alineación para alertas e íconos */
+.alert {
+  border-radius: var(--border-radius, 4px);
+}
+
+.recovery-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 3rem 1.5rem;
+  background-color: #f4f6f6;
+}
+
+.form-container {
+  background: white;
+  border-radius: var(--border-radius, 8px);
+  border: 1px solid var(--border-color, #e0e0e0);
+  width: 100%;
+  max-width: 850px;
+  overflow: hidden;
+}
+
+.form-content {
+  padding: 3rem 4rem; // Espaciado amplio para respiración de textos
+}
+
+.section-card {
+  border: none;
+  padding: 0;
+  margin: 0;
+  box-shadow: none;
+}
+
+.section-title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--secondary-green, #145A32);
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 2px solid #eaeded;
+  letter-spacing: 0.5px;
+}
+
+.subtitulo {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--secondary-green, #145A32);
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
+  letter-spacing: 0.5px;
+}
+
+.code-input {
+  letter-spacing: 6px;
+  font-size: 1.3rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+@media (max-width: 768px) {
+  .recovery-wrapper {
+    padding: 1rem 0.5rem;
+  }
+
+  .form-content {
+    padding: 2rem 1.5rem; // Reducción responsiva para pantallas móviles
+  }
+}
+
+.encabezado-institucional {
+  background: #049e46;
+  padding: 1.5rem 2rem;
+  border-radius: var(--border-radius, 8px) var(--border-radius, 8px) 0 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+  /* Alineación horizontal del Logo y el Título */
+  .header-brand {
     display: flex;
-    align-items: center;
-    justify-content: center;
-    background: url('/fondoJB.jpg') no-repeat center center;
-    background-size: cover;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    color: #ffffff;
-}
-
-.overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
+    align-items: center; // Alinea verticalmente al centro
+    justify-content: center; // Centra horizontalmente todo el bloque
+    gap: 1rem; // Espacio entre el logo y el título
     width: 100%;
-    height: 100%;
-    background: linear-gradient(135deg, rgba(10, 30, 10, 0.85) 0%, rgba(20, 60, 20, 0.6) 100%);
-    z-index: 1;
-}
 
-.login-content {
-    position: relative;
-    z-index: 2;
-    display: flex;
-    width: 100%;
-    max-width: 500px;
-    padding: 2rem;
-}
-
-.login-card {
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    padding: 3rem 2.5rem;
-    border-radius: 16px;
-    width: 100%;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-
-    h2 {
-        font-size: 1.8rem;
-        margin-bottom: 0.5rem;
-        font-weight: 700;
-    }
-}
-
-.form-group {
-    margin-bottom: 1.5rem;
-
-    label {
-        display: block;
-        margin-bottom: 0.5rem;
-        font-size: 0.9rem;
-        color: #e0e0e0;
+    h1 {
+      color: white;
+      // font-size: 1.5rem;
+      // font-weight: 700;
+      margin: 0; // Elimina el margen por defecto del h1 que desalinea la fila
     }
 
-    input {
-        width: 100%;
-        padding: 0.9rem;
-        background: rgba(255, 255, 255, 0.9);
-        border: 2px solid transparent;
-        border-radius: 8px;
-        font-size: 1rem;
-        color: #333;
-        transition: all 0.3s ease;
-
-        &:focus {
-            outline: none;
-            background: #ffffff;
-            border-color: $primary-green;
-            box-shadow: 0 0 0 4px rgba(46, 125, 50, 0.3);
-        }
-
-        &.is-invalid {
-            border-color: $error-color;
-        }
-    }
-}
-
-.btn-submit {
-    width: 100%;
-    padding: 1rem;
-    background-color: $primary-green;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-size: 1.1rem;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background-color 0.3s, transform 0.1s;
-
-    &:hover:not(:disabled) {
-        background-color: $primary-hover;
-    }
-
-    &:active:not(:disabled) {
-        transform: scale(0.98);
-    }
-
-    &:disabled {
-        background-color: rgba(255, 255, 255, 0.3);
-        color: #ccc;
-        cursor: not-allowed;
-    }
-}
-
-.forgot-password {
-    color: #a5d6a7;
-    text-decoration: none;
-    font-size: 0.9rem;
-    transition: color 0.3s;
-
-    &:hover {
-        color: #ffffff;
-        text-decoration: underline;
+    .logo-institucional {
+      border-radius: 50%; // Hace el logo circular (opcional)
+      object-fit: cover;
     }
 }

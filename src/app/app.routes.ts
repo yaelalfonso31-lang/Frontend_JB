@@ -25,7 +25,7 @@ export const routes: Routes = [
     },
     {
         path: 'recuperar-contra',
-        loadComponent: () => import('./auth/recuperar-contra/recuperar-contra').then(m => m.RecuperarPasswordComponent)
+        loadComponent: () => import('./auth/recuperar-contra/recuperar-contra').then(m => m.RecuperarContraComponent)
     },
     {
         path: 'registro-colaborador',
