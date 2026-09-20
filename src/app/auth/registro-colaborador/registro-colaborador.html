@@ -8,7 +8,7 @@
             </div>
             <div class="header-brand">
                 <h1>Registro de Colaborador</h1>
-            <img ngSrc="assets/logo.jpg" width="60" height="60" alt="Logo Jardín Botánico" class="logo-institucional" priority>
+            <img ngSrc="assets/logo.jpg" width="74" height="60" alt="Logo Jardín Botánico" class="logo-institucional" priority>
             </div>
         </div>
 
@@ -83,7 +83,7 @@
                         <button type="button" class="btn btn-outline-secondary" (click)="irAlLogin()">
                             <i class="fa-solid fa-arrow-left me-2"></i> Volver al Login
                         </button>
-                        <button type="submit" class="btn btn-success" [disabled]="isLoading()">
+                        <button type="submit" class="btn btn-siguiente" [disabled]="isLoading()">
                             @if (!isLoading()) {
                             <span>Solicitar Registro <i class="fa-solid fa-user-check ms-2"></i></span>
                             } @else {

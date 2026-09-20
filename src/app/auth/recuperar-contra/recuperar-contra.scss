@@ -84,7 +84,7 @@
 }
 
 .encabezado-institucional {
-  background: #049e46;
+  background: #d1e7de;
   padding: 1.5rem 2rem;
   border-radius: var(--border-radius, 8px) var(--border-radius, 8px) 0 0;
   display: flex;
@@ -102,14 +102,33 @@
     width: 100%;
 
     h1 {
-      color: white;
-      // font-size: 1.5rem;
-      // font-weight: 700;
+      color: #408558;
+      //font-weight: 700;
       margin: 0; // Elimina el margen por defecto del h1 que desalinea la fila
     }
 
     .logo-institucional {
-      border-radius: 50%; // Hace el logo circular (opcional)
-      object-fit: cover;
-    }
+    width: auto;           // Permite que el ancho se calcule automáticamente
+    height: 60px;          // Fija la altura deseada
+    object-fit: contain;   // Garantiza que la imagen conserve sus proporciones reales
+  }
+}
+
+.btn-siguiente {
+  background-color: #408558;
+  border-color: #408558;
+  color: #ffffff;
+  font-weight: 600;
+  transition: all 0.2s ease-in-out;
+
+  &:hover, &:focus {
+    background-color: #376e4a;
+    border-color: #376e4a;
+    color: #ffffff;
+  }
+
+  &:disabled {
+    background-color: #51aa70;
+    border-color: #51aa70;
+  }
 }

@@ -8,7 +8,7 @@
             </div>
             <div class="header-brand">
                 <h1>Recuperación de Contraseña</h1>
-                <img ngSrc="assets/logo.jpg" width="60" height="60" alt="Logo Jardín Botánico" class="logo-institucional" priority>
+                <img ngSrc="assets/logo.jpg" width="74" height="60" alt="Logo Jardín Botánico" class="logo-institucional" priority>
             </div>
         </div>
 
@@ -69,7 +69,7 @@
                         <button type="button" class="btn btn-outline-secondary" (click)="irAlLogin()">
                             <i class="fa-solid fa-arrow-left me-2"></i> Volver al Login
                         </button>
-                        <button type="submit" class="btn btn-success" [disabled]="isLoading()">
+                        <button type="submit" class="btn btn-siguiente" [disabled]="isLoading()">
                             @if (!isLoading()) {
                             <span>Enviar Código <i class="fa-solid fa-paper-plane ms-2"></i></span>
                             } @else {
@@ -113,7 +113,7 @@
                             <button type="button" class="btn btn-outline-secondary" (click)="enviarCodigo()" [disabled]="isLoading()">
                                 Reenviar
                             </button>
-                            <button type="submit" class="btn btn-success" [disabled]="isLoading()">
+                            <button type="submit" class="btn btn-siguiente" [disabled]="isLoading()">
                                 @if (!isLoading()) {
                                 <span>Verificar <i class="fa-solid fa-check ms-2"></i></span>
                                 } @else {
@@ -165,7 +165,7 @@
                         <button type="button" class="btn btn-outline-secondary" (click)="volverPaso(2)">
                             <i class="fa-solid fa-arrow-left me-2"></i> Atrás
                         </button>
-                        <button type="submit" class="btn btn-success" [disabled]="isLoading()">
+                        <button type="submit" class="btn btn-siguiente" [disabled]="isLoading()">
                             @if (!isLoading()) {
                             <span>Guardar Contraseña <i class="fa-solid fa-floppy-disk ms-2"></i></span>
                             } @else {
@@ -187,7 +187,7 @@
                 <p class="text-muted mb-4 mx-auto" style="max-width: 480px;">
                     Tu contraseña ha sido restablecida exitosamente. Ya puedes ingresar al sistema con tus nuevas credenciales.
                 </p>
-                <button type="button" class="btn btn-success px-4 py-2" (click)="irAlLogin()">
+                <button type="button" class="btn btn-siguiente px-4 py-2" (click)="irAlLogin()">
                     Ir a Iniciar Sesión <i class="fa-solid fa-right-to-bracket ms-2"></i>
                 </button>
             </div>
