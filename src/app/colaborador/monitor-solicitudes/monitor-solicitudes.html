@@ -1,0 +1,162 @@
+<div class="monitor-container">
+  <h1>Monitor Operativo de Solicitudes</h1>
+
+  <!-- Estadísticas Rápidas -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-number">{{ estadisticas.total }}</div>
+      <div class="stat-label">Total de Solicitudes</div>
+    </div>
+    <div class="stat-card stat-success">
+      <div class="stat-number">{{ estadisticas.aprobadas }}</div>
+      <div class="stat-label">Aprobadas</div>
+    </div>
+    <div class="stat-card stat-warning">
+      <div class="stat-number">{{ estadisticas.pendientes }}</div>
+      <div class="stat-label">Pendientes / Revisión</div>
+    </div>
+    <div class="stat-card stat-danger">
+      <div class="stat-number">{{ estadisticas.rechazadas }}</div>
+      <div class="stat-label">Rechazadas</div>
+    </div>
+    <div class="stat-card stat-info">
+      <div class="stat-number">{{ estadisticas.totalVisitantes }}</div>
+      <div class="stat-label">Visitantes Totales</div>
+    </div>
+  </div>
+
+  <!-- Filtros y Exportación -->
+  <div class="controls-section">
+    <div class="filters">
+      <div class="filter-group">
+        <label>Fecha de Visita:</label>
+        <input type="date" (change)="onFilterFecha($any($event.target).value)" class="filter-input" />
+      </div>
+
+      <div class="filter-group">
+        <label>Estado:</label>
+        <select (change)="onFilterEstado($any($event.target).value)" class="filter-select">
+          <option value="todos">Todos</option>
+          <option value="aprobada">Aprobada</option>
+          <option value="pendiente">Pendiente</option>
+          <option value="correccion">En Corrección</option>
+          <option value="rechazada">Rechazada</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label>Escuela:</label>
+        <select (change)="onFilterEscuela($any($event.target).value)" class="filter-select">
+          <option value="todos">Todos</option>
+          <option value="Primaria">Primaria</option>
+          <option value="Secundaria">Secundaria</option>
+          <option value="Técnica">Técnica</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="export-buttons">
+      <button type="button" class="btn-secondary" (click)="limpiarFiltros()">Limpiar filtros</button>
+      <button class="btn-export" (click)="exportarPDF()" title="Exportar a PDF">PDF</button>
+      <button class="btn-export" (click)="exportarExcel()" title="Exportar a Excel">Excel</button>
+      <button class="btn-export" (click)="exportarCSV()" title="Exportar a CSV">CSV</button>
+    </div>
+  </div>
+
+  <!-- Tabla de Solicitudes -->
+  <div class="table-container">
+    <table class="solicitudes-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Solicitante</th>
+          <th>Escuela</th>
+          <th>Fecha de Visita</th>
+          <th>Visitantes</th>
+          <th>Estado</th>
+          <th>Acción</th> <!-- Nueva columna para el Colaborador -->
+        </tr>
+      </thead>
+      <tbody>
+        @for (solicitud of filteredSolicitudes; track solicitud.id) {
+          <tr>
+            <td>{{ solicitud.id }}</td>
+            <td>{{ solicitud.solicitante }}</td>
+            <td>{{ solicitud.escuela }}</td>
+            <td>{{ solicitud.fechaVisita }}</td>
+            <td class="numeric">{{ solicitud.numeroVisitantes }}</td>
+            <td>
+              <span [class]="'status-badge status-' + solicitud.estado">
+                {{ solicitud.estado | titlecase }}
+              </span>
+            </td>
+            <td>
+              <!-- Botón que dispara el modal -->
+              <button (click)="abrirDetalle(solicitud)" style="padding: 6px 12px; background: #004d40; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 0.85rem;">
+                Revisar
+              </button>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+
+    @if (filteredSolicitudes.length === 0) {
+      <div class="no-results">
+        <p>No se encontraron solicitudes con los filtros especificados</p>
+      </div>
+    }
+  </div>
+
+  <!-- MODAL DE DETALLE (Exclusivo del Colaborador) -->
+  @if (solicitudSeleccionada(); as sol) {
+    <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); display: flex; justify-content: center; align-items: center; z-index: 9999;">
+      <div style="background: white; padding: 25px; border-radius: 8px; width: 450px; max-width: 90%; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #f4f4f4; padding-bottom: 10px; margin-bottom: 15px;">
+          <h2 style="margin: 0; color: #333; font-size: 1.5rem;">Solicitud #{{ sol.id }}</h2>
+          <button (click)="cerrarDetalle()" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #888;">✕</button>
+        </div>
+
+        <div style="margin-bottom: 20px; font-size: 0.95rem; color: #444;">
+          <p style="margin: 5px 0;"><strong>Escuela:</strong> {{ sol.solicitante }}</p>
+          <p style="margin: 5px 0;"><strong>Nivel:</strong> {{ sol.escuela }}</p>
+          <p style="margin: 5px 0;"><strong>Fecha:</strong> {{ sol.fechaVisita }}</p>
+          <p style="margin: 5px 0;"><strong>Visitantes:</strong> {{ sol.numeroVisitantes }}</p>
+          <p style="margin: 5px 0;"><strong>Propósito:</strong> {{ sol.proposito }}</p>
+        </div>
+
+        <!-- Botones Principales -->
+        <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+          <button (click)="cambiarEstado('aprobada')" style="flex: 1; padding: 10px; background: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">
+            ✓ Aprobar
+          </button>
+          <button (click)="cambiarEstado('rechazada')" style="flex: 1; padding: 10px; background: #dc3545; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">
+            ✕ Rechazar
+          </button>
+        </div>
+
+        <!-- Botón y Textarea para Corrección -->
+        <button (click)="toggleCorreccion()" style="width: 100%; padding: 10px; background: #ffc107; color: #333; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">
+          Solicitar Corrección
+        </button>
+
+        @if (mostrarCampoCorreccion()) {
+          <div style="margin-top: 15px; background: #f8f9fa; padding: 15px; border-radius: 6px; border: 1px solid #dee2e6;">
+            <label style="display: block; margin-bottom: 8px; font-weight: bold; font-size: 0.9rem;">Indicar motivo a la escuela:</label>
+            <textarea
+              rows="3"
+              style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; margin-bottom: 10px; font-family: inherit; resize: vertical;"
+              placeholder="Ej: Faltan datos del profesor responsable..."
+              [ngModel]="motivoCorreccion()"
+              (ngModelChange)="motivoCorreccion.set($event)"
+            ></textarea>
+            <button (click)="cambiarEstado('correccion')" style="width: 100%; padding: 10px; background: #17a2b8; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">
+              Enviar Corrección
+            </button>
+          </div>
+        }
+      </div>
+    </div>
+  }
+</div>

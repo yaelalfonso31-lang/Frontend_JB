@@ -1,6 +1,6 @@
-import { Component, ChangeDetectionStrategy, OnInit } from '@angular/core';
+import { Component, ChangeDetectionStrategy, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterOutlet, RouterLink, ActivatedRoute } from '@angular/router';
+import { RouterOutlet, RouterLink, ActivatedRoute, Router } from '@angular/router';
 
 type AdminSection = 'dashboard' | 'colaboradores' | 'solicitudes' | 'configuracion';
 
@@ -14,6 +14,7 @@ type AdminSection = 'dashboard' | 'colaboradores' | 'solicitudes' | 'configuraci
 })
 export class AdministradorComponent implements OnInit {
   activeSection: AdminSection = 'dashboard';
+  private router = inject(Router);
 
   constructor(private activatedRoute: ActivatedRoute) {}
 
@@ -26,5 +27,9 @@ export class AdministradorComponent implements OnInit {
         }
       }
     });
+  }
+
+  cerrarSesion() {
+    this.router.navigate(['/login']);
   }
 }
