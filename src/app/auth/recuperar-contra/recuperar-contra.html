@@ -65,6 +65,19 @@
                         </div>
                     </div>
 
+                    <!-- Avisos de error dinámicos -->
+                    @if (step1Form.controls.email.invalid && step1Form.controls.email.touched) {
+                    <div class="text-danger small mt-1 d-flex align-items-center">
+                        <i class="fa-solid fa-circle-exclamation me-1"></i>
+                        @if (step1Form.controls.email.errors?.['required']) {
+                        <span>El correo electrónico es obligatorio.</span>
+                        }
+                        @if (step1Form.controls.email.errors?.['email']) {
+                        <span>Ingresa un correo válido (ejemplo: usuario@dominio.com).</span>
+                        }
+                    </div>
+                    }
+
                     <div class="d-flex justify-content-between align-items-center pt-4 border-top">
                         <button type="button" class="btn btn-outline-secondary" (click)="irAlLogin()">
                             <i class="fa-solid fa-arrow-left me-2"></i> Volver al Login
@@ -102,6 +115,19 @@
                                 placeholder="123456" maxlength="6"
                                 [class.is-invalid]="step2Form.controls.codigo.invalid && step2Form.controls.codigo.touched">
                         </div>
+
+                        <!-- Avisos de error dinámicos -->
+                        @if (step2Form.controls.codigo.invalid && step2Form.controls.codigo.touched) {
+                        <div class="text-danger small mt-1 d-flex align-items-center justify-content-center">
+                            <i class="fa-solid fa-circle-exclamation me-1"></i>
+                            @if (step2Form.controls.codigo.errors?.['required']) {
+                            <span>Ingresa el código de 6 dígitos.</span>
+                            }
+                            @if (step2Form.controls.codigo.errors?.['minlength'] || step2Form.controls.codigo.errors?.['pattern']) {
+                            <span>El código debe contener exactamente 6 números.</span>
+                            }
+                        </div>
+                        }
                     </div>
 
                     <div class="d-flex justify-content-between align-items-center pt-4 border-top">
@@ -144,6 +170,17 @@
                                 placeholder="••••••••"
                                 [class.is-invalid]="step3Form.controls.nuevaPassword.invalid && step3Form.controls.nuevaPassword.touched">
                         </div>
+                        @if (step3Form.controls.nuevaPassword.invalid && step3Form.controls.nuevaPassword.touched) {
+                        <div class="text-danger small mt-1 d-flex align-items-center">
+                            <i class="fa-solid fa-circle-exclamation me-1"></i>
+                            @if (step3Form.controls.nuevaPassword.errors?.['required']) {
+                            <span>La nueva contraseña es requerida.</span>
+                            }
+                            @if (step3Form.controls.nuevaPassword.errors?.['minlength']) {
+                            <span>La contraseña debe tener al menos 6 caracteres.</span>
+                            }
+                        </div>
+                        }
                     </div>
 
                     <div class="mb-4">
@@ -154,9 +191,14 @@
                                 placeholder="••••••••"
                                 [class.is-invalid]="(step3Form.controls.confirmarPassword.invalid && step3Form.controls.confirmarPassword.touched) || (step3Form.errors?.['mismatch'] && step3Form.controls.confirmarPassword.touched)">
                         </div>
-                        @if (step3Form.errors?.['mismatch'] && step3Form.controls.confirmarPassword.touched) {
-                        <div class="text-danger small mt-1">
-                            Las contraseñas no coinciden.
+                        @if (step3Form.controls.confirmarPassword.touched) {
+                        <div class="text-danger small mt-1 d-flex align-items-center">
+                            <i class="fa-solid fa-circle-exclamation me-1"></i>
+                            @if (step3Form.controls.confirmarPassword.errors?.['required']) {
+                            <span>Confirma tu nueva contraseña.</span>
+                            } @else if (step3Form.errors?.['mismatch']) {
+                            <span>Las contraseñas no coinciden.</span>
+                            }
                         </div>
                         }
                     </div>
