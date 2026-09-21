@@ -1,0 +1,211 @@
+.calendar-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  color: #333;
+}
+
+.calendar-header {
+  margin-bottom: 1.5rem;
+
+  h1 {
+    margin: 0;
+    color: #333;
+    font-size: 2rem;
+  }
+
+  p {
+    margin: 0.4rem 0 1.25rem;
+    color: #666;
+  }
+}
+
+.month-controls,
+.agenda-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.month-controls {
+  padding: 1rem 1.25rem;
+  border-radius: 8px;
+  background: white;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+
+  h2 {
+    margin: 0;
+    color: #004d40;
+    font-size: 1.25rem;
+  }
+
+  button {
+    padding: 0.65rem 1rem;
+    border: 0;
+    border-radius: 4px;
+    background: #e0e0e0;
+    color: #333;
+    cursor: pointer;
+    font-weight: 600;
+
+    &:hover {
+      background: #c8e6c9;
+      color: #004d40;
+    }
+  }
+}
+
+.calendar-grid-card,
+.agenda-table-wrapper,
+.empty-selection {
+  border-radius: 8px;
+  background: white;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.calendar-grid-card {
+  margin-bottom: 1.5rem;
+  padding: 1.25rem;
+}
+
+.weekdays,
+.days-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 0.6rem;
+}
+
+.weekdays {
+  margin-bottom: 0.6rem;
+  color: #777;
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+.calendar-day {
+  min-height: 68px;
+  border: 2px solid #eee;
+  border-radius: 8px;
+  background: #f8f9fa;
+  color: #333;
+  cursor: pointer;
+  font-size: 1.05rem;
+  font-weight: 700;
+  position: relative;
+
+  &:hover:not(:disabled) {
+    border-color: #80cbc4;
+    background: #e0f2f1;
+  }
+
+  &.selected-day {
+    border-color: #004d40;
+    background: #004d40;
+    color: white;
+  }
+
+  &.empty-day {
+    border-color: transparent;
+    background: transparent;
+    cursor: default;
+  }
+
+  small {
+    position: absolute;
+    bottom: 0.25rem;
+    color: #ff9800;
+    font-size: 1.4rem;
+    line-height: 0.5;
+  }
+
+  &.selected-day small {
+    color: #ffd180;
+  }
+}
+
+.agenda-section {
+  margin-top: 1rem;
+}
+
+.agenda-heading {
+  margin-bottom: 0.75rem;
+  padding: 0.9rem 1rem;
+  border-left: 5px solid #004d40;
+  background: #e0f2f1;
+  color: #004d40;
+
+  h2 {
+    margin: 0;
+    font-size: 1.1rem;
+  }
+
+  span {
+    font-size: 0.9rem;
+  }
+}
+
+.agenda-table-wrapper {
+  overflow-x: auto;
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  th,
+  td {
+    padding: 0.85rem 1rem;
+    border-bottom: 1px solid #eee;
+    text-align: left;
+  }
+
+  th {
+    background: #f8f9fa;
+    color: #555;
+    font-size: 0.85rem;
+  }
+}
+
+.visit-time {
+  color: #004d40;
+  font-weight: 700;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 0.3rem 0.65rem;
+  border-radius: 12px;
+  background: #d4edda;
+  color: #155724;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.empty-agenda,
+.empty-selection {
+  padding: 2rem;
+  color: #777;
+  text-align: center;
+}
+
+@media (max-width: 700px) {
+  .calendar-container {
+    padding: 1rem;
+  }
+
+  .month-controls,
+  .agenda-heading {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .month-controls button {
+    width: 100%;
+  }
+
+  .calendar-day {
+    min-height: 52px;
+  }
+}

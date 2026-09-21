@@ -52,6 +52,10 @@ export const routes: Routes = [
                 loadComponent: () => import('./administrador/monitor-solicitudes/monitor-solicitudes').then(m => m.MonitorSolicitudesComponent)
             },
             {
+                path: 'calendario',
+                loadComponent: () => import('./administrador/calendario/calendario').then(m => m.AdministradorCalendarioComponent)
+            },
+            {
                 path: 'configuracion',
                 loadComponent: () => import('./administrador/configuracion-sistema/configuracion-sistema').then(m => m.ConfiguracionSistemaComponent)
             },
