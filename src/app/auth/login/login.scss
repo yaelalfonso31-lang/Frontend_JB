@@ -58,10 +58,10 @@ $error-color: #ff5252;
         height: auto;
         object-fit: contain;
         border-radius: 8px;
-        background: rgba(164, 155, 155, 0.35);
+        background: rgba(164, 155, 155, 0);
         backdrop-filter: blur(8px);
         -webkit-backdrop-filter: blur(8px);
-        border: 1px solid rgba(255, 255, 255, 0.15);
+        border: 1px solid rgba(255, 255, 255, 0);
         border-radius: 12px;
         padding: 1rem 1.5rem;
         box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
@@ -291,26 +291,28 @@ $error-color: #ff5252;
 }
 
 .style-title {
-  color: var(--secondary-green, #ffffffd2);
+    color: var(--secondary-green, #ffffffd2);
 }
 
 .btn-link-clean {
-  background: transparent;
-  border: none;
-  padding: 0;
-  color: #a5d6a7; /* Verde más claro y brillante */
-  font-weight: 400;
-  font-size: 0.9rem;
-  cursor: pointer;
-  text-decoration: none;
-  transition: color 0.2s ease, text-decoration 0.2s ease;
+    background: transparent;
+    border: none;
+    padding: 0;
+    color: #a5d6a7;
+    /* Verde más claro y brillante */
+    font-weight: 400;
+    font-size: 0.9rem;
+    cursor: pointer;
+    text-decoration: none;
+    transition: color 0.2s ease, text-decoration 0.2s ease;
 
-  &:hover {
-    color: #fafafa; /* Verde intermedio al pasar el ratón */
-    text-decoration: underline;
-  }
+    &:hover {
+        color: #fafafa;
+        /* Verde intermedio al pasar el ratón */
+        text-decoration: underline;
+    }
 
-  &:focus {
-    outline: none;
-  }
+    &:focus {
+        outline: none;
+    }
 }

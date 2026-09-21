@@ -1141,10 +1141,11 @@
                         </div>
                         <div class="col-md-6">
                             <div class="bg-light p-3 rounded-3 border">
-                                <h6 class="fw-bold text-primary"><i class="bi bi-envelope-paper me-2"></i>Envío de
+                                <h6 class="fw-bold" style="color: var(--primary-green);"><i
+                                        class="bi bi-envelope-paper me-2"></i>Envío de
                                     comprobante</h6>
                                 <p class="mb-0">Envíe su ficha de depósito o comprobante de transferencia al correo:</p>
-                                <p class="mb-0 fw-bold"><a
+                                <p class="mb-0 fw-bold"><a style="color: var(--primary-green);"
                                         href="mailto:jardinbotanico.cfdi@correo.buap.mx">jardinbotanico.cfdi@correo.buap.mx</a>
                                 </p>
                                 <small class="text-muted">El comprobante debe verse como el ejemplo que se muestra en el
@@ -1643,7 +1644,7 @@
                 <!-- Botón principal para enviar el formulario -->
                 <!-- Llama a una función enviarSolicitud() que puedes crear en tu TS para procesar solicitudForm.value -->
                 <!-- Botón principal para enviar el formulario -->
-                <button type="button" class="btn btn-success btn-lg px-5" (click)="enviarSolicitud()">
+                <button type="button" class="btn btn-success btn-lg px-5" (click)="irAPaso(6)">
                     <i class="bi bi-send-check-fill me-2"></i> Finalizar y Enviar
                 </button>
             </div>
@@ -1714,7 +1715,7 @@
                     </label>
                 </div>
 
-                <button type="button" class="btn btn-outline-primary" (click)="descargarPoliticas()">
+                <button type="button" class="btn btn-outline-politicas" (click)="descargarPoliticas()">
                     <i class="bi bi-file-earmark-pdf-fill me-2"></i> Descargar Políticas PDF
                 </button>
             </div>

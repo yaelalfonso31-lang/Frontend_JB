@@ -141,8 +141,8 @@
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        width: 80px;
-        height: 90px;
+        width: 180px;
+        height: 100px;
         line-height: 1;
         text-align: center;
         flex-shrink: 0;
@@ -150,7 +150,7 @@
         &::before {
             content: '';
             /* El texto 'Paso' ya lo trae el HTML de Angular */
-            font-size: 0.85rem;
+            font-size: 0.5rem;
             font-weight: normal;
             margin-bottom: 4px;
             text-transform: uppercase;
@@ -160,8 +160,8 @@
 
     h1 {
         color: var(--secondary-green);
-        font-size: 1.3rem;
-        font-weight: 700;
+        font-size: 1.5rem;
+        font-weight: 500;
         text-transform: uppercase;
         padding: 0 120px 0 30px;
         margin: 0;
@@ -169,14 +169,7 @@
         letter-spacing: 0.5px;
     }
 
-    .logo-institucional {
-        position: absolute;
-        right: 30px;
-        top: 50%;
-        transform: translateY(-50%);
-        /* Para ngSrc es mejor evitar max-height y dejar que actúe sobre sus atributos width/height */
-        border-radius: 4px;
-    }
+
 }
 
 @media (max-width: 768px) {
@@ -294,8 +287,8 @@
     color: var(--text-dark);
 
     &:not(.collapsed) {
-        background-color: var(--color-warm-yellow);
-        color: --color-warm-yellow;
+        background-color: var(--color-cream);
+        color: var(--color-warm-yellow);
         box-shadow: none;
 
         i {
@@ -444,7 +437,7 @@
 
 /* 1. Iconos de sección (section-title) con fondo verde y icono crema */
 .section-title .step-badge {
-    background: var(--primary-green);
+    background: var(--light-green);
     color: var(--text-cream);
     border: none;
 }
@@ -488,4 +481,38 @@
 /* 5. Ajuste para el icono de "Anticipo" en el label */
 label[for="monto_anticipo"] i {
     color: #f4b63f;
+}
+
+.alert-danger .bi-exclamation-triangle-fill {
+    color: #145a32 !important;
+    /* Verde oscuro institucional */
+}
+
+/* ==========================================================================
+   BOTÓN DESCARGAR POLÍTICAS (PASO 6)
+   ========================================================================== */
+.btn-outline-politicas {
+    color: var(--primary-green);
+    border: 1px solid var(--primary-green);
+    background-color: transparent;
+    border-radius: 4px;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+
+    &:hover,
+    &:focus {
+        background-color: var(--primary-green);
+        border-color: var(--primary-green);
+        color: white;
+    }
+
+    &:focus {
+        box-shadow: 0 0 0 0.25rem rgba(64, 133, 88, 0.25);
+    }
+
+    i {
+        color: inherit;
+    }
 }
