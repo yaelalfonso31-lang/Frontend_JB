@@ -1,6 +1,3 @@
-/* ==========================================================================
-   INDICADOR DE PROGRESO (PASOS)
-   ========================================================================== */
 .progress-steps {
     display: flex;
     justify-content: center;
@@ -204,9 +201,7 @@
     }
 }
 
-/* ==========================================================================
-   SECCIONES Y TARJETAS
-   ========================================================================== */
+
 .section-card {
     background: white;
     border: 1px solid var(--border-color);
@@ -241,9 +236,6 @@
     }
 }
 
-/* ==========================================================================
-   TARJETAS DE SERVICIOS (Radios)
-   ========================================================================== */
 .service-radio-card {
     background-color: white;
     border: 1px solid var(--border-color);
@@ -271,9 +263,6 @@
     }
 }
 
-/* ==========================================================================
-   ACORDEÓN Y TÉRMINOS
-   ========================================================================== */
 .accordion-item {
     border: 1px solid var(--border-color);
     margin-bottom: 0.5rem;
@@ -302,7 +291,6 @@
     }
 }
 
-/* Iconos de acordeón cuando están cerrados */
 .accordion-button.collapsed {
 
     .bi-geo-alt-fill,
@@ -326,15 +314,11 @@
     }
 }
 
-/* ==========================================================================
-   INPUTS, FORMULARIOS Y VALIDACIONES DE ANGULAR
-   ========================================================================== */
 .form-label {
     font-weight: 600;
     color: var(--text-dark);
     font-size: 0.95rem;
 
-    /* Mejora de contraste para iconos en etiquetas */
     i {
         color: var(--primary-green);
         font-size: 1.1rem;
@@ -369,7 +353,6 @@
     background-color: white;
 }
 
-/* AÑADIDO: Estilos automáticos para Formularios Reactivos de Angular */
 .form-control.ng-invalid.ng-touched,
 .form-select.ng-invalid.ng-touched,
 .form-control.is-invalid {
@@ -385,9 +368,6 @@
     }
 }
 
-/* ==========================================================================
-   BOTONES
-   ========================================================================== */
 .btn-success {
     background-color: var(--primary-green);
     border-color: var(--primary-green);
@@ -417,12 +397,8 @@
     font-size: 0.9rem;
 }
 
-/* ==========================================================================
-   RESPONSIVE PARA IMÁGENES (Adaptado a ngSrc)
-   ========================================================================== */
 @media (max-width: 768px) {
     .service-radio-card img {
-        /* Con ngSrc es vital mantener el object-fit para que no se deformen */
         width: 100% !important;
         height: auto !important;
         aspect-ratio: 4/3;
@@ -431,11 +407,7 @@
     }
 }
 
-/* ==========================================================================
-   MEJORAS DE CONTRASTE Y PALETA CROMÁTICA
-   ========================================================================== */
 
-/* 1. Iconos de sección (section-title) con fondo verde y icono crema */
 .section-title .step-badge {
     background: var(--light-green);
     color: var(--text-cream);
@@ -464,7 +436,6 @@
     border-color: #6c757d;
 }
 
-/* 3. Ajuste de imágenes de ejemplo (FichaPago1 y FichaPago2) */
 .card .card-img-top {
     max-height: 500px;
     width: 100%;
@@ -473,24 +444,14 @@
     padding: 1rem;
 }
 
-/* 4. Colores personalizados para el anticipo (naranja/dorado de la paleta) */
 .text-anticipo {
     color: #f4b63f !important;
 }
 
-/* 5. Ajuste para el icono de "Anticipo" en el label */
 label[for="monto_anticipo"] i {
     color: #f4b63f;
 }
 
-.alert-danger .bi-exclamation-triangle-fill {
-    color: #145a32 !important;
-    /* Verde oscuro institucional */
-}
-
-/* ==========================================================================
-   BOTÓN DESCARGAR POLÍTICAS (PASO 6)
-   ========================================================================== */
 .btn-outline-politicas {
     color: var(--primary-green);
     border: 1px solid var(--primary-green);
