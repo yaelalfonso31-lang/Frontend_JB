@@ -2,11 +2,16 @@
     <!-- Capa oscura/verde para que el texto resalte sobre el fondo -->
     <div class="overlay"></div>
 
+
     <div class="login-content">
 
-        <!-- Lado Izquierdo: Bienvenida y Logo -->
         <div class="welcome-section">
-            <img ngSrc="assets/logo.jpg" width="120" height="120" alt="Logo Jardín Botánico" class="logo" priority>
+            <div class="logos-container">
+                <img ngSrc="assets/logo.jpg" width="230" height="100" alt="Logo Jardín Botánico" class="logo logo-jb"
+                    priority>
+                <img ngSrc="assets/logo-BUAP.jpg" width="100" height="100" alt="Logo BUAP" class="logo logo-buap"
+                    priority>
+            </div>
             <h1>Bienvenido<br>al Sistema</h1>
             <p>
                 Plataforma operativa y de control de accesos del Jardín Botánico.
@@ -33,11 +38,10 @@
                             [class.is-invalid]="loginForm.controls.password.invalid && loginForm.controls.password.touched">
                     </div>
 
-                    <div class="form-options">
-                        <label class="remember-me">
-                            <input type="checkbox"> Recordarme
-                        </label>
-                        <a href="#" class="forgot-password">¿Olvidaste tu contraseña?</a>
+                    <div class="text-end mb-4">
+                        <button type="button" class="btn-link-clean" (click)="irARecuperarContra()">
+                            ¿Olvidaste tu contraseña?
+                        </button>
                     </div>
 
                     @if (errorMessage()) {
@@ -62,6 +66,16 @@
                         <p>¿Eres una escuela interesada en visitarnos?</p>
                         <button type="button" class="btn-secondary" (click)="irAlFormulario()">
                             Llenar Solicitud de Visita
+                        </button>
+                    </div>
+
+                    <div class="guest-section">
+                        <div class="divider">
+                            <span>o</span>
+                        </div>
+                        <p>¿Eres un colaborador?, Crea tu cuenta aquí</p>
+                        <button type="button" class="btn-secondary" (click)="irARegistrarColaborador()">
+                            Crear Cuenta de Colaborador
                         </button>
                     </div>
 
