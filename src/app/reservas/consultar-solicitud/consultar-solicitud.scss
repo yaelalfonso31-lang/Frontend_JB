@@ -2,6 +2,7 @@ $primary-green: #2e7d32;
 $primary-hover: #1b5e20;
 $error-color: #ff5252;
 $warning-color: #ffb300;
+$icon-accent: #f4b63f;
 
 .consulta-wrapper {
     position: relative;
@@ -10,7 +11,7 @@ $warning-color: #ffb300;
     align-items: center;
     justify-content: center;
     padding: 2rem;
-    background: url('/assets/fondoJB.jpg') no-repeat center center fixed;
+    background: url('/assets/fondo3.jpg') no-repeat center center fixed;
     background-size: cover;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     color: #ffffff;
@@ -23,7 +24,7 @@ $warning-color: #ffb300;
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(135deg, rgba(10, 30, 10, 0.85) 0%, rgba(20, 60, 20, 0.6) 100%);
+    background: linear-gradient(135deg, rgba(27, 55, 31, 0.563) 0%, rgba(30, 132, 69, 0.426) 100%);
     z-index: 1;
 }
 
@@ -41,13 +42,6 @@ $warning-color: #ffb300;
     text-align: center;
     margin-bottom: 2rem;
 
-    .logo {
-        max-width: 100px;
-        margin-bottom: 1.5rem;
-        border-radius: 8px;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-    }
-
     h1 {
         font-size: 2.8rem;
         font-weight: 800;
@@ -62,6 +56,12 @@ $warning-color: #ffb300;
         max-width: 600px;
         margin: 0 auto;
     }
+}
+
+.icon-contrast {
+    color: $icon-accent;
+    font-size: 1.1em;
+    margin-right: 0.4rem;
 }
 
 /* Efecto Glassmorphism */
@@ -118,6 +118,10 @@ $warning-color: #ffb300;
 }
 
 .btn-submit {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
     width: 100%;
     padding: 1rem;
     background-color: $primary-green;
@@ -157,6 +161,7 @@ $warning-color: #ffb300;
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    gap: 0.5rem;
 
     &:hover {
         background-color: rgba(255, 255, 255, 0.1);
@@ -209,6 +214,7 @@ $warning-color: #ffb300;
         .value {
             font-size: 1.1rem;
             font-weight: 500;
+            padding-left: 1.5rem;
         }
     }
 }
@@ -222,6 +228,9 @@ $warning-color: #ffb300;
     text-transform: uppercase;
     background: rgba(255, 255, 255, 0.2);
     backdrop-filter: blur(4px);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
 
     &.badge-pendiente {
         border: 1px solid #e0e0e0;
@@ -297,7 +306,11 @@ $warning-color: #ffb300;
     }
 
     .btn-corregir {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
         margin-top: 1rem;
+        margin-left: 1.6rem;
         background-color: $warning-color;
         color: #000;
         border: none;

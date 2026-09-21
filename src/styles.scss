@@ -1,17 +1,72 @@
-/* ==========================================================================
-   VARIABLES DE COLOR INSTITUCIONALES (Globales)
-   ========================================================================== */
 :root {
-    --primary-green: #8fba42;
-    --secondary-green: #1b371f;
-    --light-green: #c2d997;
-    --accent-green: #1e8445;
-    --text-dark: #2C3E50;
-    --text-muted: #5D6D7E;
+    /* --- VERDES --- */
+    --color-dark-green: #183524;
+    /* Verde bosque muy oscuro - Fondos principales, footer */
+    --color-primary-green: #408558;
+    /* Verde medio - Color principal de marca, botones */
+    --color-accent-green: #1e8445;
+    /* Verde vibrante - Acentos, estados activos */
+    --color-light-green: #c2d997;
+    /* Verde salvia claro - Fondos suaves de sección */
+    --color-pale-green: #d1e7de;
+    /* Verde menta muy pálido - Textos sobre fondos oscuros */
+
+    /* --- AMARILLOS / NARANJAS --- */
+    --color-accent-orange: #f4b63f;
+    /* Naranja dorado - Acento principal, hovers, CTA */
+    --color-warm-yellow: #fae18f;
+    /* Amarillo cálido - Fondos de tarjetas suaves */
+    --color-cream: #fdf3d1;
+    /* Crema - Textos sobre fondos oscuros, fondos muy suaves */
+
+    /* --- NEUTROS --- */
+    --color-bg-light: #fcfcfc;
+    /* Blanco roto - Fondo general de la app */
+    --color-text-dark: #2C3E50;
+    /* Texto principal oscuro */
+    --color-text-muted: #5D6D7E;
+    /* Texto secundario / muted */
+    --color-border: #D5DBDB;
+    /* Color de bordes por defecto */
+
+    /* --- ALIAS (Para mantener compatibilidad con el código existente) --- */
+    --primary-green: var(--color-primary-green);
+    --secondary-green: var(--color-dark-green);
+    --light-green: var(--color-light-green);
+    --accent-green: var(--color-accent-green);
+    --text-dark: var(--color-text-dark);
+    --text-muted: var(--color-text-muted);
+    --border-color: var(--color-border);
     --border-radius: 6px;
     --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-    --border-color: #D5DBDB;
 }
+
+// --- VERDES ---
+$color-dark-green: #183524;
+$color-primary-green: #408558;
+$color-accent-green: #1e8445;
+$color-light-green: #c2d997;
+$color-pale-green: #d1e7de;
+
+// --- AMARILLOS / NARANJAS ---
+$color-accent-orange: #f4b63f;
+$color-warm-yellow: #fae18f;
+$color-cream: #fdf3d1;
+
+// --- NEUTROS ---
+$color-bg-light: #fcfcfc;
+$color-text-dark: #2C3E50;
+$color-text-muted: #5D6D7E;
+$color-border: #D5DBDB;
+
+// --- ALIAS SCSS (Para compatibilidad con archivos que usan nombres en inglés) ---
+$primary-green: $color-primary-green;
+$secondary-green: $color-dark-green;
+$accent-green: $color-accent-green;
+$light-green: $color-light-green;
+$hover-orange: $color-accent-orange;
+$text-cream: $color-cream;
+$bg-dark-green: $color-dark-green;
 
 * {
     margin: 0;
@@ -23,11 +78,372 @@ body {
     font-family: 'Segoe UI', system-ui, -apple-system, 'Helvetica Neue', sans-serif;
     color: var(--text-dark);
     min-height: 100vh;
-    background-color: #fbf5df;
-    /* Asegúrate de tener esta imagen en tu carpeta public/ o quita la regla si usas un color sólido */
-    // background-image: url('/textura-fondo.png'); 
+    background-color: #ffffff;
     background-repeat: repeat;
     background-position: top left;
     background-attachment: fixed;
     background-size: 400px 400px;
+    display: flex;
+    flex-direction: column;
+}
+
+html,
+body {
+    height: 100%;
+    margin: 0;
+}
+
+
+// app-root debe ocupar todo el espacio disponible
+app-root {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+// El main-content empuja el footer hacia abajo
+.main-content {
+    flex: 1;
+    /* Ocupa todo el espacio libre restante */
+}
+
+/* ==========================================================================
+   PERSONALIZACIÓN DE FLATPICKR - PALETA JARDÍN BOTÁNICO (v2 - Definitiva)
+   ========================================================================== */
+
+/* Variables locales para Flatpickr (por si acaso) */
+.flatpickr-calendar {
+    --fp-bg: #ffffff;
+    --fp-text: #2C3E50;
+    --fp-muted: #95a5a6;
+    --fp-primary: #408558;
+    --fp-secondary: #183524;
+    --fp-accent: #f4b63f;
+    --fp-light: #c2d997;
+    --fp-pale: #d1e7de;
+    --fp-disabled: #d5dbdb;
+
+    background: var(--fp-bg) !important;
+    border-radius: 8px !important;
+    box-shadow: 0 8px 24px rgba(24, 53, 36, 0.18) !important;
+    border: 1px solid #D5DBDB !important;
+    font-family: 'Segoe UI', system-ui, sans-serif !important;
+    width: 320px !important; // Un poco más ancho para que respire
+    padding: 0 !important;
+
+    /* --- Flechas del popup --- */
+    &.arrowTop::before,
+    &.arrowTop::after {
+        border-bottom-color: var(--fp-primary) !important;
+    }
+
+    &.arrowBottom::before,
+    &.arrowBottom::after {
+        border-top-color: var(--fp-primary) !important;
+    }
+
+    /* ================================================================
+       ENCABEZADO: Mes y Año
+       ================================================================ */
+    /* ================================================================
+       ENCABEZADO: Mes y Año - FORZAR FONDO VERDE EN 3 NIVELES
+       ================================================================ */
+    .flatpickr-months {
+        background-color: var(--fp-primary) !important;
+        background: var(--fp-primary) !important; // Doble declaración por si acaso
+        border-radius: 8px 8px 0 0 !important;
+        padding: 0 !important;
+        height: 44px !important;
+        position: relative !important;
+        z-index: 1 !important;
+
+        /* Forzar fondo en el contenedor del mes */
+        .flatpickr-month {
+            background: var(--fp-primary) !important;
+            color: #ffffff !important;
+            fill: #ffffff !important;
+            height: 44px !important;
+            line-height: 44px !important;
+            padding: 0 !important;
+
+            /* Forzar fondo en el wrapper del mes/año */
+            .flatpickr-current-month {
+                background: var(--fp-primary) !important;
+                color: #ffffff !important;
+                padding: 0 !important;
+                height: 44px !important;
+                line-height: 44px !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                gap: 0.4rem !important;
+                font-size: 1.05rem !important;
+                font-weight: 600 !important;
+                left: 0 !important; // Flatpickr lo posiciona con left: 12.5%
+                width: 100% !important; // Ocupa todo el ancho disponible
+
+                /* Mes */
+                .cur-month {
+                    color: #ffffff !important;
+                    font-weight: 700 !important;
+                    text-transform: capitalize !important;
+                    margin: 0 !important;
+                    display: inline-block !important;
+                }
+
+                /* Año */
+                input.cur-year {
+                    color: #ffffff !important;
+                    font-weight: 700 !important;
+                    background: transparent !important;
+                    border: none !important;
+                    width: 60px !important;
+                    padding: 0 !important;
+                    margin: 0 !important;
+                    text-align: center !important;
+                    cursor: pointer !important;
+
+                    &:focus {
+                        outline: none !important;
+                        background: rgba(255, 255, 255, 0.1) !important;
+                        border-radius: 4px !important;
+                    }
+                }
+
+                /* Flechas del selector de año */
+                .numInputWrapper {
+                    width: 60px !important;
+                    margin: 0 !important;
+                    display: inline-block !important;
+
+                    &:hover {
+                        background: rgba(255, 255, 255, 0.15) !important;
+                        border-radius: 4px !important;
+                    }
+
+                    span.arrowUp::after {
+                        border-bottom-color: #ffffff !important;
+                    }
+
+                    span.arrowDown::after {
+                        border-top-color: #ffffff !important;
+                    }
+                }
+            }
+        }
+
+        /* Botones de navegación (prev/next mes) */
+        .flatpickr-prev-month,
+        .flatpickr-next-month {
+            top: 0 !important;
+            height: 44px !important;
+            padding: 0 1.2rem !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            background: transparent !important;
+            z-index: 2 !important; // Por encima del mes
+
+            svg {
+                fill: #ffffff !important;
+                width: 14px !important;
+                height: 14px !important;
+                transition: transform 0.2s ease !important;
+            }
+
+            &:hover {
+                background-color: rgba(255, 255, 255, 0.2) !important;
+                border-radius: 4px !important;
+
+                svg {
+                    fill: var(--fp-cream, #fdf3d1) !important;
+                    transform: scale(1.15) !important;
+                }
+            }
+        }
+    }
+
+    /* ================================================================
+       DÍAS DE LA SEMANA (LUN, MAR, MIÉ...)
+       ================================================================ */
+    .flatpickr-weekdays {
+        background-color: var(--fp-light) !important;
+        padding: 0.5rem 0 !important;
+        height: auto !important;
+
+        .flatpickr-weekday {
+            color: var(--fp-secondary) !important;
+            font-weight: 700 !important;
+            font-size: 0.75rem !important;
+            text-transform: uppercase !important;
+            letter-spacing: 0.5px !important;
+            background: transparent !important;
+        }
+    }
+
+    /* ================================================================
+       DÍAS DEL MES - AQUÍ ESTABA EL PROBLEMA PRINCIPAL
+       ================================================================ */
+    .flatpickr-days {
+        border: none !important;
+        padding: 0.5rem 0.75rem !important;
+        width: 100% !important;
+        background: #ffffff !important;
+    }
+
+    .dayContainer {
+        width: 100% !important;
+        min-width: 100% !important;
+        max-width: 100% !important;
+        padding: 0 !important;
+    }
+
+    /* Regla CRÍTICA: forzar el color de texto de TODOS los días */
+    .flatpickr-day {
+        color: var(--fp-text) !important;
+        background: transparent !important;
+        border: 1px solid transparent !important;
+        border-radius: 6px !important;
+        font-weight: 500 !important;
+        font-size: 0.9rem !important;
+        height: 38px !important;
+        line-height: 38px !important;
+        max-width: 38px !important;
+        margin: 1px !important;
+        transition: all 0.15s ease !important;
+
+        /* Hover / Focus */
+        &:hover,
+        &:focus {
+            background-color: var(--fp-light) !important;
+            border-color: var(--fp-light) !important;
+            color: var(--fp-secondary) !important;
+        }
+
+        /* Día actual */
+        &.today {
+            border-color: var(--fp-accent) !important;
+            color: var(--fp-accent) !important;
+            font-weight: 700 !important;
+            background: transparent !important;
+
+            &:hover {
+                background-color: var(--fp-accent) !important;
+                color: #ffffff !important;
+            }
+        }
+
+        /* Día seleccionado */
+        &.selected {
+            background-color: var(--fp-primary) !important;
+            border-color: var(--fp-primary) !important;
+            color: #ffffff !important;
+            font-weight: 700 !important;
+
+            &:hover,
+            &:focus {
+                background-color: var(--fp-secondary) !important;
+                border-color: var(--fp-secondary) !important;
+                color: #ffffff !important;
+            }
+        }
+
+        /* Días de otros meses */
+        &.prevMonthDay,
+        &.nextMonthDay {
+            color: var(--fp-muted) !important;
+            opacity: 0.5 !important;
+        }
+
+        /* Días deshabilitados (fines de semana) */
+        &.flatpickr-disabled,
+        &.flatpickr-disabled:hover,
+        &.flatpickr-disabled:focus {
+            color: var(--fp-disabled) !important;
+            background-color: transparent !important;
+            border-color: transparent !important;
+            cursor: not-allowed !important;
+            text-decoration: line-through !important;
+            opacity: 0.6 !important;
+        }
+
+        /* Rango (si lo usas) */
+        &.inRange,
+        &.prevMonthDay.inRange,
+        &.nextMonthDay.inRange {
+            background-color: var(--fp-pale) !important;
+            border-color: var(--fp-pale) !important;
+            color: var(--fp-secondary) !important;
+            box-shadow: none !important;
+        }
+    }
+
+    /* ================================================================
+       SELECTOR DE HORA (flatpickr-time)
+       ================================================================ */
+    .flatpickr-time {
+        border-top: 1px solid #D5DBDB !important;
+        background-color: #ffffff !important;
+        height: 50px !important;
+        line-height: 50px !important;
+
+        input {
+            color: var(--fp-text) !important;
+            font-weight: 600 !important;
+            background: transparent !important;
+            font-size: 1rem !important;
+            height: 40px !important;
+            line-height: 40px !important;
+
+            &:hover,
+            &:focus {
+                background-color: var(--fp-light) !important;
+                border-radius: 4px !important;
+                color: var(--fp-secondary) !important;
+            }
+        }
+
+        .flatpickr-am-pm {
+            color: var(--fp-text) !important;
+            font-weight: 600 !important;
+
+            &:hover {
+                background-color: var(--fp-light) !important;
+                color: var(--fp-secondary) !important;
+                border-radius: 4px !important;
+            }
+        }
+
+        .arrowUp::after {
+            border-bottom-color: var(--fp-primary) !important;
+        }
+
+        .arrowDown::after {
+            border-top-color: var(--fp-primary) !important;
+        }
+
+        .numInputWrapper {
+            &:hover {
+                background-color: var(--fp-pale) !important;
+                border-radius: 4px !important;
+            }
+        }
+    }
+
+    /* ================================================================
+       BOTONES AUXILIARES (Hoy, Limpiar) si los habilitas
+       ================================================================ */
+    .flatpickr-button {
+        background-color: var(--fp-primary) !important;
+        color: #ffffff !important;
+        border-radius: 4px !important;
+        border: none !important;
+        padding: 0.4rem 0.8rem !important;
+        font-weight: 600 !important;
+        cursor: pointer !important;
+
+        &:hover {
+            background-color: var(--fp-secondary) !important;
+        }
+    }
 }

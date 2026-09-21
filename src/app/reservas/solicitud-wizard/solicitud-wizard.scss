@@ -235,8 +235,8 @@
     letter-spacing: 0.5px;
 
     .step-badge {
-        background: var(--light-green);
-        color: var(--primary-green);
+        background: var(--primary-green);
+        color: var(--text-cream);
         width: 40px;
         height: 40px;
         border-radius: 4px;
@@ -294,18 +294,28 @@
     color: var(--text-dark);
 
     &:not(.collapsed) {
-        background-color: var(--primary-green);
-        color: white;
+        background-color: var(--color-warm-yellow);
+        color: --color-warm-yellow;
         box-shadow: none;
 
         i {
-            color: white !important;
+            color: --color-accent-orange !important;
         }
     }
 
     &:focus {
         box-shadow: none;
         border-color: rgba(0, 0, 0, 0.1);
+    }
+}
+
+/* Iconos de acordeón cuando están cerrados */
+.accordion-button.collapsed {
+
+    .bi-geo-alt-fill,
+    .bi-book-half,
+    .bi-star-fill {
+        color: var(--color-accent-orange) !important;
     }
 }
 
@@ -330,6 +340,13 @@
     font-weight: 600;
     color: var(--text-dark);
     font-size: 0.95rem;
+
+    /* Mejora de contraste para iconos en etiquetas */
+    i {
+        color: var(--primary-green);
+        font-size: 1.1rem;
+        vertical-align: middle;
+    }
 }
 
 .form-control,
@@ -344,7 +361,12 @@
 
 .input-group-text {
     background-color: #F4F6F6;
-    color: var(--text-muted);
+    color: var(--primary-green);
+    border-color: var(--border-color);
+
+    i {
+        color: inherit;
+    }
 }
 
 .form-control:focus,
@@ -414,4 +436,56 @@
         object-fit: cover;
         margin-bottom: 1rem;
     }
+}
+
+/* ==========================================================================
+   MEJORAS DE CONTRASTE Y PALETA CROMÁTICA
+   ========================================================================== */
+
+/* 1. Iconos de sección (section-title) con fondo verde y icono crema */
+.section-title .step-badge {
+    background: var(--primary-green);
+    color: var(--text-cream);
+    border: none;
+}
+
+/* 2. Radio buttons de Lunch (Sí/No) */
+.form-check-input {
+    &:checked {
+        background-color: var(--primary-green);
+        border-color: var(--primary-green);
+    }
+
+    &:focus {
+        box-shadow: 0 0 0 0.25rem rgba(64, 133, 88, 0.25);
+    }
+}
+
+#lunch_si:checked {
+    background-color: var(--primary-green);
+    border-color: var(--primary-green);
+}
+
+#lunch_no:checked {
+    background-color: #6c757d;
+    border-color: #6c757d;
+}
+
+/* 3. Ajuste de imágenes de ejemplo (FichaPago1 y FichaPago2) */
+.card .card-img-top {
+    max-height: 500px;
+    width: 100%;
+    object-fit: contain;
+    background-color: #f8f9fa;
+    padding: 1rem;
+}
+
+/* 4. Colores personalizados para el anticipo (naranja/dorado de la paleta) */
+.text-anticipo {
+    color: #f4b63f !important;
+}
+
+/* 5. Ajuste para el icono de "Anticipo" en el label */
+label[for="monto_anticipo"] i {
+    color: #f4b63f;
 }

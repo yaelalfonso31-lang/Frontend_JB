@@ -961,10 +961,10 @@
                                 [value]="montoTotal().toLocaleString('es-MX', { style: 'currency', currency: 'MXN' })">
                         </div>
                         <div class="col-md-4">
-                            <label for="monto_anticipo" class="form-label text-primary small fw-bold mb-1">
+                            <label for="monto_anticipo" class="form-label small fw-bold mb-1" style="color: #f4b63f;">
                                 <i class="bi bi-pie-chart-fill me-1"></i> Anticipo Requerido (50%)
                             </label>
-                            <input type="text" class="form-control bg-white text-center fw-bold text-primary"
+                            <input type="text" class="form-control bg-white text-center fw-bold" style="color: #f4b63f;"
                                 id="monto_anticipo" readonly
                                 [value]="montoAnticipo().toLocaleString('es-MX', { style: 'currency', currency: 'MXN' })">
                         </div>
@@ -1224,9 +1224,8 @@
                 </div>
 
                 <fieldset>
-                    <legend class="fw-bold text-secondary" style="font-size: 1.1rem;">Información que debe incluir
-                        en su reporte de
-                        pago</legend>
+                    <legend class="fw-bold text-secondary" style="font-size: 1.1rem;">Información que debe incluir en su
+                        reporte de pago</legend>
 
                     <div class="row g-4">
                         <div class="col-md-6">
@@ -1272,10 +1271,8 @@
             <div class="row g-4">
                 <div class="col-md-6">
                     <div class="card shadow-sm border-0 h-100">
-                        <!-- Asumiendo que ya redimensionaste las imágenes -->
                         <img ngSrc="assets/FichaPago1.jpg" width="384" height="690" class="card-img-top rounded-top"
-                            alt="Ejemplo de ficha de depósito en sucursal"
-                            style="object-fit: cover; height: auto; width: 100%;">
+                            alt="Ejemplo de ficha de depósito en sucursal">
                         <div class="card-body text-center">
                             <h6 class="fw-bold">Ejemplo de ficha de depósito</h6>
                             <p class="text-muted small mb-0">Depósito realizado en sucursal bancaria</p>
@@ -1285,8 +1282,7 @@
                 <div class="col-md-6">
                     <div class="card shadow-sm border-0 h-100">
                         <img ngSrc="assets/FichaPago2.jpg" width="352" height="764" class="card-img-top rounded-top"
-                            alt="Ejemplo de captura de transferencia digital"
-                            style="object-fit: cover; height: auto; width: 100%;">
+                            alt="Ejemplo de captura de transferencia digital">
                         <div class="card-body text-center">
                             <h6 class="fw-bold">Ejemplo de transferencia electrónica</h6>
                             <p class="text-muted small mb-0">Captura de pantalla de transferencia digital</p>

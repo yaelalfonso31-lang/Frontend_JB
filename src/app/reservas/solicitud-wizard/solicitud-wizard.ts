@@ -138,7 +138,13 @@ export class SolicitudWizardComponent implements AfterViewInit {
       flatpickr(this.fechaInput()!.nativeElement, {
         locale: Spanish,
         minDate: minDate,
-        disable: [(date) => date.getDay() === 0 || date.getDay() === 6]
+        disable: [(date) => date.getDay() === 0 || date.getDay() === 6],
+        disableMobile: true,
+        monthSelectorType: 'static',
+        dateFormat: "Y-m-d",
+        altInput: false,
+        appendTo: document.body, // <-- Fuerza el renderizado en el body
+        static: false
       });
     }
 
@@ -151,7 +157,8 @@ export class SolicitudWizardComponent implements AfterViewInit {
         maxTime: "15:00",
         time_24hr: true,
         minuteIncrement: 30,
-        disableMobile: true
+        disableMobile: true,
+        appendTo: document.body // <-- Igual aquí
       });
     }
   }
@@ -309,4 +316,8 @@ export class SolicitudWizardComponent implements AfterViewInit {
     link.download = 'Politicas_y_Reglamento.pdf';
     link.click();
   }
+
+
+
+
 }

@@ -1,0 +1,204 @@
+// Variables basadas en Paleta cromatica.pdf
+$bg-dark-green: #183524;
+$accent-green: #408558;
+$text-light-green: #d1e7de; // Asumiendo 'dle7de' como d1e7de
+$text-cream: #fdf3d1;
+$hover-orange: #f4b63f;
+$border-color: rgba(209, 231, 222, 0.2); // Basado en #d1e7de con opacidad
+
+.jb-footer {
+    background-color: $bg-dark-green;
+    color: $text-light-green;
+    padding: 60px 0 20px;
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}
+
+.footer-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 24px;
+}
+
+/* --- Top Section --- */
+.footer-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 50px;
+    flex-wrap: wrap;
+    gap: 30px;
+
+    .footer-slogan h2 {
+        color: $text-cream;
+        font-size: 2rem;
+        font-weight: 500;
+        line-height: 1.3;
+        margin: 0;
+    }
+
+    .footer-subscribe {
+        h3 {
+            color: $text-cream;
+            font-size: 1.1rem;
+            margin: 0 0 15px 0;
+            font-weight: 500;
+        }
+
+        .subscribe-form {
+            display: flex;
+            border: 1px solid $border-color;
+            border-radius: 30px;
+            overflow: hidden;
+            background-color: transparent;
+            padding: 4px;
+
+            input {
+                flex: 1;
+                background: transparent;
+                border: none;
+                padding: 10px 20px;
+                color: $text-cream;
+                outline: none;
+
+                &::placeholder {
+                    color: rgba(209, 231, 222, 0.6);
+                }
+            }
+
+            button {
+                background-color: $accent-green;
+                color: $text-cream;
+                border: none;
+                padding: 10px 24px;
+                border-radius: 25px;
+                cursor: pointer;
+                font-weight: 600;
+                transition: background-color 0.3s ease, color 0.3s ease;
+
+                &:hover {
+                    background-color: $hover-orange;
+                    color: $bg-dark-green;
+                }
+            }
+        }
+    }
+}
+
+/* --- Middle Section --- */
+.footer-middle {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 40px;
+    margin-bottom: 50px;
+
+    .footer-col {
+        h4 {
+            color: $text-cream;
+            font-size: 0.85rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+
+            li {
+                margin-bottom: 12px;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+
+                a {
+                    color: $text-light-green;
+                    text-decoration: none;
+                    font-size: 0.95rem;
+                    transition: color 0.3s ease;
+
+                    &:hover {
+                        color: $hover-orange;
+                    }
+                }
+            }
+        }
+    }
+
+    .social-links {
+        display: flex;
+        gap: 15px;
+
+        .social-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            background-color: $text-cream;
+            color: $bg-dark-green;
+            border-radius: 50%;
+            text-decoration: none;
+            font-size: 0.8rem;
+            font-weight: bold;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+
+            &:hover {
+                background-color: $hover-orange;
+                transform: translateY(-3px);
+            }
+        }
+    }
+}
+
+/* --- Bottom Section --- */
+.footer-bottom {
+    border-top: 1px solid $border-color;
+    padding-top: 25px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.85rem;
+    color: rgba(209, 231, 222, 0.7);
+
+    .legal-links {
+        display: flex;
+        gap: 20px;
+
+        a {
+            color: rgba(209, 231, 222, 0.7);
+            text-decoration: none;
+            transition: color 0.3s ease;
+
+            &:hover {
+                color: $hover-orange;
+            }
+        }
+    }
+}
+
+/* --- Responsive --- */
+@media (max-width: 992px) {
+    .footer-middle {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .footer-top {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .footer-middle {
+        grid-template-columns: 1fr;
+        gap: 30px;
+    }
+
+    .footer-bottom {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+    }
+}
