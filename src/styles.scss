@@ -89,8 +89,19 @@ body {
 
 html,
 body {
+    overflow-x: hidden;
+    max-width: 100vw;
+    position: relative;
     height: 100%;
     margin: 0;
+}
+
+html {
+    overflow-x: clip; // ⬅️ moderna, no rompe sticky
+}
+
+body {
+    overflow-x: hidden;
 }
 
 

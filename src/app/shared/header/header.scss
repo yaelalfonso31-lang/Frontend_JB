@@ -1,17 +1,21 @@
-// ==========================================
-// Variables
-// ==========================================
+/* ==========================================================================
+   VARIABLES LOCALES
+   ========================================================================== */
 $azul-buap: #003b5c;
 $azul-buap-dark: #002a42;
 $verde-jb: #2e7d32;
-$verde-light: #a5d6a7;
+$verde-jb-dark: #1b5e20;
 $gris-texto: #6b7280;
-$gris-suave: #f8fafc;
 $blanco: #ffffff;
+$sombra-suave: 0 2px 12px rgba(0, 59, 92, 0.06);
+$sombra-hover: 0 4px 20px rgba(0, 59, 92, 0.10);
+$radius-md: 10px;
+$drawer-width: 320px;
+$header-pad-y: 10px;
 
-// ==========================================
-// Header principal
-// ==========================================
+/* ==========================================================================
+   HEADER PRINCIPAL
+   ========================================================================== */
 .institucional-header {
     position: sticky;
     top: 0;
@@ -19,11 +23,11 @@ $blanco: #ffffff;
     width: 100%;
     background: linear-gradient(180deg, #ffffff 0%, #fbfdfb 100%);
     border-bottom: 1px solid rgba(0, 59, 92, 0.08);
-    box-shadow: 0 2px 12px rgba(0, 59, 92, 0.06);
-    padding: 14px 0;
+    box-shadow: $sombra-suave;
     transition: transform 0.35s ease, box-shadow 0.3s ease;
+    will-change: transform;
+    backface-visibility: hidden;
 
-    // Línea decorativa inferior con degradado institucional
     &::after {
         content: '';
         position: absolute;
@@ -31,14 +35,11 @@ $blanco: #ffffff;
         right: 0;
         bottom: 0;
         height: 3px;
-        background: linear-gradient(90deg,
-                $azul-buap 0%,
-                $verde-jb 50%,
-                $azul-buap 100%);
+        background: linear-gradient(90deg, $azul-buap 0%, $verde-jb 50%, $azul-buap 100%);
     }
 
     &:hover {
-        box-shadow: 0 4px 20px rgba(0, 59, 92, 0.1);
+        box-shadow: $sombra-hover;
     }
 
     &.hidden {
@@ -46,306 +47,464 @@ $blanco: #ffffff;
     }
 }
 
-// ==========================================
-// Contenedor
-// ==========================================
+/* ==========================================================================
+   LAYOUT DEL HEADER
+   ========================================================================== */
 .header-container {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    max-width: 1400px;
+    justify-content: space-between;
+    gap: 1.5rem;
+    max-width: 1600px;
     margin: 0 auto;
-    padding: 0 32px;
-    gap: 2rem;
+    padding: $header-pad-y 32px;
+    min-height: 80px;
 }
 
-// ==========================================
-// Logos
-// ==========================================
-.logo-container {
-    display: flex;
+/* ==========================================================================
+   BLOQUE DE MARCA (LOGOS)
+   ========================================================================== */
+.brand {
+    display: inline-flex;
     align-items: center;
-    flex: 0 0 auto;
+    gap: 1rem;
     text-decoration: none;
-    padding: 6px 10px;
-    border-radius: 10px;
+    padding: 6px 12px;
+    border-radius: $radius-md;
     transition: background-color 0.25s ease, transform 0.25s ease;
-
-    &.left-logo .logo {
-        max-height: 100px; // mantienes BUAP igual
-    }
-
-    &.right-logo .logo {
-        max-height: 80px; // mantienes BUAP igual
-    }
+    flex-shrink: 0;
 
     &:hover {
-        background-color: rgba(46, 125, 50, 0.06);
-        transform: translateY(-1px);
+        background-color: rgba($verde-jb, 0.05);
 
-        .logo {
-            transform: scale(1.05);
+        .brand__logo {
+            transform: translateY(-1px) scale(1.03);
+        }
+
+        .brand__divider {
+            opacity: 1;
         }
     }
 
-    .logo {
-        max-height: 60px;
+    &__divider {
+        display: block;
+        width: 1px;
+        height: 42px;
+        background: linear-gradient(180deg, transparent 0%, rgba($azul-buap, 0.18) 20%, rgba($verde-jb, 0.35) 50%, rgba($azul-buap, 0.18) 80%, transparent 100%);
+        opacity: 0.85;
+        transition: opacity 0.25s ease;
+        flex-shrink: 0;
+    }
+
+    &__logo {
+        display: block;
         width: auto;
         object-fit: contain;
         transition: transform 0.3s ease;
+        filter: drop-shadow(0 1px 2px rgba(0, 59, 92, 0.08));
+
+        &--buap {
+            max-height: 56px;
+        }
+
+        &--jb {
+            max-height: 62px;
+        }
+    }
+}
+
+/* ==========================================================================
+   NAVEGACIÓN DESKTOP
+   ========================================================================== */
+.main-nav {
+    display: flex;
+    align-items: center;
+
+    .nav-list {
+        display: flex;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        gap: 0.4rem;
+
+        li a {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 0.45rem;
+            text-decoration: none;
+            color: $azul-buap;
+            font-weight: 600;
+            font-size: 0.95rem;
+            padding: 10px 14px;
+            border-radius: $radius-md;
+            transition: background-color 0.25s ease, color 0.25s ease;
+            white-space: nowrap;
+
+            i.link-icon {
+                color: $verde-jb;
+                font-size: 1.15rem;
+                transition: transform 0.25s ease, color 0.25s ease;
+            }
+
+            &::after {
+                content: '';
+                position: absolute;
+                left: 14px;
+                right: 14px;
+                bottom: 4px;
+                height: 2px;
+                background: linear-gradient(90deg, $verde-jb, $azul-buap);
+                border-radius: 2px;
+                transform: scaleX(0);
+                transform-origin: left;
+                transition: transform 0.3s ease;
+            }
+
+            &:hover {
+                background-color: rgba($verde-jb, 0.08);
+                color: $verde-jb-dark;
+
+                i.link-icon {
+                    color: $verde-jb-dark;
+                    transform: translateY(-1px);
+                }
+
+                &::after {
+                    transform: scaleX(1);
+                }
+            }
+
+            &.active {
+                color: $verde-jb-dark;
+                background-color: rgba($verde-jb, 0.10);
+
+                i.link-icon {
+                    color: $verde-jb-dark;
+                }
+
+                &::after {
+                    transform: scaleX(1);
+                }
+            }
+        }
+    }
+}
+
+/* ==========================================================================
+   BOTÓN HAMBURGUESA (móvil)
+   ========================================================================== */
+.mobile-menu-toggle {
+    display: none;
+    background: transparent;
+    border: none;
+    font-size: 1.9rem;
+    color: $azul-buap;
+    cursor: pointer;
+    padding: 6px 10px;
+    border-radius: $radius-md;
+    transition: color 0.3s ease, background-color 0.3s ease, transform 0.2s ease;
+
+    &:hover {
+        color: $verde-jb;
+        background-color: rgba($verde-jb, 0.08);
+    }
+
+    &:active {
+        transform: scale(0.92);
+    }
+}
+
+/* ==========================================================================
+   OVERLAY
+   ========================================================================== */
+.menu-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba($azul-buap-dark, 0.55);
+    backdrop-filter: blur(4px);
+    z-index: 1099;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0s linear 0.3s;
+
+    &.open {
+        opacity: 1;
+        visibility: visible;
+        transition: opacity 0.3s ease, visibility 0s linear 0s;
+    }
+}
+
+/* ==========================================================================
+   DRAWER LATERAL MÓVIL
+   ========================================================================== */
+.mobile-drawer {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: $drawer-width;
+    max-width: 88vw;
+    height: 100vh;
+    background: linear-gradient(180deg, #ffffff 0%, #fbfdfb 100%);
+    box-shadow: -8px 0 30px rgba(0, 0, 0, 0.15);
+    z-index: 1101;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+
+    /* ESTADO CERRADO */
+    transform: translateX(100%);
+    visibility: hidden;
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), visibility 0s linear 0.4s;
+
+    /* ESTADO ABIERTO */
+    &.open {
+        transform: translateX(0);
+        visibility: visible;
+        transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), visibility 0s linear 0s;
+    }
+
+    &::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 4px;
+        background: linear-gradient(180deg, $verde-jb, $azul-buap);
+    }
+
+    /* ---------- Header del drawer ---------- */
+    &__header {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 1.25rem 1.25rem 1.25rem 1.5rem;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+        background: rgba($verde-jb, 0.05);
+    }
+
+    &__logo {
+        max-height: 40px;
+        width: auto;
+        object-fit: contain;
+    }
+
+    &__title {
+        flex: 1;
+        font-weight: 700;
+        color: $azul-buap;
+        font-size: 1rem;
+        letter-spacing: 0.3px;
+    }
+
+    &__close {
+        background: transparent;
+        border: none;
+        font-size: 1.4rem;
+        color: $azul-buap;
+        cursor: pointer;
+        padding: 4px 8px;
+        border-radius: 8px;
+        transition: background-color 0.2s ease, color 0.2s ease;
+
+        &:hover {
+            background-color: rgba($azul-buap, 0.08);
+            color: $verde-jb;
+        }
+    }
+
+    /* ---------- Navegación del Drawer ---------- */
+    .mobile-nav-container {
+        flex: 1;
+        padding: 1rem 0;
+    }
+
+    .mobile-nav-list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+
+        li {
+            opacity: 0;
+            transform: translateX(20px);
+            transition: opacity 0.35s ease, transform 0.35s ease;
+        }
+
+        li a {
+            display: flex;
+            align-items: center;
+            gap: 0.9rem;
+            padding: 1rem 1.5rem;
+            text-decoration: none;
+            color: $azul-buap;
+            font-weight: 600;
+            font-size: 1.05rem;
+            border-left: 3px solid transparent;
+            transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease, padding-left 0.25s ease;
+
+            i:first-child {
+                color: $verde-jb;
+                font-size: 1.25rem;
+                width: 1.5rem;
+                text-align: center;
+            }
+
+            .chevron {
+                margin-left: auto;
+                font-size: 0.85rem;
+                color: rgba($azul-buap, 0.35);
+                transition: transform 0.25s ease, color 0.25s ease;
+            }
+
+            &:hover,
+            &.active {
+                background-color: rgba($verde-jb, 0.07);
+                border-left-color: $verde-jb;
+                padding-left: 1.85rem;
+                color: $verde-jb-dark;
+
+                .chevron {
+                    transform: translateX(3px);
+                    color: $verde-jb;
+                }
+            }
+
+            &.active i:first-child {
+                color: $verde-jb-dark;
+            }
+        }
+    }
+
+    /* ---------- Footer del drawer ---------- */
+    &__footer {
+        padding: 1.25rem 1.5rem;
+        border-top: 1px solid rgba(0, 0, 0, 0.06);
+        background: rgba($verde-jb, 0.04);
+
+        p {
+            margin: 0;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            color: $gris-texto;
+            text-align: center;
+            line-height: 1.5;
+        }
+    }
+}
+
+/* Animación escalonada (Cascada) de los items al abrir el menú */
+.mobile-drawer.open .mobile-nav-list li {
+    opacity: 1;
+    transform: translateX(0);
+
+    &:nth-child(1) {
+        transition-delay: 0.10s;
+    }
+
+    &:nth-child(2) {
+        transition-delay: 0.16s;
+    }
+
+    &:nth-child(3) {
+        transition-delay: 0.22s;
+    }
+
+    &:nth-child(4) {
+        transition-delay: 0.28s;
+    }
+}
+
+/* ==========================================================================
+   RESPONSIVE
+   ========================================================================== */
+@media (max-width: 1200px) {
+    .header-container {
+        padding: $header-pad-y 20px;
+        gap: 1rem;
+    }
+
+    .brand {
+        gap: 0.75rem;
+    }
+
+    .brand__logo--buap {
+        max-height: 48px;
+    }
+
+    .brand__logo--jb {
+        max-height: 52px;
+    }
+
+    .brand__divider {
+        height: 36px;
+    }
+
+    .main-nav .nav-list li a {
+        font-size: 0.9rem;
+        padding: 8px 12px;
+    }
+}
+
+@media (max-width: 1024px) {
+    .main-nav {
+        display: none;
+    }
+
+    .mobile-menu-toggle {
         display: block;
     }
 }
 
-// ==========================================
-// Título central
-// ==========================================
-.header-title {
-    text-align: center;
-    flex: 1 1 auto;
-    min-width: 0; // evita desbordes en flex
-
-    h1 {
-        margin: 0;
-        font-size: 1.55rem;
-        font-weight: 700;
-        color: $azul-buap;
-        letter-spacing: 0.4px;
-        line-height: 1.5;
-        background: linear-gradient(90deg, $azul-buap 0%, $verde-jb 100%);
-        -webkit-background-clip: text;
-        background-clip: text;
-        -webkit-text-fill-color: transparent;
-    }
-
-    // Divisor decorativo con hojita
-    .title-divider {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 10px;
-        margin: 6px 0 4px;
-
-        .line {
-            height: 1px;
-            width: 60px;
-            background: linear-gradient(90deg,
-                    transparent,
-                    rgba(46, 125, 50, 0.6),
-                    transparent);
-        }
-
-        .leaf {
-            font-size: 0.85rem;
-            color: $verde-jb;
-            opacity: 0.85;
-            line-height: 1;
-        }
-    }
-
-    p {
-        margin: 0;
-        font-size: 1.25rem;
-        color: $gris-texto;
-        text-transform: uppercase;
-        letter-spacing: 1.8px;
-        font-weight: 500;
-    }
-}
-
-// ==========================================
-// Responsive
-// ==========================================
-
-// ------------------------------------------
-// Pantallas grandes / laptops pequeñas
-// ------------------------------------------
-@media (max-width: 1200px) {
-    .header-container {
-        padding: 0 24px;
-        gap: 1.5rem;
-    }
-
-    .logo-container.left-logo .logo {
-        max-height: 85px;
-    }
-
-    .logo-container.right-logo .logo {
-        max-height: 70px;
-    }
-
-    .header-title h1 {
-        font-size: 1.2rem;
-    }
-}
-
-// ------------------------------------------
-// Tablets horizontales
-// ------------------------------------------
-@media (max-width: 992px) {
-    .header-container {
-        padding: 0 20px;
-        gap: 1rem;
-    }
-
-    .logo-container.left-logo .logo {
-        max-height: 70px;
-    }
-
-    .logo-container.right-logo .logo {
-        max-height: 58px;
-    }
-
-    .header-title h1 {
-        font-size: 1.05rem;
-    }
-
-    .header-title .title-divider .line {
-        width: 40px;
-    }
-
-    .header-title p {
-        font-size: 0.68rem;
-        letter-spacing: 1.3px;
-    }
-}
-
-// ------------------------------------------
-// Tablets verticales / móviles grandes
-// ------------------------------------------
 @media (max-width: 768px) {
-    .institucional-header {
-        padding: 10px 0;
-    }
-
     .header-container {
-        padding: 0 14px;
-        gap: 0.6rem;
-        align-items: center;
+        padding: $header-pad-y 14px;
+        gap: 0.75rem;
+        min-height: 68px;
     }
 
-    .logo-container {
+    .brand {
+        gap: 0.6rem;
         padding: 4px 6px;
     }
 
-    .logo-container.left-logo .logo {
-        max-height: 56px;
-    }
-
-    .logo-container.right-logo .logo {
-        max-height: 48px;
-    }
-
-    .header-title {
-        flex: 1 1 auto;
-
-        h1 {
-            font-size: 0.95rem;
-            line-height: 1.15;
-        }
-
-        .title-divider {
-            margin: 4px 0 2px;
-
-            .line {
-                width: 26px;
-            }
-
-            .leaf {
-                font-size: 0.7rem;
-            }
-        }
-
-        p {
-            font-size: 0.58rem;
-            letter-spacing: 0.9px;
-        }
-    }
-}
-
-// ------------------------------------------
-// Móviles medianos
-// ------------------------------------------
-@media (max-width: 576px) {
-    .header-container {
-        padding: 0 10px;
-        gap: 0.4rem;
-    }
-
-    .logo-container {
-        padding: 2px 4px;
-    }
-
-    .logo-container.left-logo .logo {
-        max-height: 48px;
-    }
-
-    .logo-container.right-logo .logo {
-        max-height: 42px;
-    }
-
-    .header-title {
-        h1 {
-            font-size: 0.82rem;
-        }
-
-        .title-divider {
-            display: none; // muy estrecho para una línea decorativa
-        }
-
-        p {
-            font-size: 0.52rem;
-            letter-spacing: 0.6px;
-        }
-    }
-}
-
-// ------------------------------------------
-// Móviles pequeños
-// ------------------------------------------
-@media (max-width: 420px) {
-    .institucional-header {
-        padding: 8px 0;
-    }
-
-    .header-container {
-        padding: 0 8px;
-        gap: 0.3rem;
-    }
-
-    .logo-container.left-logo .logo {
+    .brand__logo--buap {
         max-height: 40px;
     }
 
-    .logo-container.right-logo .logo {
-        max-height: 36px;
+    .brand__logo--jb {
+        max-height: 44px;
     }
 
-    .header-title {
-        h1 {
-            font-size: 0.72rem;
-            letter-spacing: 0.2px;
-        }
+    .brand__divider {
+        height: 30px;
+    }
 
-        p {
-            display: none; // ya no cabe legible
-        }
+    .mobile-menu-toggle {
+        font-size: 1.6rem;
+        padding: 4px 8px;
     }
 }
 
-// ------------------------------------------
-// Móviles muy pequeños (iPhone SE / Galaxy Fold)
-// ------------------------------------------
-@media (max-width: 360px) {
-    .logo-container.left-logo .logo {
+@media (max-width: 480px) {
+    .header-container {
+        padding: $header-pad-y 10px;
+    }
+
+    .brand {
+        gap: 0.5rem;
+    }
+
+    .brand__logo--buap {
         max-height: 34px;
     }
 
-    .logo-container.right-logo .logo {
-        max-height: 30px;
+    .brand__logo--jb {
+        max-height: 38px;
     }
 
-    .header-title h1 {
-        font-size: 0.65rem;
+    .brand__divider {
+        height: 26px;
     }
 }

@@ -1,27 +1,100 @@
+<!-- HEADER PRINCIPAL -->
 <header class="institucional-header" [class.hidden]="isHidden">
     <div class="header-container">
 
-        <!-- Logo BUAP -->
-        <a class="logo-container right-logo" routerLink="/">
-            <img src="assets/logo-BUAP.jpg" alt="Logo BUAP" class="logo">
+        <!-- Bloque de logos (identidad) -->
+        <a class="brand" routerLink="/inicio" aria-label="Jardín Botánico Universitario - BUAP">
+            <img src="assets/logo-BUAP.jpg" alt="BUAP" class="brand__logo brand__logo--buap">
+            <span class="brand__divider" aria-hidden="true"></span>
+            <img src="assets/logo.jpg" alt="Jardín Botánico Universitario" class="brand__logo brand__logo--jb">
         </a>
 
-        <!-- Título Central -->
-        <div class="header-title">
-            <h1>Jardín Botánico Universitario</h1>
-            <div class="title-divider">
-                <span class="line"></span>
-                <span class="leaf">🌿</span>
-                <span class="line"></span>
-            </div>
-            <p>Benemérita Universidad Autónoma de Puebla</p>
-        </div>
+        <!-- Navegación Desktop -->
+        <nav class="main-nav" aria-label="Navegación principal">
+            <ul class="nav-list">
+                <li>
+                    <a routerLink="/solicitud-visita" routerLinkActive="active" (click)="closeMobileMenu()">
+                        <i class="bi bi-calendar-check link-icon"></i>
+                        <span>Reservas</span>
+                    </a>
+                </li>
+                <li>
+                    <a routerLink="/servicios" routerLinkActive="active" (click)="closeMobileMenu()">
+                        <i class="bi bi-flower1 link-icon"></i>
+                        <span>Servicios</span>
+                    </a>
+                </li>
+                <li>
+                    <a routerLink="/reglamento" routerLinkActive="active" (click)="closeMobileMenu()">
+                        <i class="bi bi-file-text link-icon"></i>
+                        <span>Reglamento</span>
+                    </a>
+                </li>
+                <li>
+                    <a routerLink="/nosotros" routerLinkActive="active" (click)="closeMobileMenu()">
+                        <i class="bi bi-people link-icon"></i>
+                        <span>Nosotros</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
 
-        <!-- Logo Jardín Botánico -->
-        <a class="logo-container left-logo" routerLink="/">
-            <img src="assets/logo.jpg" alt="Logo Jardín Botánico Universitario" class="logo">
-        </a>
-
-
+        <!-- Botón Hamburguesa -->
+        <button class="mobile-menu-toggle" type="button" [attr.aria-expanded]="isMobileMenuOpen"
+            aria-controls="mobile-drawer" aria-label="Abrir menú de navegación" (click)="toggleMobileMenu()">
+            <i class="bi" [ngClass]="isMobileMenuOpen ? 'bi-x-lg' : 'bi-list'"></i>
+        </button>
     </div>
 </header>
+<!-- FIN DEL HEADER -->
+
+<!-- OVERLAY OSCURO (AFUERA DEL HEADER) -->
+<div class="menu-overlay" [class.open]="isMobileMenuOpen" (click)="closeMobileMenu()"></div>
+
+<!-- DRAWER LATERAL MÓVIL (AFUERA DEL HEADER) -->
+<aside id="mobile-drawer" class="mobile-drawer" [class.open]="isMobileMenuOpen" role="dialog" aria-modal="true">
+    <div class="mobile-drawer__header">
+        <img src="assets/logo.jpg" alt="Jardín Botánico" class="mobile-drawer__logo">
+        <span class="mobile-drawer__title">Jardín Botánico</span>
+        <button class="mobile-drawer__close" type="button" aria-label="Cerrar menú" (click)="closeMobileMenu()">
+            <i class="bi bi-x-lg"></i>
+        </button>
+    </div>
+
+    <nav aria-label="Navegación móvil" class="mobile-nav-container">
+        <ul class="mobile-nav-list">
+            <li>
+                <a routerLink="/solicitud-visita" routerLinkActive="active" (click)="closeMobileMenu()">
+                    <i class="bi bi-calendar-check"></i>
+                    <span>Reservas</span>
+                    <i class="bi bi-chevron-right chevron"></i>
+                </a>
+            </li>
+            <li>
+                <a routerLink="/servicios" routerLinkActive="active" (click)="closeMobileMenu()">
+                    <i class="bi bi-flower1"></i>
+                    <span>Servicios</span>
+                    <i class="bi bi-chevron-right chevron"></i>
+                </a>
+            </li>
+            <li>
+                <a routerLink="/reglamento" routerLinkActive="active" (click)="closeMobileMenu()">
+                    <i class="bi bi-file-text"></i>
+                    <span>Reglamento</span>
+                    <i class="bi bi-chevron-right chevron"></i>
+                </a>
+            </li>
+            <li>
+                <a routerLink="/nosotros" routerLinkActive="active" (click)="closeMobileMenu()">
+                    <i class="bi bi-people"></i>
+                    <span>Nosotros</span>
+                    <i class="bi bi-chevron-right chevron"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <div class="mobile-drawer__footer">
+        <p>Benemérita Universidad Autónoma de Puebla</p>
+    </div>
+</aside>

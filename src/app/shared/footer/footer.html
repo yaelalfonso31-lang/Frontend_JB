@@ -1,116 +1,140 @@
 <footer class="jb-footer">
     <div class="footer-container">
 
-        <!-- Top Section: Lema y Suscripción -->
+        <!-- ============================================================
+         TOP: marca + slogan + suscripción
+         ============================================================ -->
         <div class="footer-top">
-            <div class="footer-slogan">
-                <h2>Conectando con la naturaleza – <br> Un espacio a la vez.</h2>
+            <div class="footer-brand">
+                <div class="footer-brand__name">
+                    <span class="footer-brand__leaf" aria-hidden="true">🌿</span>
+                    <span>Jardín Botánico Universitario</span>
+                </div>
+                <h2 class="footer-brand__slogan">
+                    Conectando con la naturaleza <br>un espacio a la vez.
+                </h2>
             </div>
+
             <div class="footer-subscribe">
-                <h3>¡Mantente en Contacto!</h3>
-                <form class="subscribe-form" (submit)="onSubmit($event)">
-                    <i class="bi bi-envelope-paper-fill form-icon"></i>
-                    <input type="email" placeholder="Ingresa tu correo" required>
-                    <button type="submit">
+                <h3>¡Mantente en contacto!</h3>
+                <form class="subscribe-form" (submit)="onSubmit($event)" novalidate>
+                    <i class="bi bi-envelope-paper-fill subscribe-form__icon" aria-hidden="true"></i>
+                    <input type="email" name="email" placeholder="Ingresa tu correo" required [(ngModel)]="email"
+                        [class.is-invalid]="emailTouched && !emailValido()" (blur)="emailTouched = true"
+                        aria-label="Correo electrónico">
+                    <button type="submit" [disabled]="enviando()">
+                        @if (enviando()) {
+                        <span class="spinner-border spinner-border-sm me-1" aria-hidden="true"></span>
+                        Enviando…
+                        } @else {
                         <i class="bi bi-send-fill me-1"></i> Suscribirse
+                        }
                     </button>
                 </form>
+
+                @if (emailTouched && !emailValido() && email.length > 0) {
+                <p class="subscribe-feedback subscribe-feedback--error">
+                    <i class="bi bi-exclamation-circle-fill me-1"></i>
+                    Ingresa un correo válido.
+                </p>
+                }
+                @if (mensajeExito()) {
+                <p class="subscribe-feedback subscribe-feedback--ok">
+                    <i class="bi bi-check-circle-fill me-1"></i>
+                    ¡Gracias! Te hemos suscrito.
+                </p>
+                }
             </div>
         </div>
 
-        <!-- Middle Section: 4 Columnas -->
+        <!-- ============================================================
+         MIDDLE: 3 columnas
+         ============================================================ -->
         <div class="footer-middle">
+
+            <!-- Columna: Contacto -->
             <div class="footer-col">
-                <h4><i class="bi bi-info-circle-fill me-2"></i>INFORMACIÓN DE CONTACTO</h4>
-                <ul>
+                <h4><i class="bi bi-info-circle-fill me-2"></i>Información de contacto</h4>
+                <ul class="footer-list">
                     <li>
-                        <span class="icon-wrapper">
-                            <i class="bi bi-envelope-fill"></i>
-                        </span>
+                        <span class="footer-list__icon"><i class="bi bi-envelope-fill"></i></span>
                         <a href="mailto:jardin.botanico@correo.buap.mx">jardin.botanico&#64;correo.buap.mx</a>
                     </li>
                     <li>
-                        <span class="icon-wrapper">
-                            <i class="bi bi-telephone-fill"></i>
-                        </span>
+                        <span class="footer-list__icon"><i class="bi bi-telephone-fill"></i></span>
                         <a href="tel:+522222295500">+52 222 229 5500</a>
                     </li>
                     <li>
-                        <span class="icon-wrapper">
-                            <i class="bi bi-geo-alt-fill"></i>
-                        </span>
-                        <a href="#">Ciudad Universitaria, BUAP</a>
+                        <span class="footer-list__icon"><i class="bi bi-geo-alt-fill"></i></span>
+                        <a href="https://maps.google.com/?q=Ciudad+Universitaria+BUAP" target="_blank"
+                            rel="noopener noreferrer">
+                            Ciudad Universitaria, BUAP
+                        </a>
+                    </li>
+                    <li>
+                        <span class="footer-list__icon"><i class="bi bi-clock-fill"></i></span>
+                        <span>Lun a Vie · 09:00 – 15:00</span>
                     </li>
                 </ul>
             </div>
 
+            <!-- Columna: Ayuda -->
             <div class="footer-col">
-                <h4><i class="bi bi-grid-fill me-2"></i>SISTEMA</h4>
-                <ul>
+                <h4><i class="bi bi-question-circle-fill me-2"></i>Ayuda</h4>
+                <ul class="footer-list">
                     <li>
-                        <i class="bi bi-calendar-check link-icon"></i>
-                        <a href="#">Realizar Reserva</a>
+                        <span class="footer-list__icon"><i class="bi bi-patch-question"></i></span>
+                        <a href="#">Preguntas frecuentes</a>
                     </li>
                     <li>
-                        <i class="bi bi-flower1 link-icon"></i>
-                        <a href="#">Servicios</a>
+                        <span class="footer-list__icon"><i class="bi bi-life-preserver"></i></span>
+                        <a href="#">Centro de ayuda</a>
                     </li>
                     <li>
-                        <i class="bi bi-file-text link-icon"></i>
-                        <a href="#">Reglamento</a>
+                        <span class="footer-list__icon"><i class="bi bi-headset"></i></span>
+                        <a href="#">Soporte técnico</a>
                     </li>
                     <li>
-                        <i class="bi bi-people link-icon"></i>
-                        <a href="#">Acerca de Nosotros</a>
+                        <span class="footer-list__icon"><i class="bi bi-journal-text"></i></span>
+                        <a href="#">Reglamento del jardín</a>
                     </li>
                 </ul>
             </div>
 
+            <!-- Columna: Redes -->
             <div class="footer-col">
-                <h4><i class="bi bi-question-circle-fill me-2"></i>AYUDA</h4>
-                <ul>
-                    <li>
-                        <i class="bi bi-patch-question link-icon"></i>
-                        <a href="#">Preguntas Frecuentes</a>
-                    </li>
-                    <li>
-                        <i class="bi bi-life-preserver link-icon"></i>
-                        <a href="#">Centro de Ayuda</a>
-                    </li>
-                    <li>
-                        <i class="bi bi-headset link-icon"></i>
-                        <a href="#">Soporte Técnico</a>
-                    </li>
-                </ul>
-            </div>
-
-            <div class="footer-col">
-                <h4><i class="bi bi-share-fill me-2"></i>SÍGUENOS</h4>
+                <h4><i class="bi bi-share-fill me-2"></i>Síguenos</h4>
+                <p class="footer-col__intro">
+                    Entérate de talleres, visitas y eventos especiales.
+                </p>
                 <div class="social-links">
-                    <a href="#" class="social-icon" aria-label="Facebook" title="Facebook">
+                    <a href="#" class="social-icon social-icon--fb" aria-label="Facebook">
                         <i class="bi bi-facebook"></i>
                     </a>
-                    <a href="#" class="social-icon" aria-label="Instagram" title="Instagram">
+                    <a href="#" class="social-icon social-icon--ig" aria-label="Instagram">
                         <i class="bi bi-instagram"></i>
                     </a>
-                    <a href="#" class="social-icon" aria-label="YouTube" title="YouTube">
+                    <a href="#" class="social-icon social-icon--yt" aria-label="YouTube">
                         <i class="bi bi-youtube"></i>
                     </a>
-                    <a href="#" class="social-icon" aria-label="X (Twitter)" title="X">
+                    <a href="#" class="social-icon social-icon--x" aria-label="X (Twitter)">
                         <i class="bi bi-twitter-x"></i>
                     </a>
                 </div>
             </div>
         </div>
 
-        <!-- Bottom Section: Copyright y Legales -->
+        <!-- ============================================================
+         BOTTOM: copyright + legales
+         ============================================================ -->
         <div class="footer-bottom">
-            <p>
+            <p class="footer-bottom__copy">
                 <i class="bi bi-c-circle me-1"></i>
-                2026 Jardín Botánico Universitario BUAP. Todos los derechos reservados.
+                {{ anioActual }} Jardín Botánico Universitario BUAP. Todos los derechos reservados.
             </p>
             <div class="legal-links">
                 <a href="#"><i class="bi bi-shield-lock-fill me-1"></i>Aviso de Privacidad</a>
+                <span class="legal-links__sep" aria-hidden="true">·</span>
                 <a href="#"><i class="bi bi-file-earmark-text-fill me-1"></i>Términos y Condiciones</a>
             </div>
         </div>
