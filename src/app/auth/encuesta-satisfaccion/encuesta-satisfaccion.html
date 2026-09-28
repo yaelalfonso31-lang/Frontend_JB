@@ -1,0 +1,238 @@
+<div class="recovery-wrapper">
+  <div class="form-container">
+    
+    <!-- Encabezado Institucional -->
+    <div class="encabezado-institucional">
+      <div class="header-brand">
+        <img ngSrc="assets/logo-buap.png" width="60" height="60" alt="Logo Universidad" class="logo-institucional" priority>
+        <div class="header-titles">
+          <h1>Jardín Botánico Universitario</h1>
+          <p class="mb-0">Evaluación de Servicios Educativos</p>
+        </div>
+        <img ngSrc="assets/logo.jpg" width="74" height="60" alt="Logo Jardín Botánico" class="logo-institucional" priority>
+      </div>
+      <span class="badge badge-servicio mt-2">VISITA GUIADA</span>
+    </div>
+
+    <!-- Contenido del Formulario -->
+    <div class="form-content">
+      <p class="text-muted text-center mb-4">
+        Estimado visitante, la siguiente encuesta tiene como propósito medir la satisfacción proporcionada por nuestros servicios.
+        Por favor llene todos los campos que apliquen a su visita.
+      </p>
+
+      <form [formGroup]="encuestaForm" (ngSubmit)="enviarEncuesta()">
+
+        <!-- Pregunta 1 -->
+        <div class="mb-4">
+          <label class="form-label fw-bold">1. ¿Conocía el Jardín Botánico Universitario?</label>
+          <div class="d-flex gap-4 mt-1">
+            <div class="form-check">
+              <input class="form-check-input" type="radio" id="conociaSi" value="SI" formControlName="conociaJardin">
+              <label class="form-check-label" for="conociaSi">Sí</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" id="conociaNo" value="NO" formControlName="conociaJardin">
+              <label class="form-check-label" for="conociaNo">No</label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pregunta 2 -->
+        <div class="mb-4">
+          <label class="form-label fw-bold">2. ¿Le gustó su visita al jardín?</label>
+          <div class="d-flex gap-4 mt-1">
+            <div class="form-check">
+              <input class="form-check-input" type="radio" id="gustoSi" value="SI" formControlName="gustoVisita">
+              <label class="form-check-label" for="gustoSi">Sí</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" id="gustoNo" value="NO" formControlName="gustoVisita">
+              <label class="form-check-label" for="gustoNo">No</label>
+            </div>
+          </div>
+          @if (encuestaForm.value.gustoVisita === 'NO') {
+            <div class="mt-2">
+              <input type="text" class="form-control" placeholder="Si respondió NO, ¿Por qué?" formControlName="porqueNoGusto">
+            </div>
+          }
+        </div>
+
+        <!-- Pregunta 3 -->
+        <div class="mb-4">
+          <label for="contactos" class="form-label fw-bold">3. ¿Cómo nos contactó?</label>
+          <select id="contactos" class="form-select" formControlName="comoContacto">
+            <option value="" disabled selected>Seleccione una opción</option>
+            <option value="redes">Redes Sociales / Sitio Web</option>
+            <option value="recomendacion">Recomendación de un conocido</option>
+            <option value="escuela">Institución Educativa</option>
+            <option value="otro">Otro medio</option>
+          </select>
+        </div>
+
+        <hr class="my-4">
+
+        <!-- Sección de Calificación en Escala 1 a 5 (Sección 4 y 5) -->
+        <h2 class="subtitulo">Contenido de la Visita Guiada</h2>
+        <p class="text-muted small mb-3">Considere la escala: 1 = Muy Malo, 2 = Malo, 3 = Regular, 4 = Bueno, 5 = Excelente.</p>
+
+        <!-- P4: Atencion recibida -->
+        <div class="mb-4">
+          <label class="form-label font-medium">4. ¿La forma en que se le atendió fue?</label>
+          <div class="escala-container">
+            @for (num of [1,2,3,4,5]; track num) {
+              <label class="escala-item">
+                <input type="radio" [value]="num" formControlName="atencionRecibida">
+                <span>{{ num }}</span>
+              </label>
+            }
+          </div>
+        </div>
+
+        <!-- P5: Calidad de la informacion -->
+        <div class="mb-4">
+          <label class="form-label font-medium">5. La calidad de la información contenida durante el recorrido fue:</label>
+          <div class="escala-container">
+            @for (num of [1,2,3,4,5]; track num) {
+              <label class="escala-item">
+                <input type="radio" [value]="num" formControlName="calidadInformacion">
+                <span>{{ num }}</span>
+              </label>
+            }
+          </div>
+        </div>
+
+        <!-- Preguntas adicionales del servicio -->
+        <div class="mb-3">
+          <label class="form-label">¿La información obtenida cumplió con su objetivo?</label>
+          <div class="escala-container">
+            @for (num of [1,2,3,4,5]; track num) {
+              <label class="escala-item">
+                <input type="radio" [value]="num" formControlName="cumplioObjetivo">
+                <span>{{ num }}</span>
+              </label>
+            }
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">¿Los materiales educativos utilizados fueron los adecuados?</label>
+          <div class="escala-container">
+            @for (num of [1,2,3,4,5]; track num) {
+              <label class="escala-item">
+                <input type="radio" [value]="num" formControlName="materialesAdecuados">
+                <span>{{ num }}</span>
+              </label>
+            }
+          </div>
+        </div>
+
+        <hr class="my-4">
+
+        <!-- Instructor de la visita guiada -->
+        <h2 class="subtitulo">Instructor de la Visita Guiada</h2>
+
+        <div class="mb-3">
+          <label class="form-label">6. La explicación del instructor fue clara, resolvió sus dudas y captó su atención:</label>
+          <div class="escala-container">
+            @for (num of [1,2,3,4,5]; track num) {
+              <label class="escala-item">
+                <input type="radio" [value]="num" formControlName="evaluacionInstructor">
+                <span>{{ num }}</span>
+              </label>
+            }
+          </div>
+        </div>
+
+        <div class="mb-4">
+          <label class="form-label font-medium">7. Calificación general otorgada a la visita guiada (1 al 5):</label>
+          <div class="escala-container">
+            @for (num of [1,2,3,4,5]; track num) {
+              <label class="escala-item">
+                <input type="radio" [value]="num" formControlName="calificacionGeneral">
+                <span>{{ num }}</span>
+              </label>
+            }
+          </div>
+        </div>
+
+        <!-- Pregunta 8 -->
+        <div class="mb-4">
+          <label class="form-label fw-bold">8. ¿Se cumplieron sus expectativas?</label>
+          <div class="d-flex gap-4 mt-1">
+            <div class="form-check">
+              <input class="form-check-input" type="radio" id="expSi" value="SI" formControlName="cumplioExpectativas">
+              <label class="form-check-label" for="expSi">Sí</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" id="expNo" value="NO" formControlName="cumplioExpectativas">
+              <label class="form-check-label" for="expNo">No</label>
+            </div>
+          </div>
+          @if (encuestaForm.value.cumplioExpectativas === 'NO') {
+            <div class="mt-2">
+              <input type="text" class="form-control" placeholder="¿Por qué?" formControlName="porqueNoExpectativas">
+            </div>
+          }
+        </div>
+
+        <!-- Pregunta 9: Instalaciones -->
+        <h2 class="subtitulo">9. Instalaciones del Jardín Botánico</h2>
+        
+        <div class="mb-3">
+          <label class="form-label">Sanitarios:</label>
+          <div class="escala-container">
+            @for (num of [1,2,3,4,5]; track num) {
+              <label class="escala-item">
+                <input type="radio" [value]="num" formControlName="estadoSanitarios">
+                <span>{{ num }}</span>
+              </label>
+            }
+          </div>
+        </div>
+
+        <div class="mb-4">
+          <label class="form-label">Exteriores:</label>
+          <div class="escala-container">
+            @for (num of [1,2,3,4,5]; track num) {
+              <label class="escala-item">
+                <input type="radio" [value]="num" formControlName="estadoExteriores">
+                <span>{{ num }}</span>
+              </label>
+            }
+          </div>
+        </div>
+
+        <!-- Pregunta 10 -->
+        <div class="mb-4">
+          <label class="form-label fw-bold">10. ¿Durante su servicio el instructor le pidió algún tipo de propina?</label>
+          <div class="d-flex gap-4 mt-1">
+            <div class="form-check">
+              <input class="form-check-input" type="radio" id="propinaSi" value="SI" formControlName="pidioPropina">
+              <label class="form-check-label" for="propinaSi">Sí</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" id="propinaNo" value="NO" formControlName="pidioPropina">
+              <label class="form-check-label" for="propinaNo">No</label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pregunta 11 -->
+        <div class="mb-4">
+          <label for="comentarios" class="form-label fw-bold">11. Comentarios y sugerencias:</label>
+          <textarea id="comentarios" class="form-control" rows="3" placeholder="Escriba aquí sus opiniones para ayudarnos a mejorar..." formControlName="comentarios"></textarea>
+        </div>
+
+        <!-- Botón Enviar -->
+        <div class="d-flex justify-content-end pt-3 border-top">
+          <button type="submit" class="btn btn-siguiente px-4 py-2">
+            Enviar Encuesta <i class="fa-solid fa-paper-plane ms-2"></i>
+          </button>
+        </div>
+
+      </form>
+    </div>
+
+  </div>
+</div>

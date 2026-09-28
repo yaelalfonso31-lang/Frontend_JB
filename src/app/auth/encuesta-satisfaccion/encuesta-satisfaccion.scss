@@ -1,0 +1,140 @@
+:host {
+  display: block;
+}
+
+/* Fondo grisáceo unificado con el resto de pantallas */
+.recovery-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 3rem 1.5rem;
+  background-color: #f4f6f6;
+}
+
+.form-container {
+  background: white;
+  border-radius: var(--border-radius, 8px);
+  border: 1px solid var(--border-color, #e0e0e0);
+  width: 100%;
+  max-width: 850px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.form-content {
+  padding: 3rem 4rem;
+}
+
+@media (max-width: 768px) {
+  .form-content {
+    padding: 2rem 1.5rem;
+  }
+}
+
+.encabezado-institucional {
+  background: #d1e7de;
+  padding: 1.5rem 2rem;
+  border-radius: var(--border-radius, 8px) var(--border-radius, 8px) 0 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  .header-brand {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    gap: 1rem;
+
+    .header-titles {
+      text-align: center;
+      h1 {
+        color: #408558;
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin: 0;
+      }
+      p {
+        color: #145A32;
+        font-weight: 600;
+      }
+    }
+
+    .logo-institucional {
+      width: auto !important;
+      height: 60px !important;
+      object-fit: contain;
+    }
+  }
+
+  .badge-servicio {
+    background-color: #145A32;
+    color: white;
+    padding: 0.4rem 1rem;
+    font-size: 0.85rem;
+    border-radius: 20px;
+    letter-spacing: 1px;
+  }
+}
+
+.subtitulo {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--secondary-green, #145A32);
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #eaeded;
+}
+
+/* Escala de Calificación 1 a 5 */
+.escala-container {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+
+  .escala-item {
+    cursor: pointer;
+    
+    input {
+      display: none; // Oculta el radio genérico
+    }
+
+    span {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      border: 2px solid #dcdde1;
+      border-radius: 8px;
+      font-weight: 700;
+      color: #2f3640;
+      transition: all 0.2s ease;
+    }
+
+    input:checked + span {
+      background-color: #27ae60;
+      border-color: #27ae60;
+      color: white;
+      transform: scale(1.05);
+    }
+
+    &:hover span {
+      border-color: #27ae60;
+    }
+  }
+}
+
+/* Botón Verde Institucional */
+.btn-siguiente {
+  background-color: #27ae60 !important;
+  border-color: #27ae60 !important;
+  color: #ffffff !important;
+  font-weight: 600;
+
+  &:hover {
+    background-color: #1e8449 !important;
+    border-color: #1e8449 !important;
+  }
+}
