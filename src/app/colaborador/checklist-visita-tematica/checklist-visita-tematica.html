@@ -1,0 +1,134 @@
+<form class="checklist-page" (submit)="$event.preventDefault()">
+  <header class="document-header">
+    <div class="document-title-row">
+      <div>
+        <p class="document-kicker">Control de atención educativa</p>
+        <h2>Lista de procedimientos</h2>
+        <p class="service-name">Servicio: Visita Temática</p>
+      </div>
+      <div class="document-actions">
+        <label class="folio-field">
+          <span>Folio</span>
+          <input
+            type="text"
+            name="folio"
+            autocomplete="off"
+            placeholder="Número de folio"
+            [value]="checklist().folio"
+            (change)="updateFolio($any($event.target).value)"
+          />
+        </label>
+        <button class="pdf-button" type="button" (click)="downloadPdf()">
+          <i class="bi bi-filetype-pdf" aria-hidden="true"></i>
+          Descargar PDF
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <section class="progress-panel" aria-label="Avance del servicio">
+    <div class="progress-heading">
+      <div>
+        <p class="eyebrow">Seguimiento del servicio</p>
+        <h2>{{ currentPhase() }}</h2>
+      </div>
+      <strong class="progress-count">{{ completedSteps() }} <span>/ {{ totalSteps }} pasos</span></strong>
+    </div>
+    <div
+      class="progress-track"
+      role="progressbar"
+      aria-label="Progreso general del servicio"
+      [attr.aria-valuenow]="progressPercent()"
+      aria-valuemin="0"
+      aria-valuemax="100"
+    >
+      <span [style.width.%]="progressPercent()"></span>
+    </div>
+    <div class="phase-overview">
+      @for (phase of phases; track phase.id) {
+        <div class="phase-marker" [class.phase-done]="phaseStatus(phase) === 'Completada'" [class.phase-current]="phaseStatus(phase) === 'En curso'">
+          <span class="phase-dot" aria-hidden="true"></span>
+          <span class="phase-marker-title">{{ phase.title }}</span>
+          <span class="phase-marker-status">{{ phaseStatus(phase) }}</span>
+        </div>
+      }
+    </div>
+  </section>
+
+  @for (phase of phases; track phase.id; let phaseIndex = $index) {
+    <section class="procedure-section" [attr.aria-labelledby]="'phase-' + phase.id">
+      <div class="section-heading">
+        <div class="section-number">0{{ phaseIndex + 1 }}</div>
+        <div class="section-title">
+          <p class="eyebrow">{{ phase.timing }}</p>
+          <h2 [id]="'phase-' + phase.id">{{ phase.title }}</h2>
+        </div>
+        <span class="section-progress">{{ phaseCompleted(phase) }} / {{ phase.steps.length }}</span>
+      </div>
+
+      <div class="table-scroll">
+        <table class="procedure-table">
+          <thead>
+            <tr>
+              <th scope="col">Procedimiento</th>
+              <th scope="col">Fecha</th>
+              <th scope="col">Realizó</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (step of phase.steps; track step.id; let stepIndex = $index) {
+              <tr [class.row-completed]="checklist().steps[step.id].completed">
+                <td class="procedure-cell">
+                  <label class="procedure-check">
+                    <input
+                      type="checkbox"
+                      [name]="step.id + '-completed'"
+                      [checked]="checklist().steps[step.id].completed"
+                      [attr.aria-label]="'Marcar como completado: ' + step.description"
+                      (change)="updateStep(step.id, { completed: $any($event.target).checked })"
+                    />
+                    <span class="step-number">{{ stepIndex + 1 }}.</span>
+                    <div class="procedure-copy">
+                      {{ step.description }}
+                      @if (step.details?.length) {
+                        <ul class="procedure-details">
+                          @for (detail of step.details; track detail) {
+                            <li>{{ detail }}</li>
+                          }
+                        </ul>
+                      }
+                    </div>
+                  </label>
+                </td>
+                <td class="date-cell">
+                  <input
+                    type="date"
+                    [name]="step.id + '-date'"
+                    [value]="checklist().steps[step.id].date"
+                    [attr.aria-label]="'Fecha de: ' + step.description"
+                    (change)="updateStep(step.id, { date: $any($event.target).value })"
+                  />
+                </td>
+                <td class="performer-cell">
+                  <input
+                    type="text"
+                    [name]="step.id + '-performer'"
+                    [value]="checklist().steps[step.id].performer"
+                    [attr.aria-label]="'Nombre o firma de quien realizó: ' + step.description"
+                    placeholder="Nombre o firma"
+                    (input)="updateStep(step.id, { performer: $any($event.target).value })"
+                  />
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </section>
+  }
+
+  <footer class="document-footer">
+    <span>Jardín Botánico Universitario BUAP</span>
+    <span>El avance se guarda automáticamente en este navegador, separado por folio.</span>
+  </footer>
+</form>

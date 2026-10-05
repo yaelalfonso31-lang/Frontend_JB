@@ -10,6 +10,7 @@ import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { HeaderComponent } from '../../shared/header/header';
 import { RouterOutlet } from '@angular/router';
+import { ChecklistRegistryService } from '../../colaborador/checklists/checklist-registry.service';
 
 // Validador personalizado para las reglas de los servicios
 export function serviciosValidator(): ValidatorFn {
@@ -41,6 +42,7 @@ export class SolicitudWizardComponent implements AfterViewInit {
   private fb = inject(FormBuilder).nonNullable;
   private router = inject(Router);
   private http = inject(HttpClient); // <-- Inyección del cliente HTTP
+  private checklistRegistry = inject(ChecklistRegistryService);
 
   fechaInput = viewChild<ElementRef>('fechaInput');
   horaInput = viewChild<ElementRef>('horaInput');
@@ -249,13 +251,19 @@ export class SolicitudWizardComponent implements AfterViewInit {
 
       // Enviamos el formData
       // Enviamos el formData
-      this.http.post('/api/solicitudes', formData)
+      this.http.post<{ folio: string }>('/api/solicitudes', formData)
         .subscribe({
           next: (respuesta: any) => {
             console.log('¡Éxito!', respuesta);
 
             // 1. Guardamos el folio en la memoria de tu interfaz
             this.folioAsignado.set(respuesta.folio);
+            this.checklistRegistry.registerSubmittedRequest({
+              folio: respuesta.folio,
+              school: formVal.escuela,
+              date: formVal.fecha,
+              services: formVal.servicios
+            });
 
             // 2. Le decimos a Angular que brinque al paso 6
             this.irAPaso(6);

@@ -17,13 +17,13 @@ interface SolicitudColaborador {
   selector: 'app-aprobacion-colaboradores',
   standalone: true,
   imports: [CommonModule],
-  templateUrl: './aprobacion-colaboradores.html',
-  styleUrl: './aprobacion-colaboradores.scss',
+  templateUrl: './aprobacion-colaboradores/aprobacion-colaboradores.html',
+  styleUrl: './aprobacion-colaboradores/aprobacion-colaboradores.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AprobacionColaboradoresComponent implements OnInit {
   private http = inject(HttpClient);
-  
+
   // Inicializamos el signal vacío
   solicitudes = signal<SolicitudColaborador[]>([]);
   selectedSolicitud = signal<SolicitudColaborador | null>(null);

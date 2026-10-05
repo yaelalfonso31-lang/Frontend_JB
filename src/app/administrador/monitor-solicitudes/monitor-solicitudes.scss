@@ -155,6 +155,7 @@
 }
 
 .btn-checklist,
+.btn-review,
 .btn-success,
 .btn-warning,
 .btn-danger {
@@ -168,6 +169,16 @@
 .btn-checklist,
 .btn-warning {
   background: #f59e0b;
+  color: white;
+}
+
+.btn-checklist {
+  display: inline-block;
+  text-decoration: none;
+}
+
+.btn-review {
+  background: #176044;
   color: white;
 }
 

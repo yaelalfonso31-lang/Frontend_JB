@@ -71,7 +71,8 @@
           <th>Visitantes</th>
           <th>Propósito</th>
           <th>Estado</th>
-          <th>Checklist</th>
+          <th>Procedimientos</th>
+          <th>Revisión</th>
         </tr>
       </thead>
       <tbody>
@@ -89,7 +90,14 @@
               </span>
             </td>
             <td>
-              <button class="btn-checklist" (click)="abrirChecklist(solicitud)">Checklist</button>
+              @if (checklistRoute(solicitud); as route) {
+                <a class="btn-checklist" [routerLink]="route" [queryParams]="{ folio: solicitud.folio }">Abrir checklist</a>
+              } @else {
+                <span class="checklist-unavailable" title="El API debe devolver el folio y los servicios seleccionados">Sin tipo de servicio</span>
+              }
+            </td>
+            <td>
+              <button class="btn-review" type="button" (click)="abrirChecklist(solicitud)">Revisar solicitud</button>
             </td>
           </tr>
         }
@@ -108,7 +116,7 @@
   <div class="modal-backdrop" (click)="cerrarChecklist()">
     <div class="modal-card" (click)="$event.stopPropagation()">
       <div class="modal-header">
-        <h3>Checklist - Solicitud #{{ solicitud.id }}</h3>
+        <h3>Revisión de solicitud #{{ solicitud.id }}</h3>
         <button class="close-btn" type="button" (click)="cerrarChecklist()">×</button>
       </div>
       <div class="modal-body">
@@ -117,13 +125,6 @@
         <p><strong>Fecha:</strong> {{ solicitud.fechaVisita }}</p>
         <p><strong>Visitantes:</strong> {{ solicitud.numeroVisitantes }}</p>
         <p><strong>Propósito:</strong> {{ solicitud.proposito }}</p>
-        <ul class="checklist-list">
-          <li><input type="checkbox" checked /> Documentación enviada</li>
-          <li><input type="checkbox" checked /> Horario confirmado</li>
-          <li><input type="checkbox" /> Instalaciones revisadas</li>
-          <li><input type="checkbox" /> Personal asignado</li>
-          <li><input type="checkbox" /> Notificación final realizada</li>
-        </ul>
       </div>
       <div class="modal-actions compact">
         <button type="button" class="btn-success" (click)="cambiarEstado('aprobada')">Aprobar</button>

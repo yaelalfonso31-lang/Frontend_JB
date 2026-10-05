@@ -2,7 +2,7 @@ import { Component, ChangeDetectionStrategy, OnInit, inject } from '@angular/cor
 import { CommonModule } from '@angular/common';
 import { RouterOutlet, RouterLink, ActivatedRoute, Router } from '@angular/router';
 
-type AdminSection = 'dashboard' | 'colaboradores' | 'solicitudes' | 'configuracion';
+type AdminSection = 'dashboard' | 'colaboradores' | 'solicitudes' | 'checklists' | 'configuracion';
 
 @Component({
   selector: 'app-administrador',
@@ -22,7 +22,9 @@ export class AdministradorComponent implements OnInit {
     this.activatedRoute.firstChild?.url.subscribe(url => {
       if (url && url.length > 0) {
         const segment = url[0].path;
-        if (segment === 'colaboradores' || segment === 'solicitudes' || segment === 'configuracion' || segment === 'dashboard') {
+        if (segment.startsWith('checklist')) {
+          this.activeSection = 'checklists';
+        } else if (segment === 'colaboradores' || segment === 'solicitudes' || segment === 'configuracion' || segment === 'dashboard') {
           this.activeSection = segment as AdminSection;
         }
       }

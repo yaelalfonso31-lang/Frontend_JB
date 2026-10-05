@@ -2,8 +2,10 @@ import { ChangeDetectionStrategy, Component, OnInit, inject, signal } from '@ang
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
+import { RouterLink } from '@angular/router';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
+import { ChecklistRegistryService } from '../../colaborador/checklists/checklist-registry.service';
 
 interface Solicitud {
   id: number;
@@ -13,18 +15,22 @@ interface Solicitud {
   estado: 'pendiente' | 'aprobada' | 'rechazada';
   numeroVisitantes: number;
   proposito: string;
+  folio?: string;
+  servicios?: string[] | string;
+  services?: string[] | string;
 }
 
 @Component({
   selector: 'app-monitor-solicitudes',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './monitor-solicitudes.html',
   styleUrl: './monitor-solicitudes.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class MonitorSolicitudesComponent implements OnInit {
   private http = inject(HttpClient);
+  private checklistRegistry = inject(ChecklistRegistryService);
 
   solicitudes = signal<Solicitud[]>([
     {
@@ -34,7 +40,9 @@ export class MonitorSolicitudesComponent implements OnInit {
       fechaVisita: '2026-09-25',
       estado: 'pendiente',
       numeroVisitantes: 18,
-      proposito: 'Visita guiada de ciencias naturales'
+      proposito: 'Visita guiada de ciencias naturales',
+      folio: 'JB-2026-101',
+      servicios: ['visita_guiada']
     },
     {
       id: 102,
@@ -43,7 +51,9 @@ export class MonitorSolicitudesComponent implements OnInit {
       fechaVisita: '2026-09-26',
       estado: 'aprobada',
       numeroVisitantes: 24,
-      proposito: 'Recorrido educativo del jardín botánico'
+      proposito: 'Recorrido educativo del jardín botánico',
+      folio: 'JB-2026-102',
+      servicios: ['visita_guiada', 'conociendo_medio_ambiente']
     },
     {
       id: 103,
@@ -52,7 +62,9 @@ export class MonitorSolicitudesComponent implements OnInit {
       fechaVisita: '2026-09-27',
       estado: 'rechazada',
       numeroVisitantes: 12,
-      proposito: 'Taller de biología aplicada'
+      proposito: 'Taller de biología aplicada',
+      folio: 'JB-2026-103',
+      servicios: ['visita_tematica']
     }
   ]);
 
@@ -67,7 +79,21 @@ export class MonitorSolicitudesComponent implements OnInit {
 
   cargarSolicitudes(): void {
     this.http.get<Solicitud[]>('/api/monitor/solicitudes').subscribe({
-      next: (data) => this.solicitudes.set(data.length ? data : this.solicitudes()),
+      next: (data) => {
+        const solicitudes = data.length ? data : this.solicitudes();
+        this.solicitudes.set(solicitudes);
+        for (const solicitud of solicitudes) {
+          const servicios = this.getServices(solicitud);
+          if (solicitud.folio && servicios.length && solicitud.estado !== 'rechazada') {
+            this.checklistRegistry.registerSubmittedRequest({
+              folio: solicitud.folio,
+              school: solicitud.escuela || solicitud.solicitante,
+              date: solicitud.fechaVisita,
+              services: servicios
+            });
+          }
+        }
+      },
       error: (error) => console.error('Error al cargar el monitor:', error)
     });
   }
@@ -101,6 +127,19 @@ export class MonitorSolicitudesComponent implements OnInit {
 
   abrirChecklist(solicitud: Solicitud): void {
     this.checklistSeleccionada.set(solicitud);
+  }
+
+  checklistRoute(solicitud: Solicitud): string | null {
+    if (!solicitud.folio) return null;
+
+    const services = this.getServices(solicitud);
+    if (services.includes('visita_tematica')) return '/administrador/checklist-visita-tematica';
+    if (!services.includes('visita_guiada')) return null;
+
+    const hasWorkshop = services.some(service => !['visita_guiada', 'visita_tematica'].includes(service));
+    return hasWorkshop
+      ? '/administrador/checklist-visita-taller'
+      : '/administrador/checklist-visita';
   }
 
   cerrarChecklist(): void {
@@ -167,6 +206,18 @@ export class MonitorSolicitudesComponent implements OnInit {
     link.download = nombre;
     link.click();
     URL.revokeObjectURL(url);
+  }
+
+  private getServices(solicitud: Solicitud): string[] {
+    const services = solicitud.servicios ?? solicitud.services ?? [];
+    if (Array.isArray(services)) return services;
+    try {
+      const parsed: unknown = JSON.parse(services);
+      if (Array.isArray(parsed)) return parsed.filter((item): item is string => typeof item === 'string');
+    } catch {
+      return services.split(',').map(service => service.trim()).filter(Boolean);
+    }
+    return [];
   }
 
   get estadisticas() {
