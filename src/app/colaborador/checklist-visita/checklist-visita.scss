@@ -1,0 +1,416 @@
+:host {
+  display: block;
+  color: #25372d;
+  font-family: 'Aptos', 'Segoe UI', sans-serif;
+}
+
+.checklist-page {
+  --forest: #176044;
+  --forest-deep: #104832;
+  --leaf: #dcebe1;
+  --line: #d8e0da;
+  --muted: #637269;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 2rem clamp(1rem, 3vw, 3rem) 3rem;
+}
+
+.document-header,
+.progress-panel,
+.procedure-section {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+}
+
+.document-header {
+  padding: clamp(1.25rem, 3vw, 2.25rem);
+  border-top: 5px solid var(--forest);
+}
+
+.document-title-row,
+.progress-heading,
+.section-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.eyebrow,
+.document-kicker {
+  margin: 0 0 0.35rem;
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.document-title-row h2,
+.progress-heading h2,
+.section-title h2 {
+  margin: 0;
+  color: var(--forest-deep);
+}
+
+.document-title-row {
+  align-items: flex-end;
+}
+
+.document-actions {
+  display: grid;
+  min-width: min(100%, 230px);
+  gap: 0.55rem;
+  justify-items: stretch;
+}
+
+.document-title-row h2 {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: clamp(1.45rem, 3vw, 2rem);
+  font-weight: 600;
+}
+
+.service-name {
+  margin: 0.35rem 0 0;
+  color: #4b5d52;
+}
+
+.folio-field {
+  display: grid;
+  min-width: min(100%, 230px);
+  gap: 0.4rem;
+  color: var(--forest-deep);
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.folio-field input,
+.procedure-table input[type='text'],
+.procedure-table input[type='date'] {
+  width: 100%;
+  min-width: 0;
+  min-height: 40px;
+  padding: 0.55rem 0.65rem;
+  border: 1px solid #cbd6ce;
+  border-radius: 3px;
+  background: #fff;
+  color: #25372d;
+  font: inherit;
+  font-size: 0.84rem;
+}
+
+.pdf-button {
+  display: inline-flex;
+  min-height: 40px;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.55rem 0.75rem;
+  border: 1px solid #176044;
+  border-radius: 3px;
+  background: #176044;
+  color: #fff;
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.pdf-button:hover {
+  background: #104832;
+}
+
+.pdf-button:focus-visible {
+  outline: 3px solid #9fcbb0;
+  outline-offset: 2px;
+}
+
+.folio-field input:focus,
+.procedure-table input:focus,
+.annex-item input:focus-visible,
+.procedure-check input:focus-visible {
+  outline: 3px solid #9fcbb0;
+  outline-offset: 1px;
+}
+
+.progress-panel {
+  margin-top: 1rem;
+  padding: 1.25rem clamp(1rem, 2.5vw, 2rem);
+}
+
+.progress-heading h2 {
+  font-size: 1.05rem;
+}
+
+.progress-count {
+  color: var(--forest);
+  font-size: 1.35rem;
+  white-space: nowrap;
+}
+
+.progress-count span {
+  color: var(--muted);
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.progress-track {
+  height: 8px;
+  margin-top: 1rem;
+  overflow: hidden;
+  border-radius: 10px;
+  background: #e8eee9;
+}
+
+.progress-track span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--forest);
+  transition: width 180ms ease;
+}
+
+.phase-overview {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+  margin-top: 1.1rem;
+}
+
+.phase-marker {
+  display: grid;
+  grid-template-columns: 12px minmax(0, 1fr);
+  align-items: start;
+  column-gap: 0.5rem;
+  color: #758178;
+  font-size: 0.75rem;
+}
+
+.phase-dot {
+  width: 9px;
+  aspect-ratio: 1;
+  margin-top: 0.17rem;
+  border: 2px solid #aab7ae;
+  border-radius: 50%;
+}
+
+.phase-marker-title {
+  font-weight: 650;
+}
+
+.phase-marker-status {
+  grid-column: 2;
+  margin-top: 0.2rem;
+  font-size: 0.68rem;
+}
+
+.phase-current,
+.phase-done {
+  color: var(--forest);
+}
+
+.phase-current .phase-dot,
+.phase-done .phase-dot {
+  border-color: var(--forest);
+  background: var(--forest);
+}
+
+.procedure-section,
+.annex-section {
+  margin-top: 1rem;
+  overflow: hidden;
+}
+
+.section-heading {
+  justify-content: flex-start;
+  padding: 1rem 1.25rem;
+  background: #f5f8f5;
+  border-bottom: 1px solid var(--line);
+}
+
+.section-number {
+  display: grid;
+  width: 38px;
+  aspect-ratio: 1;
+  flex: 0 0 auto;
+  place-items: center;
+  border-radius: 3px;
+  background: var(--forest);
+  color: #fff;
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+.section-title {
+  flex: 1;
+  min-width: 0;
+}
+
+.section-title h2 {
+  font-size: 1rem;
+  line-height: 1.35;
+  text-transform: uppercase;
+}
+
+.section-progress {
+  flex: 0 0 auto;
+  padding: 0.35rem 0.55rem;
+  border: 1px solid #cddbd1;
+  border-radius: 3px;
+  background: #fff;
+  color: var(--forest);
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.table-scroll {
+  overflow-x: auto;
+}
+
+.procedure-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.procedure-table th,
+.procedure-table td {
+  padding: 0.75rem 0.9rem;
+  border-bottom: 1px solid #e6ebe7;
+  text-align: left;
+  vertical-align: middle;
+}
+
+.procedure-table th {
+  background: #fbfcfb;
+  color: #536359;
+  font-size: 0.7rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.procedure-table th:first-child {
+  width: 56%;
+}
+
+.procedure-table th:nth-child(2) {
+  width: 19%;
+}
+
+.procedure-table th:nth-child(3) {
+  width: 25%;
+}
+
+.procedure-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.procedure-cell {
+  color: #34463b;
+  font-size: 0.84rem;
+  line-height: 1.5;
+}
+
+.procedure-check {
+  display: grid;
+  grid-template-columns: 18px 1.5rem minmax(0, 1fr);
+  align-items: start;
+  gap: 0.45rem;
+  cursor: pointer;
+}
+
+.procedure-copy {
+  min-width: 0;
+}
+
+.procedure-details {
+  margin: 0.45rem 0 0;
+  padding-left: 1.2rem;
+  color: #536359;
+  font-size: 0.8rem;
+}
+
+.procedure-details li + li {
+  margin-top: 0.15rem;
+}
+
+.procedure-check input,
+.annex-item input {
+  width: 17px;
+  height: 17px;
+  margin: 0.12rem 0 0;
+  accent-color: var(--forest);
+  cursor: pointer;
+}
+
+.step-number {
+  color: var(--forest);
+  font-weight: 800;
+  text-align: right;
+}
+
+.row-completed .procedure-cell > .procedure-check > span:last-child {
+  color: #76837a;
+  text-decoration: line-through;
+  text-decoration-color: #9aa79e;
+}
+
+.row-completed .procedure-copy {
+  color: #76837a;
+}
+
+.date-cell,
+.performer-cell {
+  min-width: 140px;
+}
+
+.procedure-table input[type='date'] {
+  font-size: 0.76rem;
+}
+
+.document-footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 0.25rem 0;
+  color: var(--muted);
+  font-size: 0.72rem;
+}
+
+@media (max-width: 720px) {
+  .checklist-page {
+    padding: 1rem 0.75rem 2rem;
+  }
+
+  .document-title-row {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .document-actions {
+    min-width: 100%;
+  }
+
+  .phase-overview {
+    grid-template-columns: 1fr;
+    gap: 0.65rem;
+  }
+
+  .procedure-table {
+    min-width: 720px;
+  }
+
+  .section-heading {
+    padding: 0.85rem;
+  }
+
+  .section-title h2 {
+    font-size: 0.88rem;
+  }
+
+  .document-footer {
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+}
