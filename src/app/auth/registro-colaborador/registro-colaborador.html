@@ -41,6 +41,14 @@
                             <input id="nombreCompleto" type="text" formControlName="nombreCompleto" class="form-control"
                                 placeholder="Ej. Carlos Mendoza Ruiz"
                                 [class.is-invalid]="registerForm.controls.nombreCompleto.invalid && registerForm.controls.nombreCompleto.touched">
+                                @if (registerForm.controls.nombreCompleto.invalid && registerForm.controls.nombreCompleto.touched) {
+                                <div class="text-danger small mt-1 d-flex align-items-center">
+                                    <i class="fa-solid fa-circle-exclamation me-1"></i>
+                                    @if (registerForm.controls.nombreCompleto.errors?.['required']) {
+                                    <span>El nombre completo es obligatorio.</span>
+                                    }
+                                </div>
+                                }
                         </div>
                     </div>
 
@@ -52,6 +60,17 @@
                             <input id="email" type="email" formControlName="email" class="form-control"
                                 placeholder="ejemplo@botanico.com"
                                 [class.is-invalid]="registerForm.controls.email.invalid && registerForm.controls.email.touched">
+                                @if (registerForm.controls.email.invalid && registerForm.controls.email.touched) {
+                                <div class="text-danger small mt-1 d-flex align-items-center">
+                                    <i class="fa-solid fa-circle-exclamation me-1"></i>
+                                    @if (registerForm.controls.email.errors?.['required']) {
+                                    <span>El correo electrónico es obligatorio.</span>
+                                    }
+                                    @if (registerForm.controls.email.errors?.['email']) {
+                                    <span>Ingresa un correo válido (ejemplo: usuario@dominio.com).</span>
+                                    }
+                                </div>
+                                }
                         </div>
                     </div>
 
@@ -63,6 +82,17 @@
                             <input id="password" type="password" formControlName="password" class="form-control"
                                 placeholder="••••••••"
                                 [class.is-invalid]="registerForm.controls.password.invalid && registerForm.controls.password.touched">
+                                @if (registerForm.controls.password.invalid && registerForm.controls.password.touched) {
+                                <div class="text-danger small mt-1 d-flex align-items-center">
+                                    <i class="fa-solid fa-circle-exclamation me-1"></i>
+                                    @if (registerForm.controls.password.errors?.['required']) {
+                                    <span>La nueva contraseña es requerida.</span>
+                                    }
+                                    @if (registerForm.controls.password.errors?.['minlength']) {
+                                    <span>La contraseña debe tener al menos 6 caracteres.</span>
+                                    }
+                                </div>
+                                }
                         </div>
                     </div>
 
