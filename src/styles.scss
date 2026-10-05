@@ -112,6 +112,17 @@ app-root {
     min-height: 100vh;
 }
 
+/* Para Angular Material */
+.cdk-overlay-container {
+    z-index: 9999 !important;
+}
+
+/* Para Bootstrap u otras librerías (ajusta la clase del datepicker) */
+.datepicker,
+.dropdown-menu {
+    z-index: 9999 !important;
+}
+
 // El main-content empuja el footer hacia abajo
 .main-content {
     flex: 1;

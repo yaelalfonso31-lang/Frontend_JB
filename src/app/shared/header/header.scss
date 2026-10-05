@@ -17,14 +17,14 @@ $header-pad-y: 10px;
    HEADER PRINCIPAL
    ========================================================================== */
 .institucional-header {
-    position: sticky;
+    position: relative;
     top: 0;
     z-index: 1000;
     width: 100%;
     background: linear-gradient(180deg, #ffffff 0%, #fbfdfb 100%);
     border-bottom: 1px solid rgba(0, 59, 92, 0.08);
     box-shadow: $sombra-suave;
-    transition: transform 0.35s ease, box-shadow 0.3s ease;
+    transition: transform 0.35s ease;
     will-change: transform;
     backface-visibility: hidden;
 
@@ -42,9 +42,6 @@ $header-pad-y: 10px;
         box-shadow: $sombra-hover;
     }
 
-    &.hidden {
-        transform: translateY(-100%);
-    }
 }
 
 /* ==========================================================================

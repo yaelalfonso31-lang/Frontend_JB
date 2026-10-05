@@ -3,8 +3,8 @@
 
 <div class="container py-4">
     <!-- ============================================================
-       INDICADOR DE PROGRESO
-       ============================================================ -->
+        INDICADOR DE PROGRESO
+        ============================================================ -->
     <div class="progress-steps mb-4">
         <div class="step-item" [class.active]="pasoActual() === 1" [class.completed]="pasoActual() > 1">
             <span class="step-number">1</span><span class="step-label">Solicitud</span>
@@ -28,8 +28,8 @@
 
     <div class="form-container shadow-lg">
         <!-- ============================================================
-         ENCABEZADO
-         ============================================================ -->
+        ENCABEZADO
+        ============================================================ -->
         <header class="encabezado-institucional">
             <span class="step-badge">Paso {{ pasoActual() }}</span>
             <h1>
@@ -50,8 +50,8 @@
                 @switch (pasoActual()) {
 
                 <!-- ============================================================
-             PASO 1 — SOLICITUD
-             ============================================================ -->
+                PASO 1 — SOLICITUD
+                ============================================================ -->
                 @case (1) {
                 <!-- Sección: Datos de la Institución -->
                 <div class="section-card">
@@ -1000,8 +1000,8 @@
                 }
 
                 <!-- ============================================================
-             PASO 2 — POLÍTICA DE SERVICIO
-             ============================================================ -->
+                PASO 2 — POLÍTICA DE SERVICIO
+                ============================================================ -->
                 @case (2) {
                 <div class="alert-confirmacion mb-4" role="alert">
                     <i class="bi bi-check-circle-fill alert-icon"></i>
@@ -1158,8 +1158,8 @@
                 }
 
                 <!-- ============================================================
-             PASO 3 — REPORTE DE PAGO
-             ============================================================ -->
+                PASO 3 — REPORTE DE PAGO
+                ============================================================ -->
                 @case (3) {
                 <div class="row g-3 mb-4">
                     <div class="col-md-6">
@@ -1298,8 +1298,8 @@
                 }
 
                 <!-- ============================================================
-             PASO 4 — CÓDIGO DE COMPORTAMIENTO
-             ============================================================ -->
+                PASO 4 — CÓDIGO DE COMPORTAMIENTO
+                ============================================================ -->
                 @case (4) {
                 <div class="alert-intro" role="alert">
                     <i class="bi bi-heart-fill alert-icon"></i>
@@ -1404,8 +1404,8 @@
                 }
 
                 <!-- ============================================================
-             PASO 5 — RECOMENDACIONES
-             ============================================================ -->
+                PASO 5 — RECOMENDACIONES
+                ============================================================ -->
                 @case (5) {
                 <div class="welcome-banner">
                     <h2>
@@ -1533,8 +1533,8 @@
                 }
 
                 <!-- ============================================================
-             PASO 6 — RESUMEN
-             ============================================================ -->
+                PASO 6 — RESUMEN
+                ============================================================ -->
                 @case (6) {
                 <div class="exito-banner">
                     <i class="bi bi-check2-circle exito-icon"></i>

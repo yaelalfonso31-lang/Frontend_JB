@@ -143,8 +143,9 @@ export class SolicitudWizardComponent implements AfterViewInit {
         monthSelectorType: 'static',
         dateFormat: "Y-m-d",
         altInput: false,
-        appendTo: document.body, // <-- Fuerza el renderizado en el body
-        static: false
+        appendTo: document.body,
+        static: true,
+        position: 'below'
       });
     }
 
@@ -158,7 +159,9 @@ export class SolicitudWizardComponent implements AfterViewInit {
         time_24hr: true,
         minuteIncrement: 30,
         disableMobile: true,
-        appendTo: document.body // <-- Igual aquí
+        appendTo: document.body,
+        static: true,
+        position: 'below'
       });
     }
   }
