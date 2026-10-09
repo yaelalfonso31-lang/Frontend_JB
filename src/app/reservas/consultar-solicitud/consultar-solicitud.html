@@ -4,27 +4,27 @@
     <div class="overlay"></div>
 
     <div class="consulta-content">
-        <!-- Encabezado fuera de la tarjeta -->
         <div class="header-section">
-            <img src="assets/logo.jpg" width="140" height="90" alt="Logo BUAP" class="logo-buap">
             <h1>Rastreo de Solicitudes</h1>
             <p>Conoce el estado de tu trámite de visita escolar o recorrido guiado.</p>
         </div>
 
-        <!-- Tarjeta estilo Glassmorphism -->
         <div class="glass-card">
-
             <form (ngSubmit)="buscarSolicitud()" #consultaForm="ngForm">
                 <div class="consulta-form-grid">
                     <div class="form-group">
-                        <label for="folio">Folio de la solicitud</label>
+                        <label for="folio">
+                            <i class="bi bi-hash icon-contrast"></i> Folio de la solicitud
+                        </label>
                         <input type="text" id="folio" name="folio" [(ngModel)]="folio" required
                             placeholder="Ej. JB-2026-1234"
                             [class.is-invalid]="consultaForm.controls['folio']?.invalid && consultaForm.controls['folio']?.touched">
                     </div>
 
                     <div class="form-group">
-                        <label for="correo">Correo electrónico</label>
+                        <label for="correo">
+                            <i class="bi bi-envelope-fill icon-contrast"></i> Correo electrónico
+                        </label>
                         <input type="email" id="correo" name="correo" [(ngModel)]="correo" required
                             placeholder="tu@correo.com"
                             [class.is-invalid]="consultaForm.controls['correo']?.invalid && consultaForm.controls['correo']?.touched">
@@ -32,51 +32,52 @@
                 </div>
 
                 <button type="submit" [disabled]="!consultaForm.valid" class="btn-submit">
-                    Consultar Estado
+                    <i class="bi bi-search"></i> Consultar Estado
                 </button>
             </form>
 
-            <!-- Sección de Resultados -->
             @if (solicitudEncontrada) {
             <div class="results-container">
                 <div class="status-header">
-                    <h3>Detalles de la Visita</h3>
+                    <h3><i class="bi bi-card-checklist icon-contrast"></i> Detalles de la Visita</h3>
                     <span class="status-badge" [ngClass]="obtenerClaseEstado(solicitudEncontrada.estado)">
-                        {{ solicitudEncontrada.estado }}
+                        <i class="bi bi-info-circle-fill"></i> {{ solicitudEncontrada.estado }}
                     </span>
                 </div>
 
                 <div class="details-grid">
                     <div class="detail-item">
-                        <span class="label">Folio</span>
+                        <span class="label"><i class="bi bi-upc-scan icon-contrast"></i> Folio</span>
                         <span class="value">{{ solicitudEncontrada.folio }}</span>
                     </div>
                     <div class="detail-item">
-                        <span class="label">Servicio</span>
+                        <span class="label"><i class="bi bi-tree-fill icon-contrast"></i> Servicio</span>
                         <span class="value">{{ solicitudEncontrada.servicio }}</span>
                     </div>
                     <div class="detail-item">
-                        <span class="label">Fecha agendada</span>
+                        <span class="label"><i class="bi bi-calendar-event-fill icon-contrast"></i> Fecha
+                            agendada</span>
                         <span class="value">{{ solicitudEncontrada.fecha | date:'longDate' }}</span>
                     </div>
                     <div class="detail-item">
-                        <span class="label">Visitantes</span>
+                        <span class="label"><i class="bi bi-people-fill icon-contrast"></i> Visitantes</span>
                         <span class="value">{{ solicitudEncontrada.asistentes }} personas</span>
                     </div>
                 </div>
 
-                <!-- Alertas adaptadas -->
                 @if (solicitudEncontrada.estado === 'Requiere Corrección') {
                 <div class="alert-glass warning">
-                    <strong>Atención requerida</strong>
+                    <strong><i class="bi bi-exclamation-triangle-fill"></i> Atención requerida</strong>
                     <p>{{ solicitudEncontrada.mensajeCorreccion }}</p>
-                    <button class="btn-corregir" (click)="abrirModalCorreccion()">Actualizar Datos</button>
+                    <button class="btn-corregir" (click)="abrirModalCorreccion()">
+                        <i class="bi bi-pencil-square"></i> Actualizar Datos
+                    </button>
                 </div>
                 }
 
                 @if (solicitudEncontrada.estado === 'Rechazada') {
                 <div class="alert-glass danger">
-                    <strong>Solicitud declinada</strong>
+                    <strong><i class="bi bi-x-octagon-fill"></i> Solicitud declinada</strong>
                     <p>{{ solicitudEncontrada.mensajeRechazo }}</p>
                 </div>
                 }
@@ -85,8 +86,8 @@
 
             @if (busquedaRealizada && !solicitudEncontrada) {
             <div class="results-container">
-                <div class="alert-glass danger"
-                    style="text-align: center; border: none; background: rgba(255, 82, 82, 0.15);">
+                <div class="alert-glass danger" style="border: none; background: rgba(255, 82, 82, 0.15);">
+                    <strong><i class="bi bi-search-map"></i> Búsqueda sin resultados</strong>
                     <p>No encontramos ninguna solicitud con ese folio y correo. Por favor, verifica tus datos.</p>
                 </div>
             </div>
@@ -95,16 +96,15 @@
             @if (mensajeExito) {
             <div class="results-container">
                 <div class="alert-glass success">
-                    <strong>¡Corrección enviada!</strong>
+                    <strong><i class="bi bi-check-circle-fill"></i> ¡Corrección enviada!</strong>
                     <p>Hemos recibido tus actualizaciones. Nuestro equipo revisará los cambios a la brevedad.</p>
                 </div>
             </div>
             }
 
-            <!-- Botón regresar (usando estilo secundario transparente) -->
             <div style="text-align: center; margin-top: 2.5rem;">
                 <button class="btn-secondary" (click)="regresarInicio()">
-                    Volver al inicio
+                    <i class="bi bi-arrow-left-circle"></i> Volver al inicio
                 </button>
             </div>
         </div>
@@ -116,3 +116,4 @@
     </app-modal-correccion>
     }
 </div>
+<app-footer></app-footer>

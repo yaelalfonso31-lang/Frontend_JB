@@ -34,6 +34,7 @@
               "node_modules/bootstrap-icons/font/bootstrap-icons.css",
               "node_modules/flatpickr/dist/flatpickr.min.css",
               "node_modules/flatpickr/dist/themes/material_green.css",
+              "node_modules/@fortawesome/fontawesome-free/css/all.min.css",
               "src/styles.scss"
             ],
             "scripts": [
@@ -50,8 +51,8 @@
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "4kB",
-                  "maximumError": "8kB"
+                  "maximumWarning": "8kB",
+                  "maximumError": "20kB"
                 }
               ],
               "outputHashing": "all"
@@ -99,6 +100,7 @@
               "node_modules/bootstrap-icons/font/bootstrap-icons.css",
               "node_modules/flatpickr/dist/flatpickr.min.css",
               "node_modules/flatpickr/dist/themes/material_green.css",
+              "node_modules/@fortawesome/fontawesome-free/css/all.min.css",
               "src/styles.scss"
             ],
             "scripts": [

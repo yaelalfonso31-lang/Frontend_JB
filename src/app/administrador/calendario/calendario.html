@@ -1,0 +1,80 @@
+<div class="calendar-container">
+  <header class="calendar-header">
+    <div>
+      <h1>Calendario de visitas</h1>
+      <p>Consulta la agenda de visitas aprobadas por fecha.</p>
+    </div>
+    <div class="month-controls">
+      <button type="button" (click)="cambiarMes(-1)">&laquo; Anterior</button>
+      <h2>{{ mesAnioActual() }}</h2>
+      <button type="button" (click)="cambiarMes(1)">Siguiente &raquo;</button>
+    </div>
+  </header>
+
+  <section class="calendar-grid-card" aria-label="Calendario mensual">
+    <div class="weekdays">
+      <span>Dom</span><span>Lun</span><span>Mar</span><span>Mié</span><span>Jue</span><span>Vie</span><span>Sáb</span>
+    </div>
+
+    <div class="days-grid">
+      @for (dia of diasDelMes(); track $index) {
+        <button
+          type="button"
+          class="calendar-day"
+          [class.empty-day]="!dia"
+          [class.selected-day]="esDiaSeleccionado(dia)"
+          [class.has-visits]="tieneVisitas(dia)"
+          [disabled]="!dia"
+          (click)="seleccionarDia(dia)"
+        >
+          @if (dia) {
+            <span>{{ dia.getDate() }}</span>
+            @if (tieneVisitas(dia)) {
+              <small aria-label="Tiene visitas">•</small>
+            }
+          }
+        </button>
+      }
+    </div>
+  </section>
+
+  @if (diaSeleccionado(); as dia) {
+    <section class="agenda-section">
+      <div class="agenda-heading">
+        <h2>Agenda del día</h2>
+        <span>{{ dia | date:'longDate' }}</span>
+      </div>
+
+      <div class="agenda-table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Hora</th>
+              <th>Solicitante</th>
+              <th>Escuela</th>
+              <th>Visitantes</th>
+              <th>Estado</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (visita of visitasDelDia(); track visita.id) {
+              <tr>
+                <td class="visit-time">{{ visita.horaVisita }}</td>
+                <td>{{ visita.solicitante }}</td>
+                <td>{{ visita.escuela }}</td>
+                <td>{{ visita.numeroVisitantes }}</td>
+                <td><span class="status-badge">{{ visita.estado | titlecase }}</span></td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="5" class="empty-agenda">No hay visitas programadas para esta fecha.</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </section>
+  } @else {
+    <div class="empty-selection">Selecciona un día para consultar su agenda.</div>
+  }
+</div>

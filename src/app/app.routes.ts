@@ -6,12 +6,10 @@ export const routes: Routes = [
         loadComponent: () => import('./auth/login/login').then(m => m.LoginComponent)
     },
     {
-        // Nuestra nueva Landing Page
         path: 'inicio',
         loadComponent: () => import('./pages/inicio/inicio').then(m => m.InicioComponent)
     },
     {
-        // Esta es la ruta que declaramos en el botón "Llenar Solicitud de Visita" del Login
         path: 'solicitud-visita',
         loadComponent: () => import('./reservas/solicitud-wizard/solicitud-wizard').then(m => m.SolicitudWizardComponent)
     },
@@ -49,11 +47,31 @@ export const routes: Routes = [
             },
             {
                 path: 'aprobacion',
-                loadComponent: () => import('./administrador/gestion-colaboradores/aprobacion-colaboradores/aprobacion-colaboradores').then(m => m.AprobacionColaboradoresComponent)
+                loadComponent: () => import('./administrador/gestion-colaboradores/aprobacion-colaboradores').then(m => m.AprobacionColaboradoresComponent)
             },
             {
                 path: 'solicitudes',
                 loadComponent: () => import('./administrador/monitor-solicitudes/monitor-solicitudes').then(m => m.MonitorSolicitudesComponent)
+            },
+            {
+                path: 'checklists',
+                loadComponent: () => import('./colaborador/checklists/checklists').then(m => m.ChecklistsComponent)
+            },
+            {
+                path: 'checklist-visita',
+                loadComponent: () => import('./colaborador/checklist-visita/checklist-visita').then(m => m.ChecklistVisitaComponent)
+            },
+            {
+                path: 'checklist-visita-taller',
+                loadComponent: () => import('./colaborador/checklist-visita-taller/checklist-visita-taller').then(m => m.ChecklistVisitaTallerComponent)
+            },
+            {
+                path: 'checklist-visita-tematica',
+                loadComponent: () => import('./colaborador/checklist-visita-tematica/checklist-visita-tematica').then(m => m.ChecklistVisitaTematicaComponent)
+            },
+            {
+                path: 'calendario',
+                loadComponent: () => import('./administrador/calendario/calendario').then(m => m.AdministradorCalendarioComponent)
             },
             {
                 path: 'configuracion',
@@ -77,6 +95,22 @@ export const routes: Routes = [
             {
                 path: 'solicitudes',
                 loadComponent: () => import('./colaborador/monitor-solicitudes/monitor-solicitudes').then(m => m.MonitorSolicitudes)
+            },
+            {
+                path: 'checklists',
+                loadComponent: () => import('./colaborador/checklists/checklists').then(m => m.ChecklistsComponent)
+            },
+            {
+                path: 'checklist-visita',
+                loadComponent: () => import('./colaborador/checklist-visita/checklist-visita').then(m => m.ChecklistVisitaComponent)
+            },
+            {
+                path: 'checklist-visita-taller',
+                loadComponent: () => import('./colaborador/checklist-visita-taller/checklist-visita-taller').then(m => m.ChecklistVisitaTallerComponent)
+            },
+            {
+                path: 'checklist-visita-tematica',
+                loadComponent: () => import('./colaborador/checklist-visita-tematica/checklist-visita-tematica').then(m => m.ChecklistVisitaTematicaComponent)
             },
             {
                 path: 'instalaciones',

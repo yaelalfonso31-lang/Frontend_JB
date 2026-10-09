@@ -20,4 +20,13 @@ export class AuthService {
   actualizarPassword(email: string, codigo: string, nuevaPassword: string): Observable<any> {
     return this.http.post(`${this.apiUrl}/actualizar-password`, { email, codigo, nuevaPassword });
   }
+  restablecerPassword(email: string, nuevaPassword: string, nueva: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}/restablecer-password`, { email, nuevaPassword });
+  }
+
+  registrarColaborador(nombreCompleto: string, email: string, password: string, rol: string, mensajeNota: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}/registrar-colaborador`, { nombreCompleto, email, password, rol, mensajeNota });
+  }
+
+
 }

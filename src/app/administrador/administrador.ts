@@ -1,8 +1,8 @@
-import { Component, ChangeDetectionStrategy, OnInit } from '@angular/core';
+import { Component, ChangeDetectionStrategy, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterOutlet, RouterLink, ActivatedRoute } from '@angular/router';
+import { RouterOutlet, RouterLink, ActivatedRoute, Router } from '@angular/router';
 
-type AdminSection = 'dashboard' | 'colaboradores' | 'solicitudes' | 'configuracion';
+type AdminSection = 'dashboard' | 'colaboradores' | 'solicitudes' | 'checklists' | 'configuracion';
 
 @Component({
   selector: 'app-administrador',
@@ -14,6 +14,7 @@ type AdminSection = 'dashboard' | 'colaboradores' | 'solicitudes' | 'configuraci
 })
 export class AdministradorComponent implements OnInit {
   activeSection: AdminSection = 'dashboard';
+  private router = inject(Router);
 
   constructor(private activatedRoute: ActivatedRoute) {}
 
@@ -21,10 +22,16 @@ export class AdministradorComponent implements OnInit {
     this.activatedRoute.firstChild?.url.subscribe(url => {
       if (url && url.length > 0) {
         const segment = url[0].path;
-        if (segment === 'colaboradores' || segment === 'solicitudes' || segment === 'configuracion' || segment === 'dashboard') {
+        if (segment.startsWith('checklist')) {
+          this.activeSection = 'checklists';
+        } else if (segment === 'colaboradores' || segment === 'solicitudes' || segment === 'configuracion' || segment === 'dashboard') {
           this.activeSection = segment as AdminSection;
         }
       }
     });
+  }
+
+  cerrarSesion() {
+    this.router.navigate(['/login']);
   }
 }

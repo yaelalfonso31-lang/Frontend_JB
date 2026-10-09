@@ -1,45 +1,65 @@
 <div class="registration-wrapper">
     <div class="form-container shadow-sm">
 
-        <!-- Encabezado Institucional -->
-        <div class="encabezado-institucional">
-            <div class="step-badge">
-                <i class="fa-solid fa-user-plus"></i>
-            </div>
+        <!-- ============================================================
+         ENCABEZADO INSTITUCIONAL
+         ============================================================ -->
+        <header class="encabezado-institucional">
             <div class="header-brand">
                 <h1>Registro de Colaborador</h1>
             <img ngSrc="assets/logo.jpg" width="74" height="60" alt="Logo Jardín Botánico" class="logo-institucional" priority>
             </div>
-        </div>
+        </header>
 
-        <!-- Contenido Principal -->
-        <div class="form-content">
+        <!-- ============================================================
+         CONTENIDO
+         ============================================================ -->
+        <div class="form-content" aria-live="polite">
 
-            <!-- Alerta de Errores Globales -->
+            <!-- Alerta de error global -->
             @if (errorMessage()) {
             <div class="alert alert-danger d-flex align-items-center mb-4" role="alert">
-                <i class="fa-solid fa-circle-exclamation me-2"></i>
+                <i class="fa-solid fa-circle-exclamation me-2 fs-5"></i>
                 <div>{{ errorMessage() }}</div>
             </div>
             }
 
-            <!-- ESTADO 1: Formulario de Registro -->
+            <!-- ============================================================
+           ESTADO 1 — Formulario
+           ============================================================ -->
             @if (!isRegistered()) {
-            <div class="section-card">
-                <h2 class="section-title">Crear Cuenta de Acceso</h2>
+            <section class="section-card">
+                <h2 class="section-title">
+                    <i class="fa-solid fa-id-card-clip me-2"></i>
+                    Crear Cuenta de Acceso
+                </h2>
 
-                <p class="text-muted mb-4">
-                    Completa el siguiente formulario para solicitar tu cuenta de colaborador. Una vez enviado el registro, el encargado principal deberá autorizar tu acceso.
+                <p class="section-text">
+                    <i class="fa-solid fa-circle-info me-1"></i>
+                    Completa el formulario para solicitar tu cuenta. Una vez enviado,
+                    el <strong>encargado principal</strong> deberá autorizar tu acceso.
                 </p>
 
-                <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
-                    <!-- Nombre Completo -->
+                <div class="info-callout">
+                    <i class="fa-solid fa-lightbulb"></i>
+                    <div>
+                        Usa tu correo institucional si eres parte de la BUAP. Si eres externo,
+                        puedes usar tu correo personal — el encargado validará tu identidad.
+                    </div>
+                </div>
+
+                <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" novalidate>
+
+                    <!-- Nombre -->
                     <div class="mb-3">
-                        <label for="nombreCompleto" class="form-label">Nombre Completo</label>
+                        <label for="nombreCompleto" class="form-label">
+                            <i class="fa-solid fa-user me-1"></i>
+                            Nombre completo <span class="req">*</span>
+                        </label>
                         <div class="input-group">
-                            <span class="input-group-text"><i class="fa-solid fa-user"></i></span>
+                            <span class="input-group-text"><i class="fa-solid fa-id-badge"></i></span>
                             <input id="nombreCompleto" type="text" formControlName="nombreCompleto" class="form-control"
-                                placeholder="Ej. Carlos Mendoza Ruiz"
+                                placeholder="Ej. Carlos Mendoza Ruiz" autocomplete="name"
                                 [class.is-invalid]="registerForm.controls.nombreCompleto.invalid && registerForm.controls.nombreCompleto.touched">
                                 @if (registerForm.controls.nombreCompleto.invalid && registerForm.controls.nombreCompleto.touched) {
                                 <div class="text-danger small mt-1 d-flex align-items-center">
@@ -50,15 +70,25 @@
                                 </div>
                                 }
                         </div>
+                        @if (registerForm.controls.nombreCompleto.invalid &&
+                        registerForm.controls.nombreCompleto.touched) {
+                        <p class="field-error">
+                            <i class="fa-solid fa-circle-exclamation me-1"></i>
+                            Ingresa tu nombre completo (solo letras y espacios, mín. 3 caracteres).
+                        </p>
+                        }
                     </div>
 
-                    <!-- Correo Electrónico -->
+                    <!-- Email -->
                     <div class="mb-3">
-                        <label for="email" class="form-label">Correo Electrónico</label>
+                        <label for="email" class="form-label">
+                            <i class="fa-solid fa-at me-1"></i>
+                            Correo electrónico <span class="req">*</span>
+                        </label>
                         <div class="input-group">
                             <span class="input-group-text"><i class="fa-solid fa-envelope"></i></span>
                             <input id="email" type="email" formControlName="email" class="form-control"
-                                placeholder="ejemplo@botanico.com"
+                                placeholder="usuario@correo.buap.mx" autocomplete="email"
                                 [class.is-invalid]="registerForm.controls.email.invalid && registerForm.controls.email.touched">
                                 @if (registerForm.controls.email.invalid && registerForm.controls.email.touched) {
                                 <div class="text-danger small mt-1 d-flex align-items-center">
@@ -72,15 +102,49 @@
                                 </div>
                                 }
                         </div>
+                        @if (registerForm.controls.email.invalid && registerForm.controls.email.touched) {
+                        <p class="field-error">
+                            <i class="fa-solid fa-circle-exclamation me-1"></i>
+                            Ingresa un correo electrónico válido.
+                        </p>
+                        }
+                    </div>
+
+                    <!-- Rol -->
+                    <div class="mb-3">
+                        <label for="rol" class="form-label">
+                            <i class="fa-solid fa-user-tag me-1"></i>
+                            Tipo de colaborador <span class="req">*</span>
+                        </label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fa-solid fa-user-gear"></i></span>
+                            <select id="rol" formControlName="rol" class="form-select"
+                                [class.is-invalid]="registerForm.controls.rol.invalid && registerForm.controls.rol.touched">
+                                <option value="" disabled selected>Selecciona tu rol…</option>
+                                @for (r of roles; track r.value) {
+                                <option [value]="r.value">{{ r.label }}</option>
+                                }
+                            </select>
+                        </div>
+                        @if (registerForm.controls.rol.invalid && registerForm.controls.rol.touched) {
+                        <p class="field-error">
+                            <i class="fa-solid fa-circle-exclamation me-1"></i>
+                            Selecciona un tipo de colaborador.
+                        </p>
+                        }
                     </div>
 
                     <!-- Contraseña -->
                     <div class="mb-3">
-                        <label for="password" class="form-label">Contraseña</label>
+                        <label for="password" class="form-label">
+                            <i class="fa-solid fa-lock me-1"></i>
+                            Contraseña <span class="req">*</span>
+                        </label>
                         <div class="input-group">
-                            <span class="input-group-text"><i class="fa-solid fa-lock"></i></span>
-                            <input id="password" type="password" formControlName="password" class="form-control"
-                                placeholder="••••••••"
+                            <span class="input-group-text"><i class="fa-solid fa-key"></i></span>
+                            <input id="password" [type]="mostrarPassword() ? 'text' : 'password'"
+                                formControlName="password" class="form-control" placeholder="Mínimo 8 caracteres"
+                                autocomplete="new-password"
                                 [class.is-invalid]="registerForm.controls.password.invalid && registerForm.controls.password.touched">
                                 @if (registerForm.controls.password.invalid && registerForm.controls.password.touched) {
                                 <div class="text-danger small mt-1 d-flex align-items-center">
@@ -93,52 +157,188 @@
                                     }
                                 </div>
                                 }
+                            <button type="button" class="btn-toggle-password"
+                                (click)="mostrarPassword.set(!mostrarPassword())"
+                                [attr.aria-label]="mostrarPassword() ? 'Ocultar contraseña' : 'Mostrar contraseña'">
+                                <i class="fa-solid" [class.fa-eye]="!mostrarPassword()"
+                                    [class.fa-eye-slash]="mostrarPassword()"></i>
+                            </button>
                         </div>
+
+                        <!-- Medidor de fortaleza -->
+                        @if (registerForm.controls.password.value) {
+                        <div class="strength-meter">
+                            <div class="strength-meter__bars">
+                                <span class="bar" [class.active]="fortaleza().nivel >= 1"
+                                    [class]="fortaleza().clase"></span>
+                                <span class="bar" [class.active]="fortaleza().nivel >= 2"
+                                    [class]="fortaleza().clase"></span>
+                                <span class="bar" [class.active]="fortaleza().nivel >= 3"
+                                    [class]="fortaleza().clase"></span>
+                            </div>
+                            <span class="strength-meter__label" [class]="fortaleza().clase">
+                                @switch (fortaleza().nivel) {
+                                @case (1) { <i class="fa-solid fa-circle-exclamation me-1"></i> }
+                                @case (2) { <i class="fa-solid fa-circle-half-stroke me-1"></i> }
+                                @case (3) { <i class="fa-solid fa-circle-check me-1"></i> }
+                                }
+                                {{ fortaleza().texto }}
+                            </span>
+                        </div>
+                        }
                     </div>
 
-                    <!-- Mensaje Opcional de Identificación -->
+                    <!-- Confirmar contraseña -->
+                    <div class="mb-4">
+                        <label for="confirmPassword" class="form-label">
+                            <i class="fa-solid fa-lock me-1"></i>
+                            Confirmar contraseña <span class="req">*</span>
+                        </label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fa-solid fa-key"></i></span>
+                            <input id="confirmPassword" [type]="mostrarConfirm() ? 'text' : 'password'"
+                                formControlName="confirmPassword" class="form-control"
+                                placeholder="Repite tu contraseña" autocomplete="new-password" [class.is-invalid]="
+                    (registerForm.controls.confirmPassword.touched && registerForm.controls.confirmPassword.invalid) ||
+                    (registerForm.errors?.['mismatch'] && registerForm.controls.confirmPassword.touched)">
+                            <button type="button" class="btn-toggle-password"
+                                (click)="mostrarConfirm.set(!mostrarConfirm())"
+                                [attr.aria-label]="mostrarConfirm() ? 'Ocultar contraseña' : 'Mostrar contraseña'">
+                                <i class="fa-solid" [class.fa-eye]="!mostrarConfirm()"
+                                    [class.fa-eye-slash]="mostrarConfirm()"></i>
+                            </button>
+                        </div>
+
+                        @if (registerForm.errors?.['mismatch'] && registerForm.controls.confirmPassword.touched) {
+                        <p class="field-error">
+                            <i class="fa-solid fa-circle-exclamation me-1"></i>
+                            Las contraseñas no coinciden.
+                        </p>
+                        }
+                    </div>
+
+                    <!-- Mensaje opcional -->
                     <div class="mb-4">
                         <label for="mensajeNota" class="form-label">
-                            Mensaje para el Encargado <span class="text-muted fw-normal">(Opcional)</span>
+                            <i class="fa-solid fa-comment-dots me-1"></i>
+                            Mensaje para el encargado
+                            <span class="optional">(Opcional)</span>
                         </label>
                         <textarea id="mensajeNota" formControlName="mensajeNota" class="form-control" rows="3"
                             placeholder="Ej. Hola, soy Carlos de la facultad de ingeniería, acordamos mi acceso para el proyecto del sistema de visitas."></textarea>
-                        <div class="form-text">
-                            Este mensaje ayudará al encargado principal a identificarte rápidamente para otorgarte el acceso.
+                        <div class="form-hint">
+                            <i class="fa-solid fa-circle-info me-1"></i>
+                            Este mensaje ayudará al encargado a identificarte y agilizar tu autorización.
                         </div>
                     </div>
 
-                    <!-- Botones de Acción -->
-                    <div class="d-flex justify-content-between align-items-center pt-4 border-top">
+                    <!-- Aceptar términos -->
+                    <div class="mb-4 terms-box">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="aceptaTerminos"
+                                formControlName="aceptaTerminos"
+                                [class.is-invalid]="registerForm.controls.aceptaTerminos.invalid && registerForm.controls.aceptaTerminos.touched">
+                            <label class="form-check-label" for="aceptaTerminos">
+                                <i class="fa-solid fa-file-contract me-1"></i>
+                                Acepto el <a href="#" target="_blank">aviso de privacidad</a> y los
+                                <a href="#" target="_blank">términos de uso</a> del sistema.
+                            </label>
+                        </div>
+                        @if (registerForm.controls.aceptaTerminos.invalid &&
+                        registerForm.controls.aceptaTerminos.touched) {
+                        <p class="field-error">
+                            <i class="fa-solid fa-circle-exclamation me-1"></i>
+                            Debes aceptar los términos para continuar.
+                        </p>
+                        }
+                    </div>
+
+                    <!-- Acciones -->
+                    <div class="form-actions">
                         <button type="button" class="btn btn-outline-secondary" (click)="irAlLogin()">
-                            <i class="fa-solid fa-arrow-left me-2"></i> Volver al Login
+                            <i class="fa-solid fa-arrow-left me-2"></i>
+                            Volver al Login
                         </button>
                         <button type="submit" class="btn btn-siguiente" [disabled]="isLoading()">
                             @if (!isLoading()) {
-                            <span>Solicitar Registro <i class="fa-solid fa-user-check ms-2"></i></span>
+                            <span>
+                                <i class="fa-solid fa-user-check me-2"></i>
+                                Solicitar Registro
+                            </span>
                             } @else {
-                            <span>Enviando registro...</span>
+                            <span>
+                                <span class="spinner-border spinner-border-sm me-2"></span>
+                                Enviando registro…
+                            </span>
                             }
                         </button>
                     </div>
                 </form>
-            </div>
+            </section>
             }
 
-            <!-- ESTADO 2: Confirmación de Espera de Autorización -->
+            <!-- ============================================================
+           ESTADO 2 — Confirmación de espera
+           ============================================================ -->
             @if (isRegistered()) {
-            <div class="section-card text-center py-4">
-                <div class="mb-3 text-warning-icon">
-                    <i class="fa-solid fa-clock-rotate-left fa-4x"></i>
+            <section class="section-card section-card--pending text-center">
+
+                <div class="pending-icon">
+                    <i class="fa-solid fa-clock-rotate-left"></i>
                 </div>
-                <h2 class="h3 fw-bold mb-3" style="color: var(--secondary-green, #145A32);">¡Registro Enviado Exitosamente!</h2>
-                <p class="text-muted mb-4 mx-auto" style="max-width: 520px;">
-                    Tu cuenta se ha creado correctamente. Por motivos de seguridad, debes <strong>esperar a que el encargado principal autorice tu acceso</strong> en la plataforma para poder iniciar sesión.
+
+                <h2 class="pending-title">
+                    <i class="fa-solid fa-circle-check me-2"></i>
+                    ¡Registro enviado exitosamente!
+                </h2>
+
+                <p class="pending-text">
+                    Tu cuenta se creó correctamente. Por motivos de seguridad,
+                    debes <strong>esperar a que el encargado principal autorice tu acceso</strong>
+                    en la plataforma para poder iniciar sesión.
                 </p>
-                <button type="button" class="btn btn-success px-4 py-2" (click)="irAlLogin()">
-                    Entendido, ir al Login <i class="fa-solid fa-right-to-bracket ms-2"></i>
-                </button>
-            </div>
+
+                <!-- Timeline informativo -->
+                <div class="pending-steps">
+                    <div class="pending-steps__item pending-steps__item--done">
+                        <span class="dot"><i class="fa-solid fa-check"></i></span>
+                        <div>
+                            <strong>Registro completado</strong>
+                            <small>Tu solicitud llegó al sistema</small>
+                        </div>
+                    </div>
+                    <div class="pending-steps__item pending-steps__item--current">
+                        <span class="dot"><i class="fa-solid fa-hourglass-half"></i></span>
+                        <div>
+                            <strong>Esperando autorización</strong>
+                            <small>El encargado revisará tu solicitud</small>
+                        </div>
+                    </div>
+                    <div class="pending-steps__item pending-steps__item--future">
+                        <span class="dot"><i class="fa-solid fa-right-to-bracket"></i></span>
+                        <div>
+                            <strong>Acceso habilitado</strong>
+                            <small>Podrás iniciar sesión normalmente</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pending-actions">
+                    <button type="button" class="btn btn-success px-4 py-2" (click)="irAlLogin()">
+                        <i class="fa-solid fa-right-to-bracket me-2"></i>
+                        Entendido, ir al Login
+                    </button>
+                </div>
+
+                <div class="info-callout info-callout--warn mt-4">
+                    <i class="fa-solid fa-envelope-circle-check"></i>
+                    <div>
+                        Recibirás una notificación por correo cuando el encargado
+                        autorice tu acceso. Si pasa más de <strong>48 horas</strong>,
+                        contacta al área administrativa.
+                    </div>
+                </div>
+            </section>
             }
 
         </div>

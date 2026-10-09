@@ -47,7 +47,7 @@
       </button>
     </div>
 
-    <button class="btn-agregar">+ Agregar Colaborador</button>
+    <button class="btn-agregar" (click)="abrirModalCrear()">+ Agregar Colaborador</button>
   </div>
 
   <div class="table-container">
@@ -125,3 +125,104 @@
     }
   </div>
 </div>
+
+@if (modalAbierto()) {
+  <div class="modal-backdrop" (click)="cerrarModal()">
+    <div class="modal-card" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>{{ modoModal() === 'create' ? 'Agregar colaborador' : 'Editar colaborador' }}</h3>
+        <button class="close-btn" type="button" (click)="cerrarModal()">×</button>
+      </div>
+
+      <form class="collaborator-form" (ngSubmit)="guardarColaborador()">
+        <div class="modal-body">
+          <p class="form-intro">
+            Completa la información del colaborador para incorporarlo al equipo.
+          </p>
+
+          <div class="form-grid">
+            <div class="form-group form-group-wide">
+              <label for="nombre-colaborador">Nombre completo <span>*</span></label>
+              <input
+                id="nombre-colaborador"
+                name="nombre"
+                type="text"
+                placeholder="Ej. Ana García"
+                required
+                [ngModel]="formulario().nombre"
+                (ngModelChange)="actualizarCampo('nombre', $event)"
+              />
+            </div>
+
+            <div class="form-group form-group-wide">
+              <label for="email-colaborador">Correo institucional <span>*</span></label>
+              <input
+                id="email-colaborador"
+                name="email"
+                type="email"
+                placeholder="nombre@jb.edu.mx"
+                required
+                [ngModel]="formulario().email"
+                (ngModelChange)="actualizarCampo('email', $event)"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="telefono-colaborador">Teléfono</label>
+              <input
+                id="telefono-colaborador"
+                name="telefono"
+                type="tel"
+                placeholder="555-0123"
+                [ngModel]="formulario().telefono"
+                (ngModelChange)="actualizarCampo('telefono', $event)"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="cargo-colaborador">Cargo <span>*</span></label>
+              <input
+                id="cargo-colaborador"
+                name="cargo"
+                type="text"
+                placeholder="Ej. Coordinador de visitas"
+                required
+                [ngModel]="formulario().cargo"
+                (ngModelChange)="actualizarCampo('cargo', $event)"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="estado-colaborador">Estado</label>
+              <select
+                id="estado-colaborador"
+                name="estado"
+                [ngModel]="formulario().estado"
+                (ngModelChange)="actualizarCampo('estado', $event)"
+              >
+                <option value="activo">Activo</option>
+                <option value="inactivo">Inactivo</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="fecha-colaborador">Fecha de registro</label>
+              <input
+                id="fecha-colaborador"
+                name="fechaRegistro"
+                type="date"
+                [ngModel]="formulario().fechaRegistro"
+                (ngModelChange)="actualizarCampo('fechaRegistro', $event)"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" class="btn-secondary" (click)="cerrarModal()">Cancelar</button>
+          <button type="submit" class="btn-primary">Guardar colaborador</button>
+        </div>
+      </form>
+    </div>
+  </div>
+}

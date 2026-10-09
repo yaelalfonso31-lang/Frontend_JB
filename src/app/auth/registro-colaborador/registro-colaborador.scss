@@ -1,53 +1,651 @@
+:host {
+  display: block;
+  min-height: 100vh;
+  /* ⚠️ Asegúrate de borrar todas las propiedades de background que estaban aquí */
+}
+
 .registration-wrapper {
+  position: relative;
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
   min-height: 100vh;
   padding: 3rem 1.5rem;
-  background-color: #f4f6f6;
+  background-color: transparent;
+  z-index: 1;
+
+  /* =========================================
+     FONDO FIJO A PRUEBA DE FALLOS
+     ========================================= */
+  &::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: -1; // Mantiene la imagen por detrás del formulario
+    background-image:
+      linear-gradient(135deg,
+        rgba(87, 160, 118, 0.367) 0%,
+        rgba(115, 201, 96, 0.201) 100%),
+      url('/assets/fondo3.jpg');
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+  }
 }
 
 .form-container {
-  background: white;
+  background: #fff;
   border-radius: var(--border-radius, 8px);
-  border: 1px solid var(--border-color, #e0e0e0);
+  border: 1px solid var(--color-border, #D5DBDB);
   width: 100%;
-  max-width: 850px;
+  max-width: 1000px;
   overflow: hidden;
 }
 
+/* ==========================================================================
+   ENCABEZADO INSTITUCIONAL
+   ========================================================================== */
+.encabezado-institucional {
+  background: linear-gradient(135deg,
+      var(--color-primary-green, #408558) 0%,
+      var(--color-accent-green, #1e8445) 100%);
+  padding: 1.75rem 2rem;
+
+  .header-brand {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+
+    &__logo-wrap {
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #fff;
+      border-radius: 10px;
+      padding: 6px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.18);
+    }
+
+    .logo-institucional {
+      display: block;
+      border-radius: 6px;
+      object-fit: contain;
+    }
+
+    &__text {
+      flex: 1;
+      min-width: 0;
+
+      h1 {
+        margin: 0;
+        color: #fff;
+        font-size: 1.35rem;
+        font-weight: 700;
+        letter-spacing: 0.3px;
+        line-height: 1.3;
+
+        i {
+          color: var(--color-cream, #fdf3d1);
+        }
+      }
+
+      p {
+        margin: 0.25rem 0 0;
+        color: rgba(255, 255, 255, 0.88);
+        font-size: 0.8rem;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+
+        i {
+          color: var(--color-cream, #fdf3d1);
+        }
+      }
+    }
+  }
+}
+
+/* ==========================================================================
+   CONTENIDO
+   ========================================================================== */
 .form-content {
-  padding: 3rem 4rem;
+  padding: 2.5rem 3rem;
 }
 
 .section-card {
   border: none;
   padding: 0;
   margin: 0;
-  box-shadow: none;
 }
 
 .section-title {
-  font-size: 1.4rem;
+  display: flex;
+  align-items: center;
+  font-size: 1.3rem;
   font-weight: 700;
-  color: var(--secondary-green, #145A32);
-  margin-bottom: 1rem;
-  padding-bottom: 0.75rem;
+  color: var(--color-dark-green, #183524);
+  margin: 0 0 0.75rem;
+  padding-bottom: 0.6rem;
   border-bottom: 2px solid #eaeded;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.3px;
+
+  i {
+    color: var(--color-primary-green, #408558);
+  }
 }
 
-.text-warning-icon {
-  color: #f39c12;
+.section-text {
+  color: var(--color-text-muted, #5D6D7E);
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin-bottom: 1.25rem;
+
+  i {
+    color: var(--color-accent-green, #1e8445);
+  }
 }
 
+/* ---------- Callout informativo ---------- */
+.info-callout {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.85rem 1rem;
+  background: var(--color-pale-green, #d1e7de);
+  border-left: 4px solid var(--color-primary-green, #408558);
+  border-radius: 6px;
+  margin-bottom: 1.5rem;
+  font-size: 0.88rem;
+  color: var(--color-dark-green, #183524);
+  line-height: 1.5;
+
+  i {
+    color: var(--color-primary-green, #408558);
+    font-size: 1.1rem;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  strong {
+    color: var(--color-dark-green, #183524);
+  }
+
+  &--warn {
+    background: rgba(244, 182, 63, 0.15);
+    border-left-color: var(--color-accent-orange, #f4b63f);
+    color: #6b4a00;
+
+    i {
+      color: var(--color-accent-orange, #f4b63f);
+    }
+  }
+}
+
+/* ==========================================================================
+   FORMULARIOS
+   ========================================================================== */
+.form-label {
+  font-weight: 600;
+  color: var(--color-text-dark, #2C3E50);
+  font-size: 0.9rem;
+  margin-bottom: 0.4rem;
+
+  i {
+    color: var(--color-primary-green, #408558);
+  }
+
+  .req {
+    color: #dc3545;
+    font-weight: 700;
+  }
+
+  .optional {
+    color: var(--color-text-muted, #5D6D7E);
+    font-weight: 400;
+    font-size: 0.82rem;
+  }
+}
+
+.form-control,
+.form-select,
+.input-group-text {
+  border: 1px solid var(--color-border, #D5DBDB);
+  border-radius: 4px;
+  padding: 0.65rem 1rem;
+  font-size: 0.95rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.input-group-text {
+  background-color: #f4f6f6;
+  color: var(--color-primary-green, #408558);
+  border-right: none;
+
+  i {
+    color: inherit;
+  }
+}
+
+.form-control,
+.form-select {
+  &:focus {
+    border-color: var(--color-primary-green, #408558);
+    box-shadow: 0 0 0 3px rgba(64, 133, 88, 0.15);
+    outline: none;
+  }
+
+  &.is-invalid {
+    border-color: #dc3545;
+    background-image: none;
+
+    &:focus {
+      box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.15);
+    }
+  }
+}
+
+.field-error {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  color: #dc3545;
+  font-size: 0.82rem;
+  font-weight: 600;
+  margin: 0.4rem 0 0;
+}
+
+.form-hint {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  color: var(--color-text-muted, #5D6D7E);
+  font-size: 0.82rem;
+  margin-top: 0.4rem;
+
+  i {
+    color: var(--color-primary-green, #408558);
+  }
+}
+
+/* ==========================================================================
+   BOTÓN MOSTRAR/OCULTAR PASSWORD
+   ========================================================================== */
+.btn-toggle-password {
+  background: #f4f6f6;
+  border: 1px solid var(--color-border, #D5DBDB);
+  border-left: none;
+  padding: 0 0.9rem;
+  color: var(--color-text-muted, #5D6D7E);
+  cursor: pointer;
+  transition: color 0.2s ease, background-color 0.2s ease;
+  border-top-right-radius: 4px;
+  border-bottom-right-radius: 4px;
+
+  &:hover {
+    color: var(--color-primary-green, #408558);
+    background-color: #e8eeea;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-primary-green, #408558);
+    outline-offset: -2px;
+  }
+}
+
+/* ==========================================================================
+   MEDIDOR DE FORTALEZA
+   ========================================================================== */
+.strength-meter {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+
+  &__bars {
+    display: flex;
+    gap: 4px;
+    flex: 1;
+    max-width: 200px;
+  }
+
+  .bar {
+    flex: 1;
+    height: 5px;
+    border-radius: 3px;
+    background: #e2e6e6;
+    transition: background-color 0.25s ease;
+
+    &.active.weak {
+      background: #dc3545;
+    }
+
+    &.active.medium {
+      background: var(--color-accent-orange, #f4b63f);
+    }
+
+    &.active.strong {
+      background: var(--color-accent-green, #1e8445);
+    }
+  }
+
+  &__label {
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    display: inline-flex;
+    align-items: center;
+
+    &.weak {
+      color: #dc3545;
+    }
+
+    &.medium {
+      color: #d99a1f;
+    }
+
+    &.strong {
+      color: var(--color-accent-green, #1e8445);
+    }
+  }
+}
+
+/* ==========================================================================
+   TÉRMINOS Y CONDICIONES
+   ========================================================================== */
+.terms-box {
+  padding: 0.9rem 1rem;
+  background: #f9fbfb;
+  border: 1px solid var(--color-border, #D5DBDB);
+  border-radius: 6px;
+
+  .form-check {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    margin: 0;
+
+    .form-check-input {
+      margin-top: 3px;
+      flex-shrink: 0;
+      cursor: pointer;
+
+      &:checked {
+        background-color: var(--color-primary-green, #408558);
+        border-color: var(--color-primary-green, #408558);
+      }
+
+      &:focus {
+        box-shadow: 0 0 0 0.25rem rgba(64, 133, 88, 0.25);
+      }
+    }
+
+    .form-check-label {
+      font-size: 0.9rem;
+      color: var(--color-text-dark, #2C3E50);
+      line-height: 1.5;
+      cursor: pointer;
+
+      i {
+        color: var(--color-primary-green, #408558);
+      }
+
+      a {
+        color: var(--color-primary-green, #408558);
+        font-weight: 600;
+        text-decoration: none;
+
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+    }
+  }
+}
+
+/* ==========================================================================
+   BOTONES DE ACCIÓN
+   ========================================================================== */
+.form-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid #eaeded;
+  margin-top: 0.5rem;
+  flex-wrap: wrap;
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    font-weight: 600;
+    font-size: 0.9rem;
+    padding: 0.6rem 1.25rem;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+
+    &:focus-visible {
+      outline: 2px solid var(--color-primary-green, #408558);
+      outline-offset: 2px;
+    }
+  }
+
+  .btn-success {
+    background-color: var(--color-primary-green, #408558);
+    border-color: var(--color-primary-green, #408558);
+
+    &:hover:not(:disabled) {
+      background-color: var(--color-dark-green, #183524);
+      border-color: var(--color-dark-green, #183524);
+    }
+
+    &:disabled {
+      background-color: #a8c974;
+      border-color: #a8c974;
+      cursor: not-allowed;
+    }
+  }
+}
+
+/* ==========================================================================
+   ESTADO 2 — PENDIENTE DE AUTORIZACIÓN
+   ========================================================================== */
+.section-card--pending {
+  padding: 1rem 0;
+
+  .pending-icon {
+    font-size: 4rem;
+    color: var(--color-accent-orange, #f4b63f);
+    margin-bottom: 1rem;
+    animation: pulseSoft 2s ease-in-out infinite;
+  }
+
+  .pending-title {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--color-dark-green, #183524);
+    margin-bottom: 0.75rem;
+
+    i {
+      color: var(--color-accent-green, #1e8445);
+    }
+  }
+
+  .pending-text {
+    color: var(--color-text-muted, #5D6D7E);
+    max-width: 520px;
+    margin: 0 auto 2rem;
+    line-height: 1.6;
+
+    strong {
+      color: var(--color-dark-green, #183524);
+    }
+  }
+}
+
+/* ---------- Timeline ---------- */
+.pending-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  max-width: 460px;
+  margin: 0 auto 2rem;
+  text-align: left;
+
+  &__item {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 0.85rem 1rem;
+    border-radius: 8px;
+    background: #f8faf9;
+    border-left: 4px solid #c9d4d4;
+    transition: background-color 0.25s ease;
+
+    .dot {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: #c9d4d4;
+      color: #fff;
+      font-size: 0.9rem;
+      flex-shrink: 0;
+    }
+
+    strong {
+      display: block;
+      font-size: 0.9rem;
+      color: var(--color-text-dark, #2C3E50);
+    }
+
+    small {
+      font-size: 0.78rem;
+      color: var(--color-text-muted, #5D6D7E);
+      line-height: 1.4;
+    }
+
+    &--done {
+      border-left-color: var(--color-accent-green, #1e8445);
+      background: rgba(30, 132, 69, 0.06);
+
+      .dot {
+        background: var(--color-accent-green, #1e8445);
+      }
+
+      strong {
+        color: var(--color-dark-green, #183524);
+      }
+    }
+
+    &--current {
+      border-left-color: var(--color-accent-orange, #f4b63f);
+      background: rgba(244, 182, 63, 0.10);
+
+      .dot {
+        background: var(--color-accent-orange, #f4b63f);
+        animation: pulseSoft 2s ease-in-out infinite;
+      }
+
+      strong {
+        color: #6b4a00;
+      }
+    }
+
+    &--future {
+      opacity: 0.65;
+    }
+  }
+}
+
+.pending-actions {
+  display: flex;
+  justify-content: center;
+  margin-top: 0.5rem;
+}
+
+@keyframes pulseSoft {
+
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+
+  50% {
+    transform: scale(1.08);
+    opacity: 0.85;
+  }
+}
+
+/* ==========================================================================
+   ALERTA GLOBAL
+   ========================================================================== */
+.alert-danger {
+  background-color: #f8d7da;
+  border: 1px solid #f5c2c7;
+  color: #842029;
+  border-radius: 6px;
+  padding: 0.85rem 1rem;
+  font-size: 0.9rem;
+
+  i {
+    color: #842029;
+  }
+}
+
+/* ==========================================================================
+   RESPONSIVE
+   ========================================================================== */
 @media (max-width: 768px) {
   .registration-wrapper {
-    padding: 1rem 0.5rem;
+    padding: 1rem 0.75rem;
+    align-items: flex-start;
   }
 
   .form-content {
-    padding: 2rem 1.5rem;
+    padding: 1.75rem 1.5rem;
+  }
+
+  .encabezado-institucional {
+    padding: 1.25rem 1.5rem;
+
+    .header-brand {
+      &__logo-wrap {
+        padding: 5px;
+      }
+
+      &__text h1 {
+        font-size: 1.1rem;
+      }
+
+      &__text p {
+        font-size: 0.7rem;
+      }
+    }
+  }
+
+  .form-actions {
+    flex-direction: column-reverse;
+    align-items: stretch;
+
+    .btn {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+
+  .pending-steps__item {
+    padding: 0.75rem 0.85rem;
   }
 }
 
@@ -60,14 +658,14 @@
   align-items: center;
   gap: 1rem;
 }
+@media (max-width: 420px) {
+  .section-title {
+    font-size: 1.1rem;
+  }
 
-  /* Alineación horizontal del Logo y el Título */
-  .header-brand {
-    display: flex;
-    align-items: center; // Alinea verticalmente al centro
-    justify-content: center; // Centra horizontalmente todo el bloque
-    gap: 1rem; // Espacio entre el logo y el título
-    width: 100%;
+  .form-content {
+    padding: 1.5rem 1rem;
+  }
 
     h1 {
       color: #408558;
@@ -98,5 +696,8 @@
   &:disabled {
     background-color: #51aa70;
     border-color: #51aa70;
+  .pending-title {
+    font-size: 1.15rem;
+  }
   }
 }
