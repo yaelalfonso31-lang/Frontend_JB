@@ -30,6 +30,10 @@ export const routes: Routes = [
         loadComponent: () => import('./auth/registro-colaborador/registro-colaborador').then(m => m.RegistroColaboradorComponent)
     },
     {
+        path: 'encuesta-satisfaccion',
+        loadComponent: () => import('./auth/encuesta-satisfaccion/encuesta-satisfaccion').then(m => m.EncuestaSatisfaccionComponent)
+    },
+    {
         path: 'administrador',
         loadComponent: () => import('./administrador/administrador').then(m => m.AdministradorComponent),
         children: [

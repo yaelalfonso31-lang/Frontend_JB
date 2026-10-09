@@ -6,10 +6,6 @@
          ============================================================ -->
         <header class="encabezado-institucional">
             <div class="header-brand">
-                <div class="header-brand__logo-wrap">
-                    <img ngSrc="assets/logo.jpg" width="60" height="60" alt="Logo Jardín Botánico"
-                        class="logo-institucional" priority>
-                </div>
                 <div class="header-brand__text">
                     <h1>
                         <i class="fa-solid fa-shield-halved me-2"></i>
@@ -20,6 +16,7 @@
                         Jardín Botánico Universitario · BUAP
                     </p>
                 </div>
+                <img ngSrc="assets/logo.jpg" width="74" height="60" alt="Logo Jardín Botánico" class="logo-institucional" priority>
             </div>
         </header>
 
@@ -91,8 +88,8 @@
             }
 
             <!-- ============================================================
-           PASO 1 — Correo electrónico
-           ============================================================ -->
+            PASO 1 — Correo electrónico
+            ============================================================ -->
             @if (currentStep() === 1) {
             <section class="section-card">
                 <h2 class="section-title">
@@ -126,19 +123,26 @@
                                 placeholder="usuario@correo.buap.mx" autocomplete="email"
                                 [class.is-invalid]="step1Form.controls.email.invalid && step1Form.controls.email.touched">
                         </div>
+
+                        <!-- Avisos de error dinámicos -->
                         @if (step1Form.controls.email.invalid && step1Form.controls.email.touched) {
-                        <p class="field-error">
+                        <div class="text-danger small mt-1 d-flex align-items-center">
                             <i class="fa-solid fa-circle-exclamation me-1"></i>
-                            Ingresa un correo electrónico válido.
-                        </p>
+                            @if (step1Form.controls.email.errors?.['required']) {
+                            <span>El correo electrónico es obligatorio.</span>
+                            }
+                            @if (step1Form.controls.email.errors?.['email']) {
+                            <span>Ingresa un correo válido (ejemplo: usuario@dominio.com).</span>
+                            }
+                        </div>
                         }
                     </div>
 
-                    <div class="form-actions">
+                    <div class="form-actions d-flex justify-content-between align-items-center pt-3 border-top">
                         <button type="button" class="btn btn-outline-secondary" (click)="irAlLogin()">
                             <i class="fa-solid fa-arrow-left me-2"></i> Volver al Login
                         </button>
-                        <button type="submit" class="btn btn-success" [disabled]="isLoading()">
+                        <button type="submit" class="btn btn-siguiente" [disabled]="isLoading()">
                             @if (!isLoading()) {
                             <span>
                                 <i class="fa-solid fa-paper-plane me-2"></i>
@@ -157,8 +161,8 @@
             }
 
             <!-- ============================================================
-           PASO 2 — Código OTP
-           ============================================================ -->
+            PASO 2 — Código OTP
+            ============================================================ -->
             @if (currentStep() === 2) {
             <section class="section-card">
                 <h2 class="section-title">
@@ -214,17 +218,11 @@
                         <button type="button" class="btn btn-outline-secondary" (click)="volverPaso(1)">
                             <i class="fa-solid fa-arrow-left me-2"></i> Cambiar Correo
                         </button>
-                        <button type="submit" class="btn btn-success" [disabled]="isLoading()">
+                        <button type="submit" class="btn btn-siguiente" [disabled]="isLoading()">
                             @if (!isLoading()) {
-                            <span>
-                                <i class="fa-solid fa-check me-2"></i>
-                                Verificar Código
-                            </span>
+                            <span>Verificar <i class="fa-solid fa-check ms-2"></i></span>
                             } @else {
-                            <span>
-                                <span class="spinner-border spinner-border-sm me-2"></span>
-                                Validando…
-                            </span>
+                            <span>Validando...</span>
                             }
                         </button>
                     </div>
@@ -233,8 +231,8 @@
             }
 
             <!-- ============================================================
-           PASO 3 — Nueva contraseña
-           ============================================================ -->
+            PASO 3 — Nueva contraseña
+            ============================================================ -->
             @if (currentStep() === 3) {
             <section class="section-card">
                 <h2 class="section-title">
@@ -277,6 +275,19 @@
                             </button>
                         </div>
 
+                        <!-- Errores de validación contraseña -->
+                        @if (step3Form.controls.nuevaPassword.invalid && step3Form.controls.nuevaPassword.touched) {
+                        <div class="text-danger small mt-1 d-flex align-items-center">
+                            <i class="fa-solid fa-circle-exclamation me-1"></i>
+                            @if (step3Form.controls.nuevaPassword.errors?.['required']) {
+                            <span>La nueva contraseña es requerida.</span>
+                            }
+                            @if (step3Form.controls.nuevaPassword.errors?.['minlength']) {
+                            <span>La contraseña debe tener al menos 8 caracteres.</span>
+                            }
+                        </div>
+                        }
+
                         <!-- Medidor de fortaleza -->
                         @if (step3Form.controls.nuevaPassword.value) {
                         <div class="strength-meter">
@@ -311,8 +322,8 @@
                             <input id="confirmarPassword" [type]="mostrarConfirm() ? 'text' : 'password'"
                                 formControlName="confirmarPassword" class="form-control"
                                 placeholder="Repite tu contraseña" autocomplete="new-password" [class.is-invalid]="
-                    (step3Form.controls.confirmarPassword.touched && step3Form.controls.confirmarPassword.invalid) ||
-                    (step3Form.errors?.['mismatch'] && step3Form.controls.confirmarPassword.touched)">
+                            (step3Form.controls.confirmarPassword.touched && step3Form.controls.confirmarPassword.invalid) ||
+                            (step3Form.errors?.['mismatch'] && step3Form.controls.confirmarPassword.touched)">
                             <button type="button" class="btn-toggle-password"
                                 (click)="mostrarConfirm.set(!mostrarConfirm())"
                                 [attr.aria-label]="mostrarConfirm() ? 'Ocultar contraseña' : 'Mostrar contraseña'">
@@ -321,11 +332,15 @@
                             </button>
                         </div>
 
-                        @if (step3Form.errors?.['mismatch'] && step3Form.controls.confirmarPassword.touched) {
-                        <p class="field-error">
+                        @if (step3Form.controls.confirmarPassword.touched) {
+                        <div class="text-danger small mt-1 d-flex align-items-center">
                             <i class="fa-solid fa-circle-exclamation me-1"></i>
-                            Las contraseñas no coinciden.
-                        </p>
+                            @if (step3Form.controls.confirmarPassword.errors?.['required']) {
+                            <span>Confirma tu nueva contraseña.</span>
+                            } @else if (step3Form.errors?.['mismatch']) {
+                            <span>Las contraseñas no coinciden.</span>
+                            }
+                        </div>
                         }
                     </div>
 
@@ -333,7 +348,7 @@
                         <button type="button" class="btn btn-outline-secondary" (click)="volverPaso(2)">
                             <i class="fa-solid fa-arrow-left me-2"></i> Atrás
                         </button>
-                        <button type="submit" class="btn btn-success" [disabled]="isLoading()">
+                        <button type="submit" class="btn btn-siguiente" [disabled]="isLoading()">
                             @if (!isLoading()) {
                             <span>
                                 <i class="fa-solid fa-floppy-disk me-2"></i>
@@ -352,8 +367,8 @@
             }
 
             <!-- ============================================================
-           PASO 4 — Confirmación final
-           ============================================================ -->
+            PASO 4 — Confirmación final
+            ============================================================ -->
             @if (currentStep() === 4) {
             <section class="section-card section-card--success text-center">
                 <div class="success-icon">
@@ -368,7 +383,7 @@
                     Tu contraseña se restableció correctamente. Ya puedes ingresar
                     al sistema con tus nuevas credenciales.
                 </p>
-                <button type="button" class="btn btn-success px-4 py-2" (click)="irAlLogin()">
+                <button type="button" class="btn btn-siguiente px-4 py-2" (click)="irAlLogin()">
                     <i class="fa-solid fa-right-to-bracket me-2"></i>
                     Ir a Iniciar Sesión
                 </button>
