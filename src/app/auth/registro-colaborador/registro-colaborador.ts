@@ -16,7 +16,7 @@ import {
 } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NgOptimizedImage } from '@angular/common';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal} from '@angular/core/rxjs-interop';
 import { AuthService } from '../services/auth.service';
 
 /* ==========================================================================
@@ -28,6 +28,43 @@ export const passwordsMatchValidator: ValidatorFn = (
   const pass = group.get('password')?.value;
   const confirm = group.get('confirmPassword')?.value;
   return pass && confirm && pass === confirm ? null : { mismatch: true };
+};
+
+/* ==========================================================================
+   VALIDADORES PERSONALIZADOS (Funciones puras)
+   ========================================================================== */
+//Validador de Nombre completo
+export const nombreCompletoValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
+  const value = control.value?.trim();
+  
+  if (!value) return null; // Deja que Validators.required maneje el campo vacío
+
+  // 1. Debe incluir al menos Nombre y Apellido (mínimo 2 palabras)
+  const palabras = value.split(/\s+/);
+  if (palabras.length < 2) {
+    return { faltaApellido: true };
+  }
+
+  // 2. Solo letras en español y espacios simples entre palabras (evita dobles espacios)
+  const regexNombreValido = /^[A-Za-zÁÉÍÓÚÑáéíóúñ]+(\s[A-Za-zÁÉÍÓÚÑáéíóúñ]+)+$/;
+  if (!regexNombreValido.test(value)) {
+    return { nombreInvalido: true };
+  }
+
+  return null; // Si todo está bien, no hay error
+};
+
+//Validaddor de correo electronico
+export const emailEstrictoValidator: ValidatorFn = (
+  control: AbstractControl
+): ValidationErrors | null => {
+  const value = control.value?.trim();
+  if (!value) return null; // Deja que Validators.required maneje el campo vacío
+
+  // Exige: texto + @ + dominio + . + extensión de mínimo 2 letras (ej. .com, .mx, .edu.mx)
+  const regexEmailValido = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+  
+  return regexEmailValido.test(value) ? null : { emailInvalido: true };
 };
 
 @Component({
@@ -60,11 +97,11 @@ export class RegistroColaboradorComponent {
         '',
         [
           Validators.required,
-          Validators.minLength(3),
-          Validators.pattern(/^[A-Za-zÁÉÍÓÚÑáéíóúñ\s]+$/),
+          Validators.minLength(5),
+          nombreCompletoValidator // Validador personalizado
         ],
       ],
-      email: ['', [Validators.required, Validators.email]],
+      email: ['', [Validators.required, emailEstrictoValidator ]],
       rol: ['', Validators.required],
       password: ['', [Validators.required, Validators.minLength(8)]],
       confirmPassword: ['', Validators.required],
@@ -72,6 +109,12 @@ export class RegistroColaboradorComponent {
       aceptaTerminos: [false, Validators.requiredTrue],
     },
     { validators: passwordsMatchValidator }
+  );
+
+  /* Signal reactivo vinculado al valor del campo password */
+  readonly passwordValue = toSignal(
+    this.registerForm.controls.password.valueChanges,
+    { initialValue: '' }
   );
 
   /* ---------- Catálogo de roles ---------- */
@@ -86,7 +129,7 @@ export class RegistroColaboradorComponent {
 
   /* ---------- Fortaleza de contraseña ---------- */
   readonly fortaleza = computed(() => {
-    const pass = this.registerForm.controls.password.value;
+    const pass = this.passwordValue(); // <-- Rastreo de los cambios en tiempo real
     if (!pass) return { nivel: 0, texto: '', clase: '' };
 
     let score = 0;
