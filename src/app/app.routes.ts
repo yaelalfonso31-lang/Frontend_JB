@@ -1,4 +1,15 @@
-import { Routes } from '@angular/router';
+import { inject } from '@angular/core';
+import { CanActivateFn, Router, Routes } from '@angular/router';
+
+// Guardián para verificar que el usuario haya iniciado sesión
+const authGuard: CanActivateFn = () => {
+    const router = inject(Router);
+    const token = localStorage.getItem('token');
+    if (!token) {
+        return router.createUrlTree(['/login']);
+    }
+    return true;
+};
 
 export const routes: Routes = [
     {
@@ -35,6 +46,7 @@ export const routes: Routes = [
     },
     {
         path: 'administrador',
+        canActivate: [authGuard],
         loadComponent: () => import('./administrador/administrador').then(m => m.AdministradorComponent),
         children: [
             {
@@ -47,7 +59,7 @@ export const routes: Routes = [
             },
             {
                 path: 'aprobacion',
-                loadComponent: () => import('./administrador/gestion-colaboradores/aprobacion-colaboradores').then(m => m.AprobacionColaboradoresComponent)
+                loadComponent: () => import('./administrador/gestion-colaboradores/aprobacion-colaboradores/aprobacion-colaboradores').then(m => m.AprobacionColaboradoresComponent)
             },
             {
                 path: 'solicitudes',
@@ -86,6 +98,7 @@ export const routes: Routes = [
     },
     {
         path: 'colaborador',
+        canActivate: [authGuard],
         loadComponent: () => import('./colaborador/colaborador').then(m => m.ColaboradorComponent),
         children: [
             {
@@ -129,12 +142,11 @@ export const routes: Routes = [
     },
     {
         path: '',
-        redirectTo: '/login',
+        redirectTo: '/inicio',
         pathMatch: 'full'
     },
     {
-        // Ruta comodín para capturar URLs no válidas y mandarlas al login
         path: '**',
-        redirectTo: '/login'
+        redirectTo: '/inicio'
     }
 ];
