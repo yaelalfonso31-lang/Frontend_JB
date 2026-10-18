@@ -8,9 +8,19 @@ interface Solicitud {
   solicitante: string;
   escuela: string;
   fechaVisita: string;
+  horaVisita?: string;
   estado: 'pendiente' | 'aprobada' | 'rechazada' | 'correccion';
   numeroVisitantes: number;
   proposito: string;
+  folio?: string;
+  profesores?: string;
+  telefonos?: string;
+  correos?: string;
+  comprobanteRuta?: string;
+  montoPagado?: number;
+  titularPago?: string;
+  servicios?: string[] | string;
+  services?: string[] | string;
 }
 
 @Component({
@@ -18,7 +28,7 @@ interface Solicitud {
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './monitor-solicitudes.html',
-  styleUrl: './monitor-solicitudes.scss', // Heredará tus estilos del admin
+  styleUrl: './monitor-solicitudes.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class MonitorSolicitudes implements OnInit {
@@ -26,12 +36,10 @@ export class MonitorSolicitudes implements OnInit {
 
   solicitudes = signal<Solicitud[]>([]);
 
-  // Filtros del Administrador
   filterFecha = signal('');
   filterEstado = signal<'todos' | 'aprobada' | 'pendiente' | 'rechazada' | 'correccion'>('todos');
   filterEscuela = signal<string>('todos');
 
-  // Variables para el Modal del Colaborador
   solicitudSeleccionada = signal<Solicitud | null>(null);
   mostrarCampoCorreccion = signal(false);
   motivoCorreccion = signal('');
@@ -51,7 +59,9 @@ export class MonitorSolicitudes implements OnInit {
     return this.solicitudes().filter(s => {
       const matchFecha = !this.filterFecha() || s.fechaVisita === this.filterFecha();
       const matchEstado = this.filterEstado() === 'todos' || s.estado === this.filterEstado();
-      const matchEscuela = this.filterEscuela() === 'todos' || s.escuela === this.filterEscuela();
+      const matchEscuela =
+        this.filterEscuela() === 'todos' ||
+        (s.escuela || '').toLowerCase() === this.filterEscuela().toLowerCase();
 
       return matchFecha && matchEstado && matchEscuela;
     });
@@ -69,14 +79,12 @@ export class MonitorSolicitudes implements OnInit {
     return {
       total: this.filteredSolicitudes.length,
       aprobadas: this.filteredSolicitudes.filter(s => s.estado === 'aprobada').length,
-      // Sumamos pendientes y correcciones para esta tarjeta
       pendientes: this.filteredSolicitudes.filter(s => s.estado === 'pendiente' || s.estado === 'correccion').length,
       rechazadas: this.filteredSolicitudes.filter(s => s.estado === 'rechazada').length,
       totalVisitantes: this.filteredSolicitudes.reduce((sum, s) => sum + s.numeroVisitantes, 0)
     };
   }
 
-  // --- LÓGICA DEL COLABORADOR (MODAL) ---
   abrirDetalle(solicitud: Solicitud) {
     this.solicitudSeleccionada.set(solicitud);
     this.mostrarCampoCorreccion.set(false);
@@ -95,17 +103,15 @@ export class MonitorSolicitudes implements OnInit {
     const solicitud = this.solicitudSeleccionada();
     if (!solicitud) return;
 
-    const payload = { 
+    const payload = {
       estado: nuevoEstado,
       motivo: nuevoEstado === 'correccion' ? this.motivoCorreccion() : null
     };
 
-    // Llamada real al backend
     this.http.put(`/api/solicitudes/${solicitud.id}/estado-colaborador`, payload).subscribe({
       next: () => {
-        // Actualizamos la lista local o recargamos de la BD
         const currentList = this.solicitudes();
-        const updated: Solicitud[] = currentList.map(sol => 
+        const updated: Solicitud[] = currentList.map(sol =>
           sol.id === solicitud.id ? { ...sol, estado: nuevoEstado } : sol
         );
         this.solicitudes.set(updated);

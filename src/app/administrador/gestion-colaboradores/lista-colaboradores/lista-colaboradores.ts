@@ -33,26 +33,7 @@ interface ColaboradorForm {
 export class ListaColaboradoresComponent implements OnInit {
   private http = inject(HttpClient);
 
-  colaboradores = signal<Colaborador[]>([
-    {
-      id: 1,
-      nombre: 'Ana García',
-      email: 'ana.garcia@jb.edu.mx',
-      telefono: '555-0123',
-      cargo: 'Coordinadora de visitas',
-      estado: 'activo',
-      fechaRegistro: '2025-01-15'
-    },
-    {
-      id: 2,
-      nombre: 'Luis Ramírez',
-      email: 'luis.ramirez@jb.edu.mx',
-      telefono: '555-0198',
-      cargo: 'Asistente de monitoreo',
-      estado: 'inactivo',
-      fechaRegistro: '2025-02-20'
-    }
-  ]);
+  colaboradores = signal<Colaborador[]>([]);
   searchTerm = signal('');
   filterEstado = signal<'todos' | 'activo' | 'inactivo'>('todos');
   modalAbierto = signal(false);
@@ -73,16 +54,17 @@ export class ListaColaboradoresComponent implements OnInit {
 
   cargarColaboradores() {
     this.http.get<Colaborador[]>('/api/colaboradores').subscribe({
-      next: (data) => this.colaboradores.set(data.length ? data : this.colaboradores()),
+      next: (data) => this.colaboradores.set(data),
       error: (err) => console.error('Error al cargar colaboradores:', err)
     });
   }
+
   filteredColaboradores = computed(() => {
     return this.colaboradores().filter(col => {
       const matchSearch =
-        col.nombre.toLowerCase().includes(this.searchTerm().toLowerCase()) ||
-        col.email.toLowerCase().includes(this.searchTerm().toLowerCase()) ||
-        col.cargo.toLowerCase().includes(this.searchTerm().toLowerCase());
+        (col.nombre || '').toLowerCase().includes(this.searchTerm().toLowerCase()) ||
+        (col.email || '').toLowerCase().includes(this.searchTerm().toLowerCase()) ||
+        (col.cargo || '').toLowerCase().includes(this.searchTerm().toLowerCase());
 
       const matchEstado =
         this.filterEstado() === 'todos' || col.estado === this.filterEstado();
@@ -142,7 +124,6 @@ export class ListaColaboradoresComponent implements OnInit {
 
   guardarColaborador() {
     const payload = this.formulario();
-    const currentList = this.colaboradores();
 
     if (!payload.nombre || !payload.email || !payload.cargo) {
       alert('Completa nombre, correo y cargo para guardar el colaborador.');
@@ -153,24 +134,22 @@ export class ListaColaboradoresComponent implements OnInit {
       const colaboradorActual = this.colaboradorSeleccionado();
       if (!colaboradorActual) return;
 
-      const updatedList = currentList.map(col =>
-        col.id === colaboradorActual.id ? { ...col, ...payload } : col
-      );
-      this.colaboradores.set(updatedList);
+      this.http.put(`/api/colaboradores/${colaboradorActual.id}`, payload).subscribe({
+        next: () => {
+          this.cargarColaboradores();
+          this.cerrarModal();
+        },
+        error: (err) => console.error('Error al actualizar colaborador:', err)
+      });
     } else {
-      const nuevoColaborador: Colaborador = {
-        id: Date.now(),
-        nombre: payload.nombre,
-        email: payload.email,
-        telefono: payload.telefono,
-        cargo: payload.cargo,
-        estado: payload.estado,
-        fechaRegistro: payload.fechaRegistro
-      };
-      this.colaboradores.set([nuevoColaborador, ...currentList]);
+      this.http.post('/api/colaboradores', payload).subscribe({
+        next: () => {
+          this.cargarColaboradores();
+          this.cerrarModal();
+        },
+        error: (err) => console.error('Error al crear colaborador:', err)
+      });
     }
-
-    this.cerrarModal();
   }
 
   editarColaborador(id: number) {
@@ -181,8 +160,12 @@ export class ListaColaboradoresComponent implements OnInit {
   }
 
   eliminarColaborador(id: number) {
-    const currentList = this.colaboradores();
-    this.colaboradores.set(currentList.filter(col => col.id !== id));
+    this.http.delete(`/api/colaboradores/${id}`).subscribe({
+      next: () => {
+        this.colaboradores.set(this.colaboradores().filter(col => col.id !== id));
+      },
+      error: (err) => console.error('Error al eliminar colaborador:', err)
+    });
   }
 
   toggleEstado(id: number) {

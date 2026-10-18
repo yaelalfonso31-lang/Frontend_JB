@@ -1,18 +1,16 @@
-import { Component, ChangeDetectionStrategy, inject, signal, computed, AfterViewInit, ElementRef, viewChild } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, signal, computed, AfterViewInit, OnInit, ElementRef, viewChild } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators, FormArray, AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { NgOptimizedImage, CurrencyPipe, DatePipe } from '@angular/common';
-import { Router } from '@angular/router';
-import { HttpClient } from '@angular/common/http'; // <-- Importación del cliente HTTP agregada
+import { NgOptimizedImage } from '@angular/common';
+import { Router, RouterOutlet } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
 import flatpickr from 'flatpickr';
 import { Spanish } from 'flatpickr/dist/l10n/es.js';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { HeaderComponent } from '../../shared/header/header';
-import { RouterOutlet } from '@angular/router';
 import { ChecklistRegistryService } from '../../colaborador/checklists/checklist-registry.service';
 
-// Validador personalizado para las reglas de los servicios
 export function serviciosValidator(): ValidatorFn {
   return (control: AbstractControl): ValidationErrors | null => {
     const seleccionados = control.value as string[];
@@ -20,7 +18,6 @@ export function serviciosValidator(): ValidatorFn {
     if (!seleccionados || seleccionados.length === 0) return { required: true };
     if (seleccionados.length > 3) return { maxSelections: true };
 
-    // Limitar a 1 solo tipo de visita
     const visitas = ['visita_guiada', 'visita_tematica'];
     const visitasSeleccionadas = seleccionados.filter(s => visitas.includes(s));
 
@@ -38,10 +35,10 @@ export function serviciosValidator(): ValidatorFn {
   styleUrl: './solicitud-wizard.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class SolicitudWizardComponent implements AfterViewInit {
+export class SolicitudWizardComponent implements OnInit, AfterViewInit {
   private fb = inject(FormBuilder).nonNullable;
   private router = inject(Router);
-  private http = inject(HttpClient); // <-- Inyección del cliente HTTP
+  private http = inject(HttpClient);
   private checklistRegistry = inject(ChecklistRegistryService);
 
   fechaInput = viewChild<ElementRef>('fechaInput');
@@ -53,6 +50,7 @@ export class SolicitudWizardComponent implements AfterViewInit {
   folioAsignado = signal<string>('');
   fechaGeneracion = signal<Date>(new Date());
   politicasAceptadas = signal<boolean>(false);
+  fechasBloqueadas = signal<string[]>([]);
 
   preciosServicios: Record<string, number> = {
     visita_guiada: 30, visita_tematica: 99, conociendo_medio_ambiente: 125,
@@ -62,18 +60,18 @@ export class SolicitudWizardComponent implements AfterViewInit {
   };
 
   private regexNombres = /^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\s\.,'-]+$/;
-  private regexDireccion = /^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑüÜ\s\.,#-]+$/;
+  private regexDireccion = /^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑüÜ\s\.,#()°'-]+$/;
   private regexAlfanumerico = /^[a-zA-Z0-9\s-]+$/;
   private regexMonto = /^\d+(\.\d{1,2})?$/;
 
   solicitudForm = this.fb.group({
-    escuela: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(100), Validators.pattern(this.regexNombres)]],
+    escuela: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(120), Validators.pattern(this.regexDireccion)]],
     calle: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(100), Validators.pattern(this.regexDireccion)]],
     num_ext: ['', [Validators.required, Validators.maxLength(10), Validators.pattern(this.regexAlfanumerico)]],
     num_int: ['', [Validators.maxLength(10), Validators.pattern(this.regexAlfanumerico)]],
     colonia: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(100), Validators.pattern(this.regexDireccion)]],
     cp: ['', [Validators.required, Validators.pattern('^[0-9]{5}$')]],
-    municipio: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(50), Validators.pattern(this.regexNombres)]],
+    municipio: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(50), Validators.pattern(this.regexDireccion)]],
 
     profesores: this.fb.array([
       this.fb.control('', [Validators.required, Validators.minLength(3), Validators.maxLength(80), Validators.pattern(this.regexNombres)])
@@ -86,7 +84,7 @@ export class SolicitudWizardComponent implements AfterViewInit {
     ]),
 
     nivel: ['', Validators.required],
-    grado: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(50)]],
+    grado: ['', [Validators.required, Validators.minLength(1), Validators.maxLength(50)]],
 
     servicios: [[] as string[], [serviciosValidator()]],
     notas: ['', [Validators.maxLength(500)]],
@@ -126,28 +124,48 @@ export class SolicitudWizardComponent implements AfterViewInit {
 
   montoAnticipo = computed(() => this.montoTotal() * 0.5);
 
-  capturarArchivo(event: any) {
-    if (event.target.files && event.target.files.length > 0) {
-      this.archivoFisico = event.target.files[0];
-    }
+  ngOnInit(): void {
+    this.http.get<{ limiteVisitantes: number; diasFestivos: { id: number; fecha: string; nombre: string }[] }>('/api/configuracion')
+      .subscribe({
+        next: (config) => {
+          const fechas = (config.diasFestivos || []).map(d => d.fecha);
+          this.fechasBloqueadas.set(fechas);
+          this.inicializarCalendarios();
+        },
+        error: () => this.inicializarCalendarios()
+      });
   }
 
-  ngAfterViewInit() {
+  ngAfterViewInit(): void {
+    this.inicializarCalendarios();
+  }
+
+  inicializarCalendarios(): void {
     if (this.fechaInput()?.nativeElement) {
       const minDate = new Date();
       minDate.setDate(minDate.getDate() + 14);
+      const bloqueadas = new Set(this.fechasBloqueadas());
 
       flatpickr(this.fechaInput()!.nativeElement, {
         locale: Spanish,
         minDate: minDate,
-        disable: [(date) => date.getDay() === 0 || date.getDay() === 6],
+        defaultDate: this.solicitudForm.controls.fecha.value || undefined,
+        disable: [
+          (date) => {
+            const yyyy = date.getFullYear();
+            const mm = String(date.getMonth() + 1).padStart(2, '0');
+            const dd = String(date.getDate()).padStart(2, '0');
+            const iso = `${yyyy}-${mm}-${dd}`;
+            return date.getDay() === 0 || date.getDay() === 6 || bloqueadas.has(iso);
+          }
+        ],
         disableMobile: true,
         monthSelectorType: 'static',
-        dateFormat: "Y-m-d",
+        dateFormat: 'Y-m-d',
         altInput: false,
-        appendTo: document.body,
-        static: true,
-        position: 'below'
+        onChange: (_selectedDates, dateStr) => {
+          this.solicitudForm.controls.fecha.setValue(dateStr);
+        }
       });
     }
 
@@ -155,20 +173,27 @@ export class SolicitudWizardComponent implements AfterViewInit {
       flatpickr(this.horaInput()!.nativeElement, {
         enableTime: true,
         noCalendar: true,
-        dateFormat: "H:i",
-        minTime: "09:00",
-        maxTime: "15:00",
+        dateFormat: 'H:i',
+        defaultDate: this.solicitudForm.controls.hora.value || undefined,
+        minTime: '09:00',
+        maxTime: '15:00',
         time_24hr: true,
         minuteIncrement: 30,
         disableMobile: true,
-        appendTo: document.body,
-        static: true,
-        position: 'below'
+        onChange: (_selectedDates, dateStr) => {
+          this.solicitudForm.controls.hora.setValue(dateStr);
+        }
       });
     }
   }
 
-  toggleServicio(id: string, event: Event) {
+  capturarArchivo(event: any): void {
+    if (event.target.files && event.target.files.length > 0) {
+      this.archivoFisico = event.target.files[0];
+    }
+  }
+
+  toggleServicio(id: string, event: Event): void {
     const isChecked = (event.target as HTMLInputElement).checked;
     const ctrl = this.solicitudForm.controls.servicios;
     let actuales = [...ctrl.value];
@@ -187,13 +212,13 @@ export class SolicitudWizardComponent implements AfterViewInit {
   get telefonos() { return this.solicitudForm.get('telefonos') as FormArray; }
   get correos() { return this.solicitudForm.get('correos') as FormArray; }
 
-  agregarCampo(tipo: 'profesor' | 'telefono' | 'correo') {
+  agregarCampo(tipo: 'profesor' | 'telefono' | 'correo'): void {
     if (tipo === 'profesor') this.profesores.push(this.fb.control('', [Validators.required, Validators.minLength(3), Validators.maxLength(80), Validators.pattern(this.regexNombres)]));
     if (tipo === 'telefono') this.telefonos.push(this.fb.control('', [Validators.required, Validators.pattern('^[0-9]{10}$')]));
     if (tipo === 'correo') this.correos.push(this.fb.control('', [Validators.required, Validators.email, Validators.maxLength(80)]));
   }
 
-  eliminarCampo(tipo: 'profesor' | 'telefono' | 'correo', index: number) {
+  eliminarCampo(tipo: 'profesor' | 'telefono' | 'correo', index: number): void {
     if (tipo === 'profesor') this.profesores.removeAt(index);
     if (tipo === 'telefono') this.telefonos.removeAt(index);
     if (tipo === 'correo') this.correos.removeAt(index);
@@ -219,47 +244,39 @@ export class SolicitudWizardComponent implements AfterViewInit {
     return true;
   }
 
-  irAPaso(paso: number) {
+  irAPaso(paso: number): void {
     if (paso >= 1 && paso <= 6) {
       this.pasoActual.set(paso);
       window.scrollTo({ top: 0, behavior: 'smooth' });
+      if (paso === 1) {
+        setTimeout(() => this.inicializarCalendarios(), 50);
+      }
     }
   }
 
-  // --- LOGICA REEMPLAZADA PARA ENVIAR REALMENTE EL FORMULARIO A PYTHON ---
-  enviarSolicitud() {
+  enviarSolicitud(): void {
     const archivo = this.archivoFisico;
 
-    if (this.solicitudForm.valid) {
-      if (!archivo) {
-        alert('Por favor, selecciona el archivo del comprobante de pago.');
-        return;
-      }
+    if (!archivo) {
+      alert('Por favor, selecciona el archivo del comprobante de pago en el Paso 3.');
+      return;
+    }
 
+    if (this.solicitudForm.valid) {
       const formVal = this.solicitudForm.getRawValue();
 
-      // --- LA SOLUCIÓN ---
-      // Clonamos el formulario e inyectamos el monto computado con el nombre que exige Python
       const datosParaPython = {
         ...formVal,
         monto_estimado: this.montoTotal()
       };
 
-      // Creamos el empaque multipart
       const formData = new FormData();
-      // Mandamos nuestro nuevo objeto 'datosParaPython'
       formData.append('datos', JSON.stringify(datosParaPython));
-      // Metemos la imagen
       formData.append('comprobante', archivo);
 
-      // Enviamos el formData
-      // Enviamos el formData
       this.http.post<{ folio: string }>('/api/solicitudes', formData)
         .subscribe({
           next: (respuesta: any) => {
-            console.log('¡Éxito!', respuesta);
-
-            // 1. Guardamos el folio en la memoria de tu interfaz
             this.folioAsignado.set(respuesta.folio);
             this.checklistRegistry.registerSubmittedRequest({
               folio: respuesta.folio,
@@ -267,28 +284,29 @@ export class SolicitudWizardComponent implements AfterViewInit {
               date: formVal.fecha,
               services: formVal.servicios
             });
-
-            // 2. Le decimos a Angular que brinque al paso 6
             this.irAPaso(6);
           },
           error: (err) => {
             console.error('Error del servidor:', err);
-            alert('Hubo un problema de conexión al guardar.');
+            alert('Hubo un problema de conexión al guardar la solicitud.');
           }
         });
+    } else {
+      this.solicitudForm.markAllAsTouched();
+      alert('Por favor, verifica que todos los campos obligatorios del Paso 1 y Paso 3 estén completos.');
     }
   }
 
-  regresarACorrecciones() {
+  regresarACorrecciones(): void {
     this.politicasAceptadas.set(false);
     this.irAPaso(1);
   }
 
-  salirAlMenu() {
+  salirAlMenu(): void {
     this.router.navigate(['/inicio']);
   }
 
-  descargarResumenPDF() {
+  descargarResumenPDF(): void {
     const doc = new jsPDF();
     const vals = this.solicitudForm.getRawValue();
     const folio = this.folioAsignado();
@@ -321,14 +339,10 @@ export class SolicitudWizardComponent implements AfterViewInit {
     doc.save(`Solicitud_${folio}.pdf`);
   }
 
-  descargarPoliticas() {
+  descargarPoliticas(): void {
     const link = document.createElement('a');
     link.href = '/Reglamento_JardinBotanico.pdf';
     link.download = 'Politicas_y_Reglamento.pdf';
     link.click();
   }
-
-
-
-
 }

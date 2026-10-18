@@ -12,10 +12,17 @@ interface Solicitud {
   solicitante: string;
   escuela: string;
   fechaVisita: string;
+  horaVisita?: string;
   estado: 'pendiente' | 'aprobada' | 'rechazada';
   numeroVisitantes: number;
   proposito: string;
   folio?: string;
+  profesores?: string;
+  telefonos?: string;
+  correos?: string;
+  comprobanteRuta?: string;
+  montoPagado?: number;
+  titularPago?: string;
   servicios?: string[] | string;
   services?: string[] | string;
 }
@@ -32,45 +39,10 @@ export class MonitorSolicitudesComponent implements OnInit {
   private http = inject(HttpClient);
   private checklistRegistry = inject(ChecklistRegistryService);
 
-  solicitudes = signal<Solicitud[]>([
-    {
-      id: 101,
-      solicitante: 'Ana García',
-      escuela: 'Primaria',
-      fechaVisita: '2026-09-25',
-      estado: 'pendiente',
-      numeroVisitantes: 18,
-      proposito: 'Visita guiada de ciencias naturales',
-      folio: 'JB-2026-101',
-      servicios: ['visita_guiada']
-    },
-    {
-      id: 102,
-      solicitante: 'Miguel Torres',
-      escuela: 'Secundaria',
-      fechaVisita: '2026-09-26',
-      estado: 'aprobada',
-      numeroVisitantes: 24,
-      proposito: 'Recorrido educativo del jardín botánico',
-      folio: 'JB-2026-102',
-      servicios: ['visita_guiada', 'conociendo_medio_ambiente']
-    },
-    {
-      id: 103,
-      solicitante: 'Carla Soto',
-      escuela: 'Técnica',
-      fechaVisita: '2026-09-27',
-      estado: 'rechazada',
-      numeroVisitantes: 12,
-      proposito: 'Taller de biología aplicada',
-      folio: 'JB-2026-103',
-      servicios: ['visita_tematica']
-    }
-  ]);
-
+  solicitudes = signal<Solicitud[]>([]);
   filterFecha = signal('');
   filterEstado = signal<'todos' | 'aprobada' | 'pendiente' | 'rechazada'>('todos');
-  filterEscuela = signal<'todos' | 'Primaria' | 'Secundaria' | 'Técnica'>('todos');
+  filterEscuela = signal<string>('todos');
   checklistSeleccionada = signal<Solicitud | null>(null);
 
   ngOnInit(): void {
@@ -80,9 +52,8 @@ export class MonitorSolicitudesComponent implements OnInit {
   cargarSolicitudes(): void {
     this.http.get<Solicitud[]>('/api/monitor/solicitudes').subscribe({
       next: (data) => {
-        const solicitudes = data.length ? data : this.solicitudes();
-        this.solicitudes.set(solicitudes);
-        for (const solicitud of solicitudes) {
+        this.solicitudes.set(data);
+        for (const solicitud of data) {
           const servicios = this.getServices(solicitud);
           if (solicitud.folio && servicios.length && solicitud.estado !== 'rechazada') {
             this.checklistRegistry.registerSubmittedRequest({
@@ -102,7 +73,9 @@ export class MonitorSolicitudesComponent implements OnInit {
     return this.solicitudes().filter((solicitud) => {
       const matchFecha = !this.filterFecha() || solicitud.fechaVisita === this.filterFecha();
       const matchEstado = this.filterEstado() === 'todos' || solicitud.estado === this.filterEstado();
-      const matchEscuela = this.filterEscuela() === 'todos' || solicitud.escuela === this.filterEscuela();
+      const matchEscuela =
+        this.filterEscuela() === 'todos' ||
+        (solicitud.escuela || '').toLowerCase() === this.filterEscuela().toLowerCase();
       return matchFecha && matchEstado && matchEscuela;
     });
   }
@@ -115,7 +88,7 @@ export class MonitorSolicitudesComponent implements OnInit {
     this.filterEstado.set(value);
   }
 
-  onFilterEscuela(value: 'todos' | 'Primaria' | 'Secundaria' | 'Técnica'): void {
+  onFilterEscuela(value: string): void {
     this.filterEscuela.set(value);
   }
 
@@ -150,10 +123,17 @@ export class MonitorSolicitudesComponent implements OnInit {
     const solicitudActual = this.checklistSeleccionada();
     if (!solicitudActual) return;
 
-    this.solicitudes.set(this.solicitudes().map((solicitud) =>
-      solicitud.id === solicitudActual.id ? { ...solicitud, estado: nuevoEstado } : solicitud
-    ));
-    this.cerrarChecklist();
+    this.http.put(`/api/solicitudes/${solicitudActual.id}/estado`, { estado: nuevoEstado }).subscribe({
+      next: () => {
+        this.solicitudes.set(
+          this.solicitudes().map((solicitud) =>
+            solicitud.id === solicitudActual.id ? { ...solicitud, estado: nuevoEstado } : solicitud
+          )
+        );
+        this.cerrarChecklist();
+      },
+      error: (err) => console.error('Error al actualizar estado de solicitud:', err)
+    });
   }
 
   exportarPDF(): void {

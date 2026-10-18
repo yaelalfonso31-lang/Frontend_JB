@@ -1,6 +1,7 @@
-import { Component, ChangeDetectionStrategy, signal } from '@angular/core';
+import { Component, ChangeDetectionStrategy, signal, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { HttpClient } from '@angular/common/http';
 
 interface DiaFestivo {
   id: number;
@@ -16,18 +17,14 @@ interface DiaFestivo {
   styleUrl: './configuracion-sistema.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ConfiguracionSistemaComponent {
+export class ConfiguracionSistemaComponent implements OnInit {
   private fb = inject(FormBuilder);
+  private http = inject(HttpClient);
 
-  // Estado de configuración
   limiteVisitantes = signal(100);
-  diasFestivos = signal<DiaFestivo[]>([
-    { id: 1, fecha: '2024-12-25', nombre: 'Navidad' },
-    { id: 2, fecha: '2024-01-01', nombre: 'Año Nuevo' },
-    { id: 3, fecha: '2024-12-08', nombre: 'Inmaculada Concepción' }
-  ]);
+  diasFestivos = signal<DiaFestivo[]>([]);
+  mostrarFormularioDia = signal(false);
 
-  // Formularios
   configForm = this.fb.nonNullable.group({
     limiteVisitantes: [100, [Validators.required, Validators.min(1)]]
   });
@@ -37,61 +34,69 @@ export class ConfiguracionSistemaComponent {
     nombre: ['', Validators.required]
   });
 
-  mostrarFormularioDia = signal(false);
-
-  constructor() {
-    this.configForm.patchValue({
-      limiteVisitantes: this.limiteVisitantes()
-    });
+  ngOnInit(): void {
+    this.cargarConfiguracion();
   }
 
-  ngOnInit() {
-    // Inicialización si es necesario
+  cargarConfiguracion(): void {
+    this.http.get<{ limiteVisitantes: number; diasFestivos: DiaFestivo[] }>('/api/configuracion')
+      .subscribe({
+        next: (data) => {
+          this.limiteVisitantes.set(data.limiteVisitantes || 100);
+          this.configForm.patchValue({ limiteVisitantes: data.limiteVisitantes || 100 });
+          this.diasFestivos.set(data.diasFestivos || []);
+        },
+        error: (err) => console.error('Error al cargar configuración:', err)
+      });
   }
 
-  guardarConfiguracion() {
+  guardarConfiguracion(): void {
     if (this.configForm.valid) {
       const valor = this.configForm.get('limiteVisitantes')?.value;
       if (valor !== undefined && typeof valor === 'number') {
-        this.limiteVisitantes.set(valor);
-        console.log('Configuración guardada:', { limiteVisitantes: valor });
-        alert('Configuración guardada exitosamente');
+        this.http.put('/api/configuracion', { limiteVisitantes: valor }).subscribe({
+          next: () => {
+            this.limiteVisitantes.set(valor);
+            alert('Configuración guardada exitosamente en la base de datos.');
+          },
+          error: (err) => console.error('Error al guardar configuración:', err)
+        });
       }
     }
   }
 
-  abrirFormularioDia() {
+  abrirFormularioDia(): void {
     this.mostrarFormularioDia.set(true);
   }
 
-  cerrarFormularioDia() {
+  cerrarFormularioDia(): void {
     this.mostrarFormularioDia.set(false);
     this.diaFestivoForm.reset();
   }
 
-  agregarDiaFestivo() {
+  agregarDiaFestivo(): void {
     if (this.diaFestivoForm.valid) {
-      const nuevoId =
-        this.diasFestivos().length > 0
-          ? Math.max(...this.diasFestivos().map(d => d.id)) + 1
-          : 1;
-
-      const nuevoDia: DiaFestivo = {
-        id: nuevoId,
+      const payload = {
         fecha: this.diaFestivoForm.get('fecha')?.value || '',
         nombre: this.diaFestivoForm.get('nombre')?.value || ''
       };
 
-      this.diasFestivos.update(dias => [...dias, nuevoDia]);
-      this.cerrarFormularioDia();
-      console.log('Día festivo agregado:', nuevoDia);
+      this.http.post<DiaFestivo>('/api/configuracion/dias-festivos', payload).subscribe({
+        next: () => {
+          this.cargarConfiguracion();
+          this.cerrarFormularioDia();
+        },
+        error: (err) => console.error('Error al agregar día festivo:', err)
+      });
     }
   }
 
-  eliminarDiaFestivo(id: number) {
-    this.diasFestivos.update(dias => dias.filter(d => d.id !== id));
-    console.log('Día festivo eliminado:', id);
+  eliminarDiaFestivo(id: number): void {
+    this.http.delete(`/api/configuracion/dias-festivos/${id}`).subscribe({
+      next: () => {
+        this.diasFestivos.update(dias => dias.filter(d => d.id !== id));
+      },
+      error: (err) => console.error('Error al eliminar día festivo:', err)
+    });
   }
 }
-
-import { inject } from '@angular/core';
