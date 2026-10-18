@@ -1,6 +1,8 @@
 import { Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NgOptimizedImage } from '@angular/common';
+import { HttpClient } from '@angular/common/http';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-encuesta-satisfaccion',
@@ -11,6 +13,8 @@ import { NgOptimizedImage } from '@angular/common';
 })
 export class EncuestaSatisfaccionComponent {
   private fb = inject(FormBuilder);
+  private http = inject(HttpClient);
+  private router = inject(Router);
 
   encuestaForm = this.fb.group({
     tipoServicio: ['visita_guiada', Validators.required],
@@ -19,11 +23,7 @@ export class EncuestaSatisfaccionComponent {
     gustoVisita: ['', Validators.required],
     porqueNoGusto: [''],
     comoContacto: ['', Validators.required],
-    
-    // P4: Atención recibida
     atencionRecibida: [null, Validators.required],
-
-    // P5: Subcriterios de Contenido / Información
     calidadInformacionVisita: [null],
     calidadInformacionTaller: [null],
     cumplioObjetivoVisita: [null],
@@ -32,16 +32,12 @@ export class EncuestaSatisfaccionComponent {
     materialesAdecuadosTaller: [null],
     instalacionesAdecuadasVisita: [null],
     instalacionesAdecuadasTaller: [null],
-
-    // P6: Subcriterios del Instructor
     explicacionClaraVisita: [null],
     explicacionClaraTaller: [null],
     resolvioDudasVisita: [null],
     resolvioDudasTaller: [null],
     captoAtencionVisita: [null],
     captoAtencionTaller: [null],
-
-    // P7 a P11
     calificacionGeneral: [null, Validators.required],
     cumplioExpectativas: ['', Validators.required],
     porqueNoExpectativas: [''],
@@ -58,9 +54,20 @@ export class EncuestaSatisfaccionComponent {
 
   enviarEncuesta(): void {
     if (this.encuestaForm.valid) {
-      console.log('Encuesta lista para enviar:', this.encuestaForm.value);
+      this.http.post('/api/encuestas', this.encuestaForm.getRawValue()).subscribe({
+        next: () => {
+          alert('¡Muchas gracias! Tu encuesta ha sido registrada exitosamente.');
+          this.encuestaForm.reset({ tipoServicio: 'visita_guiada' });
+          this.router.navigate(['/inicio']);
+        },
+        error: (err) => {
+          console.error('Error al guardar encuesta:', err);
+          alert('No se pudo enviar la encuesta. Por favor intenta de nuevo.');
+        }
+      });
     } else {
       this.encuestaForm.markAllAsTouched();
+      alert('Por favor responde las preguntas obligatorias antes de enviar.');
     }
   }
 }

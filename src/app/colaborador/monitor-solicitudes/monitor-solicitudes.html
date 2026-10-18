@@ -123,6 +123,22 @@
           <p style="margin: 5px 0;"><strong>Fecha:</strong> {{ sol.fechaVisita }}</p>
           <p style="margin: 5px 0;"><strong>Visitantes:</strong> {{ sol.numeroVisitantes }}</p>
           <p style="margin: 5px 0;"><strong>Propósito:</strong> {{ sol.proposito }}</p>
+          @if (sol.profesores) {
+            <p style="margin: 5px 0;"><strong>Profesor(es):</strong> {{ sol.profesores }}</p>
+          }
+          @if (sol.telefonos) {
+            <p style="margin: 5px 0;"><strong>Teléfono(s):</strong> {{ sol.telefonos }}</p>
+          }
+          @if (sol.correos) {
+            <p style="margin: 5px 0;"><strong>Correo(s):</strong> {{ sol.correos }}</p>
+          }
+          @if (sol.comprobanteRuta) {
+            <p style="margin: 10px 0;">
+              <a [href]="sol.comprobanteRuta" target="_blank" rel="noopener" style="color: #004d40; font-weight: bold; text-decoration: underline;">
+                📄 Ver comprobante de pago ({{ sol.titularPago }} - ${{ sol.montoPagado }} MXN)
+              </a>
+            </p>
+          }
         </div>
 
         <!-- Botones Principales -->

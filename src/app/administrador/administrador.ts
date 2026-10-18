@@ -1,6 +1,6 @@
 import { Component, ChangeDetectionStrategy, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterOutlet, RouterLink, ActivatedRoute, Router } from '@angular/router';
+import { RouterOutlet, RouterLink, ActivatedRoute, Router, RouterLinkActive } from '@angular/router';
 
 type AdminSection = 'dashboard' | 'colaboradores' | 'solicitudes' | 'checklists' | 'configuracion';
 
@@ -32,6 +32,8 @@ export class AdministradorComponent implements OnInit {
   }
 
   cerrarSesion() {
+    localStorage.removeItem('token');
+    localStorage.removeItem('usuarioRol');
     this.router.navigate(['/login']);
   }
 }
