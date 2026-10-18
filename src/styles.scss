@@ -1,3 +1,5 @@
+@import 'flatpickr/dist/flatpickr.min.css';
+
 :root {
     /* --- VERDES --- */
     --color-dark-green: #183524;
@@ -467,6 +469,39 @@ app-root {
         &:hover {
             background-color: var(--fp-secondary) !important;
         }
+    }
+
+    /* ============================================================
+       CORRECCIÓN DE POSICIÓN DE FLATPICKR EN INPUT-GROUP (STATIC)
+       ============================================================ */
+    .input-group .flatpickr-wrapper {
+        position: relative !important;
+        flex: 1 1 auto !important;
+        width: 1% !important;
+        min-width: 0 !important;
+        display: flex !important;
+
+        .form-control {
+            width: 100% !important;
+            border-top-left-radius: 0 !important;
+            border-bottom-left-radius: 0 !important;
+        }
+
+        .flatpickr-calendar.static {
+            position: absolute !important;
+            top: calc(100% + 6px) !important;
+            left: 0 !important;
+            right: auto !important;
+            transform: none !important;
+            z-index: 9999 !important;
+        }
+    }
+
+    /* Asegurar que las tarjetas del formulario no recorten el calendario al abrirse */
+    .section-card,
+    .form-container,
+    .form-content {
+        overflow: visible !important;
     }
 }
 
