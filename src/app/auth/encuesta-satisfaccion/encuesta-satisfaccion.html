@@ -83,118 +83,230 @@
 
         <hr class="my-4">
 
-        <!-- EVALUACIÓN EN ESCALA DE 1 A 3 -->
+        <!-- EVALUACIÓN CON CARITAS DE SATISFACCIÓN -->
         <h2 class="subtitulo">Calificación del Servicio</h2>
-        <p class="text-muted small mb-3">Considere la escala: 1 = Malo, 2 = Regular, 3 = Bueno.</p>
+
+        <!-- LEYENDA EXPLICATIVA DE LAS CARITAS -->
+        <div class="leyenda-escala mb-4">
+          <span class="leyenda-titulo">
+            <i class="fa-solid fa-circle-info me-2"></i>Escala de evaluación:
+          </span>
+          <div class="leyenda-items">
+            <div class="leyenda-item">
+              <img src="/assets/caritas/mala.png" alt="Malo" class="leyenda-img">
+              <span>1 = Malo</span>
+            </div>
+            <div class="leyenda-item">
+              <img src="/assets/caritas/regular.png" alt="Regular" class="leyenda-img">
+              <span>2 = Regular</span>
+            </div>
+            <div class="leyenda-item">
+              <img src="/assets/caritas/buena.png" alt="Bueno" class="leyenda-img">
+              <span>3 = Bueno</span>
+            </div>
+          </div>
+        </div>
 
         <!-- P4: Atención recibida -->
         <div class="mb-4">
-          <label class="form-label font-medium">4. ¿La forma en que se le atendió fue?</label>
-          <div class="escala-container">
-            @for (num of [1,2,3]; track num) {
-              <label class="escala-item">
-                <input type="radio" [value]="num" formControlName="atencionRecibida">
-                <span>{{ num }}</span>
+          <label class="form-label font-medium d-block mb-3">4. ¿La forma en que se le atendió fue?</label>
+          <div class="escala-caritas-compacta">
+            @for (opcion of opcionesAtencion; track opcion.valor) {
+              <label class="carita-solo">
+                <input type="radio" [value]="opcion.valor" formControlName="atencionRecibida" class="radio-oculto">
+                <img [src]="opcion.img" [alt]="opcion.label" [title]="opcion.label" class="carita-img">
               </label>
             }
           </div>
         </div>
 
-        <!-- P5: SUBDIVISIONES DE CONTENIDO DE LA VISITA / TALLER -->
+        <!-- P5: EVALUACIÓN DEL CONTENIDO -->
         <div class="mb-4">
           <h3 class="h6 fw-bold text-success mb-3">5. Evaluación del Contenido</h3>
 
-          <!-- Subcriterio A: Calidad de la información -->
+          <!-- Subcriterio A -->
           <div class="subcriterio-block mb-3">
             <label class="form-label small fw-bold">a) La calidad de la información contenida fue:</label>
             @if (tipoServicioSeleccionado === 'visita_guiada') {
-              <div class="escala-container">
-                @for (num of [1,2,3]; track num) {
-                  <label class="escala-item"><input type="radio" [value]="num" formControlName="calidadInformacionVisita"><span>{{ num }}</span></label>
+              <div class="escala-caritas-compacta">
+                @for (opcion of opcionesAtencion; track opcion.valor) {
+                  <label class="carita-solo">
+                    <input type="radio" [value]="opcion.valor" formControlName="calidadInformacionVisita" class="radio-oculto">
+                    <img [src]="opcion.img" [alt]="opcion.label" [title]="opcion.label" class="carita-img">
+                  </label>
                 }
               </div>
             } @else if (tipoServicioSeleccionado === 'taller') {
-              <div class="escala-container">
-                @for (num of [1,2,3]; track num) {
-                  <label class="escala-item"><input type="radio" [value]="num" formControlName="calidadInformacionTaller"><span>{{ num }}</span></label>
+              <div class="escala-caritas-compacta">
+                @for (opcion of opcionesAtencion; track opcion.valor) {
+                  <label class="carita-solo">
+                    <input type="radio" [value]="opcion.valor" formControlName="calidadInformacionTaller" class="radio-oculto">
+                    <img [src]="opcion.img" [alt]="opcion.label" [title]="opcion.label" class="carita-img">
+                  </label>
                 }
               </div>
             } @else {
-              <div class="row">
-                <div class="col-md-6"><span class="d-block small text-muted">Visita Guiada:</span>
-                  <div class="escala-container">@for (num of [1,2,3]; track num) { <label class="escala-item"><input type="radio" [value]="num" formControlName="calidadInformacionVisita"><span>{{ num }}</span></label> }</div>
+              <div class="row g-3">
+                <div class="col-md-6"><span class="d-block small text-muted mb-2">Visita Guiada:</span>
+                  <div class="escala-caritas-compacta">
+                    @for (opcion of opcionesAtencion; track opcion.valor) {
+                      <label class="carita-solo">
+                        <input type="radio" [value]="opcion.valor" formControlName="calidadInformacionVisita" class="radio-oculto">
+                        <img [src]="opcion.img" [alt]="opcion.label" [title]="opcion.label" class="carita-img">
+                      </label>
+                    }
+                  </div>
                 </div>
-                <div class="col-md-6"><span class="d-block small text-muted">Taller:</span>
-                  <div class="escala-container">@for (num of [1,2,3]; track num) { <label class="escala-item"><input type="radio" [value]="num" formControlName="calidadInformacionTaller"><span>{{ num }}</span></label> }</div>
+                <div class="col-md-6"><span class="d-block small text-muted mb-2">Taller:</span>
+                  <div class="escala-caritas-compacta">
+                    @for (opcion of opcionesAtencion; track opcion.valor) {
+                      <label class="carita-solo">
+                        <input type="radio" [value]="opcion.valor" formControlName="calidadInformacionTaller" class="radio-oculto">
+                        <img [src]="opcion.img" [alt]="opcion.label" [title]="opcion.label" class="carita-img">
+                      </label>
+                    }
+                  </div>
                 </div>
               </div>
             }
           </div>
 
-          <!-- Subcriterio B: Cumplió con su objetivo -->
+          <!-- Subcriterio B -->
           <div class="subcriterio-block mb-3">
             <label class="form-label small fw-bold">b) La información obtenida cumplió con su objetivo:</label>
             @if (tipoServicioSeleccionado === 'visita_guiada') {
-              <div class="escala-container">
-                @for (num of [1,2,3]; track num) { <label class="escala-item"><input type="radio" [value]="num" formControlName="cumplioObjetivoVisita"><span>{{ num }}</span></label> }
+              <div class="escala-caritas-compacta">
+                @for (opcion of opcionesAtencion; track opcion.valor) {
+                  <label class="carita-solo">
+                    <input type="radio" [value]="opcion.valor" formControlName="cumplioObjetivoVisita" class="radio-oculto">
+                    <img [src]="opcion.img" [alt]="opcion.label" [title]="opcion.label" class="carita-img">
+                  </label>
+                }
               </div>
             } @else if (tipoServicioSeleccionado === 'taller') {
-              <div class="escala-container">
-                @for (num of [1,2,3]; track num) { <label class="escala-item"><input type="radio" [value]="num" formControlName="cumplioObjetivoTaller"><span>{{ num }}</span></label> }
+              <div class="escala-caritas-compacta">
+                @for (opcion of opcionesAtencion; track opcion.valor) {
+                  <label class="carita-solo">
+                    <input type="radio" [value]="opcion.valor" formControlName="cumplioObjetivoTaller" class="radio-oculto">
+                    <img [src]="opcion.img" [alt]="opcion.label" [title]="opcion.label" class="carita-img">
+                  </label>
+                }
               </div>
             } @else {
-              <div class="row">
-                <div class="col-md-6"><span class="d-block small text-muted">Visita Guiada:</span>
-                  <div class="escala-container">@for (num of [1,2,3]; track num) { <label class="escala-item"><input type="radio" [value]="num" formControlName="cumplioObjetivoVisita"><span>{{ num }}</span></label> }</div>
+              <div class="row g-3">
+                <div class="col-md-6"><span class="d-block small text-muted mb-2">Visita Guiada:</span>
+                  <div class="escala-caritas-compacta">
+                    @for (opcion of opcionesAtencion; track opcion.valor) {
+                      <label class="carita-solo">
+                        <input type="radio" [value]="opcion.valor" formControlName="cumplioObjetivoVisita" class="radio-oculto">
+                        <img [src]="opcion.img" [alt]="opcion.label" [title]="opcion.label" class="carita-img">
+                      </label>
+                    }
+                  </div>
                 </div>
-                <div class="col-md-6"><span class="d-block small text-muted">Taller:</span>
-                  <div class="escala-container">@for (num of [1,2,3]; track num) { <label class="escala-item"><input type="radio" [value]="num" formControlName="cumplioObjetivoTaller"><span>{{ num }}</span></label> }</div>
+                <div class="col-md-6"><span class="d-block small text-muted mb-2">Taller:</span>
+                  <div class="escala-caritas-compacta">
+                    @for (opcion of opcionesAtencion; track opcion.valor) {
+                      <label class="carita-solo">
+                        <input type="radio" [value]="opcion.valor" formControlName="cumplioObjetivoTaller" class="radio-oculto">
+                        <img [src]="opcion.img" [alt]="opcion.label" [title]="opcion.label" class="carita-img">
+                      </label>
+                    }
+                  </div>
                 </div>
               </div>
             }
           </div>
 
-          <!-- Subcriterio C: Materiales educativos -->
+          <!-- Subcriterio C -->
           <div class="subcriterio-block mb-3">
             <label class="form-label small fw-bold">c) Los materiales educativos utilizados fueron los adecuados:</label>
             @if (tipoServicioSeleccionado === 'visita_guiada') {
-              <div class="escala-container">
-                @for (num of [1,2,3]; track num) { <label class="escala-item"><input type="radio" [value]="num" formControlName="materialesAdecuadosVisita"><span>{{ num }}</span></label> }
+              <div class="escala-caritas-compacta">
+                @for (opcion of opcionesAtencion; track opcion.valor) {
+                  <label class="carita-solo">
+                    <input type="radio" [value]="opcion.valor" formControlName="materialesAdecuadosVisita" class="radio-oculto">
+                    <img [src]="opcion.img" [alt]="opcion.label" [title]="opcion.label" class="carita-img">
+                  </label>
+                }
               </div>
             } @else if (tipoServicioSeleccionado === 'taller') {
-              <div class="escala-container">
-                @for (num of [1,2,3]; track num) { <label class="escala-item"><input type="radio" [value]="num" formControlName="materialesAdecuadosTaller"><span>{{ num }}</span></label> }
+              <div class="escala-caritas-compacta">
+                @for (opcion of opcionesAtencion; track opcion.valor) {
+                  <label class="carita-solo">
+                    <input type="radio" [value]="opcion.valor" formControlName="materialesAdecuadosTaller" class="radio-oculto">
+                    <img [src]="opcion.img" [alt]="opcion.label" [title]="opcion.label" class="carita-img">
+                  </label>
+                }
               </div>
             } @else {
-              <div class="row">
-                <div class="col-md-6"><span class="d-block small text-muted">Visita Guiada:</span>
-                  <div class="escala-container">@for (num of [1,2,3]; track num) { <label class="escala-item"><input type="radio" [value]="num" formControlName="materialesAdecuadosVisita"><span>{{ num }}</span></label> }</div>
+              <div class="row g-3">
+                <div class="col-md-6"><span class="d-block small text-muted mb-2">Visita Guiada:</span>
+                  <div class="escala-caritas-compacta">
+                    @for (opcion of opcionesAtencion; track opcion.valor) {
+                      <label class="carita-solo">
+                        <input type="radio" [value]="opcion.valor" formControlName="materialesAdecuadosVisita" class="radio-oculto">
+                        <img [src]="opcion.img" [alt]="opcion.label" [title]="opcion.label" class="carita-img">
+                      </label>
+                    }
+                  </div>
                 </div>
-                <div class="col-md-6"><span class="d-block small text-muted">Taller:</span>
-                  <div class="escala-container">@for (num of [1,2,3]; track num) { <label class="escala-item"><input type="radio" [value]="num" formControlName="materialesAdecuadosTaller"><span>{{ num }}</span></label> }</div>
+                <div class="col-md-6"><span class="d-block small text-muted mb-2">Taller:</span>
+                  <div class="escala-caritas-compacta">
+                    @for (opcion of opcionesAtencion; track opcion.valor) {
+                      <label class="carita-solo">
+                        <input type="radio" [value]="opcion.valor" formControlName="materialesAdecuadosTaller" class="radio-oculto">
+                        <img [src]="opcion.img" [alt]="opcion.label" [title]="opcion.label" class="carita-img">
+                      </label>
+                    }
+                  </div>
                 </div>
               </div>
             }
           </div>
 
-          <!-- Subcriterio D: Instalaciones utilizadas -->
+          <!-- Subcriterio D -->
           <div class="subcriterio-block mb-3">
             <label class="form-label small fw-bold">d) Las instalaciones utilizadas fueron las adecuadas para su servicio:</label>
             @if (tipoServicioSeleccionado === 'visita_guiada') {
-              <div class="escala-container">
-                @for (num of [1,2,3]; track num) { <label class="escala-item"><input type="radio" [value]="num" formControlName="instalacionesAdecuadasVisita"><span>{{ num }}</span></label> }
+              <div class="escala-caritas-compacta">
+                @for (opcion of opcionesAtencion; track opcion.valor) {
+                  <label class="carita-solo">
+                    <input type="radio" [value]="opcion.valor" formControlName="instalacionesAdecuadasVisita" class="radio-oculto">
+                    <img [src]="opcion.img" [alt]="opcion.label" [title]="opcion.label" class="carita-img">
+                  </label>
+                }
               </div>
             } @else if (tipoServicioSeleccionado === 'taller') {
-              <div class="escala-container">
-                @for (num of [1,2,3]; track num) { <label class="escala-item"><input type="radio" [value]="num" formControlName="instalacionesAdecuadasTaller"><span>{{ num }}</span></label> }
+              <div class="escala-caritas-compacta">
+                @for (opcion of opcionesAtencion; track opcion.valor) {
+                  <label class="carita-solo">
+                    <input type="radio" [value]="opcion.valor" formControlName="instalacionesAdecuadasTaller" class="radio-oculto">
+                    <img [src]="opcion.img" [alt]="opcion.label" [title]="opcion.label" class="carita-img">
+                  </label>
+                }
               </div>
             } @else {
-              <div class="row">
-                <div class="col-md-6"><span class="d-block small text-muted">Visita Guiada:</span>
-                  <div class="escala-container">@for (num of [1,2,3]; track num) { <label class="escala-item"><input type="radio" [value]="num" formControlName="instalacionesAdecuadasVisita"><span>{{ num }}</span></label> }</div>
+              <div class="row g-3">
+                <div class="col-md-6"><span class="d-block small text-muted mb-2">Visita Guiada:</span>
+                  <div class="escala-caritas-compacta">
+                    @for (opcion of opcionesAtencion; track opcion.valor) {
+                      <label class="carita-solo">
+                        <input type="radio" [value]="opcion.valor" formControlName="instalacionesAdecuadasVisita" class="radio-oculto">
+                        <img [src]="opcion.img" [alt]="opcion.label" [title]="opcion.label" class="carita-img">
+                      </label>
+                    }
+                  </div>
                 </div>
-                <div class="col-md-6"><span class="d-block small text-muted">Taller:</span>
-                  <div class="escala-container">@for (num of [1,2,3]; track num) { <label class="escala-item"><input type="radio" [value]="num" formControlName="instalacionesAdecuadasTaller"><span>{{ num }}</span></label> }</div>
+                <div class="col-md-6"><span class="d-block small text-muted mb-2">Taller:</span>
+                  <div class="escala-caritas-compacta">
+                    @for (opcion of opcionesAtencion; track opcion.valor) {
+                      <label class="carita-solo">
+                        <input type="radio" [value]="opcion.valor" formControlName="instalacionesAdecuadasTaller" class="radio-oculto">
+                        <img [src]="opcion.img" [alt]="opcion.label" [title]="opcion.label" class="carita-img">
+                      </label>
+                    }
+                  </div>
                 </div>
               </div>
             }
@@ -213,70 +325,142 @@
 
         <div class="mb-4">
           
-          <!-- Subcriterio 6a: Explicación clara -->
+          <!-- Subcriterio 6a -->
           <div class="subcriterio-block mb-3">
             <label class="form-label small fw-bold">a) La explicación del instructor fue clara:</label>
             @if (tipoServicioSeleccionado === 'visita_guiada') {
-              <div class="escala-container">
-                @for (num of [1,2,3]; track num) { <label class="escala-item"><input type="radio" [value]="num" formControlName="explicacionClaraVisita"><span>{{ num }}</span></label> }
+              <div class="escala-caritas-compacta">
+                @for (opcion of opcionesAtencion; track opcion.valor) {
+                  <label class="carita-solo">
+                    <input type="radio" [value]="opcion.valor" formControlName="explicacionClaraVisita" class="radio-oculto">
+                    <img [src]="opcion.img" [alt]="opcion.label" [title]="opcion.label" class="carita-img">
+                  </label>
+                }
               </div>
             } @else if (tipoServicioSeleccionado === 'taller') {
-              <div class="escala-container">
-                @for (num of [1,2,3]; track num) { <label class="escala-item"><input type="radio" [value]="num" formControlName="explicacionClaraTaller"><span>{{ num }}</span></label> }
+              <div class="escala-caritas-compacta">
+                @for (opcion of opcionesAtencion; track opcion.valor) {
+                  <label class="carita-solo">
+                    <input type="radio" [value]="opcion.valor" formControlName="explicacionClaraTaller" class="radio-oculto">
+                    <img [src]="opcion.img" [alt]="opcion.label" [title]="opcion.label" class="carita-img">
+                  </label>
+                }
               </div>
             } @else {
-              <div class="row">
-                <div class="col-md-6"><span class="d-block small text-muted">Instructor Visita:</span>
-                  <div class="escala-container">@for (num of [1,2,3]; track num) { <label class="escala-item"><input type="radio" [value]="num" formControlName="explicacionClaraVisita"><span>{{ num }}</span></label> }</div>
+              <div class="row g-3">
+                <div class="col-md-6"><span class="d-block small text-muted mb-2">Instructor Visita:</span>
+                  <div class="escala-caritas-compacta">
+                    @for (opcion of opcionesAtencion; track opcion.valor) {
+                      <label class="carita-solo">
+                        <input type="radio" [value]="opcion.valor" formControlName="explicacionClaraVisita" class="radio-oculto">
+                        <img [src]="opcion.img" [alt]="opcion.label" [title]="opcion.label" class="carita-img">
+                      </label>
+                    }
+                  </div>
                 </div>
-                <div class="col-md-6"><span class="d-block small text-muted">Instructor Taller:</span>
-                  <div class="escala-container">@for (num of [1,2,3]; track num) { <label class="escala-item"><input type="radio" [value]="num" formControlName="explicacionClaraTaller"><span>{{ num }}</span></label> }</div>
+                <div class="col-md-6"><span class="d-block small text-muted mb-2">Instructor Taller:</span>
+                  <div class="escala-caritas-compacta">
+                    @for (opcion of opcionesAtencion; track opcion.valor) {
+                      <label class="carita-solo">
+                        <input type="radio" [value]="opcion.valor" formControlName="explicacionClaraTaller" class="radio-oculto">
+                        <img [src]="opcion.img" [alt]="opcion.label" [title]="opcion.label" class="carita-img">
+                      </label>
+                    }
+                  </div>
                 </div>
               </div>
             }
           </div>
 
-          <!-- Subcriterio 6b: Resolvió dudas -->
+          <!-- Subcriterio 6b -->
           <div class="subcriterio-block mb-3">
             <label class="form-label small fw-bold">b) Resolvió sus dudas:</label>
             @if (tipoServicioSeleccionado === 'visita_guiada') {
-              <div class="escala-container">
-                @for (num of [1,2,3]; track num) { <label class="escala-item"><input type="radio" [value]="num" formControlName="resolvioDudasVisita"><span>{{ num }}</span></label> }
+              <div class="escala-caritas-compacta">
+                @for (opcion of opcionesAtencion; track opcion.valor) {
+                  <label class="carita-solo">
+                    <input type="radio" [value]="opcion.valor" formControlName="resolvioDudasVisita" class="radio-oculto">
+                    <img [src]="opcion.img" [alt]="opcion.label" [title]="opcion.label" class="carita-img">
+                  </label>
+                }
               </div>
             } @else if (tipoServicioSeleccionado === 'taller') {
-              <div class="escala-container">
-                @for (num of [1,2,3]; track num) { <label class="escala-item"><input type="radio" [value]="num" formControlName="resolvioDudasTaller"><span>{{ num }}</span></label> }
+              <div class="escala-caritas-compacta">
+                @for (opcion of opcionesAtencion; track opcion.valor) {
+                  <label class="carita-solo">
+                    <input type="radio" [value]="opcion.valor" formControlName="resolvioDudasTaller" class="radio-oculto">
+                    <img [src]="opcion.img" [alt]="opcion.label" [title]="opcion.label" class="carita-img">
+                  </label>
+                }
               </div>
             } @else {
-              <div class="row">
-                <div class="col-md-6"><span class="d-block small text-muted">Instructor Visita:</span>
-                  <div class="escala-container">@for (num of [1,2,3]; track num) { <label class="escala-item"><input type="radio" [value]="num" formControlName="resolvioDudasVisita"><span>{{ num }}</span></label> }</div>
+              <div class="row g-3">
+                <div class="col-md-6"><span class="d-block small text-muted mb-2">Instructor Visita:</span>
+                  <div class="escala-caritas-compacta">
+                    @for (opcion of opcionesAtencion; track opcion.valor) {
+                      <label class="carita-solo">
+                        <input type="radio" [value]="opcion.valor" formControlName="resolvioDudasVisita" class="radio-oculto">
+                        <img [src]="opcion.img" [alt]="opcion.label" [title]="opcion.label" class="carita-img">
+                      </label>
+                    }
+                  </div>
                 </div>
-                <div class="col-md-6"><span class="d-block small text-muted">Instructor Taller:</span>
-                  <div class="escala-container">@for (num of [1,2,3]; track num) { <label class="escala-item"><input type="radio" [value]="num" formControlName="resolvioDudasTaller"><span>{{ num }}</span></label> }</div>
+                <div class="col-md-6"><span class="d-block small text-muted mb-2">Instructor Taller:</span>
+                  <div class="escala-caritas-compacta">
+                    @for (opcion of opcionesAtencion; track opcion.valor) {
+                      <label class="carita-solo">
+                        <input type="radio" [value]="opcion.valor" formControlName="resolvioDudasTaller" class="radio-oculto">
+                        <img [src]="opcion.img" [alt]="opcion.label" [title]="opcion.label" class="carita-img">
+                      </label>
+                    }
+                  </div>
                 </div>
               </div>
             }
           </div>
 
-          <!-- Subcriterio 6c: Captó la atención -->
+          <!-- Subcriterio 6c -->
           <div class="subcriterio-block mb-3">
             <label class="form-label small fw-bold">c) Captó la atención del grupo:</label>
             @if (tipoServicioSeleccionado === 'visita_guiada') {
-              <div class="escala-container">
-                @for (num of [1,2,3]; track num) { <label class="escala-item"><input type="radio" [value]="num" formControlName="captoAtencionVisita"><span>{{ num }}</span></label> }
+              <div class="escala-caritas-compacta">
+                @for (opcion of opcionesAtencion; track opcion.valor) {
+                  <label class="carita-solo">
+                    <input type="radio" [value]="opcion.valor" formControlName="captoAtencionVisita" class="radio-oculto">
+                    <img [src]="opcion.img" [alt]="opcion.label" [title]="opcion.label" class="carita-img">
+                  </label>
+                }
               </div>
             } @else if (tipoServicioSeleccionado === 'taller') {
-              <div class="escala-container">
-                @for (num of [1,2,3]; track num) { <label class="escala-item"><input type="radio" [value]="num" formControlName="captoAtencionTaller"><span>{{ num }}</span></label> }
+              <div class="escala-caritas-compacta">
+                @for (opcion of opcionesAtencion; track opcion.valor) {
+                  <label class="carita-solo">
+                    <input type="radio" [value]="opcion.valor" formControlName="captoAtencionTaller" class="radio-oculto">
+                    <img [src]="opcion.img" [alt]="opcion.label" [title]="opcion.label" class="carita-img">
+                  </label>
+                }
               </div>
             } @else {
-              <div class="row">
-                <div class="col-md-6"><span class="d-block small text-muted">Instructor Visita:</span>
-                  <div class="escala-container">@for (num of [1,2,3]; track num) { <label class="escala-item"><input type="radio" [value]="num" formControlName="captoAtencionVisita"><span>{{ num }}</span></label> }</div>
+              <div class="row g-3">
+                <div class="col-md-6"><span class="d-block small text-muted mb-2">Instructor Visita:</span>
+                  <div class="escala-caritas-compacta">
+                    @for (opcion of opcionesAtencion; track opcion.valor) {
+                      <label class="carita-solo">
+                        <input type="radio" [value]="opcion.valor" formControlName="captoAtencionVisita" class="radio-oculto">
+                        <img [src]="opcion.img" [alt]="opcion.label" [title]="opcion.label" class="carita-img">
+                      </label>
+                    }
+                  </div>
                 </div>
-                <div class="col-md-6"><span class="d-block small text-muted">Instructor Taller:</span>
-                  <div class="escala-container">@for (num of [1,2,3]; track num) { <label class="escala-item"><input type="radio" [value]="num" formControlName="captoAtencionTaller"><span>{{ num }}</span></label> }</div>
+                <div class="col-md-6"><span class="d-block small text-muted mb-2">Instructor Taller:</span>
+                  <div class="escala-caritas-compacta">
+                    @for (opcion of opcionesAtencion; track opcion.valor) {
+                      <label class="carita-solo">
+                        <input type="radio" [value]="opcion.valor" formControlName="captoAtencionTaller" class="radio-oculto">
+                        <img [src]="opcion.img" [alt]="opcion.label" [title]="opcion.label" class="carita-img">
+                      </label>
+                    }
+                  </div>
                 </div>
               </div>
             }
@@ -284,13 +468,14 @@
 
         </div>
 
+        <!-- P7: Calificación General -->
         <div class="mb-4">
-          <label class="form-label font-medium">7. Calificación general otorgada (1 al 3):</label>
-          <div class="escala-container">
-            @for (num of [1,2,3]; track num) {
-              <label class="escala-item">
-                <input type="radio" [value]="num" formControlName="calificacionGeneral">
-                <span>{{ num }}</span>
+          <label class="form-label font-medium d-block mb-3">7. Calificación general otorgada:</label>
+          <div class="escala-caritas-compacta">
+            @for (opcion of opcionesAtencion; track opcion.valor) {
+              <label class="carita-solo">
+                <input type="radio" [value]="opcion.valor" formControlName="calificacionGeneral" class="radio-oculto">
+                <img [src]="opcion.img" [alt]="opcion.label" [title]="opcion.label" class="carita-img">
               </label>
             }
           </div>
@@ -320,20 +505,26 @@
         <h2 class="subtitulo">9. Instalaciones del Jardín Botánico</h2>
 
         <div class="mb-3">
-          <label class="form-label">Sanitarios:</label>
-          <div class="escala-container">
-            @for (num of [1,2,3]; track num) {
-              <label class="escala-item"><input type="radio" [value]="num" formControlName="estadoSanitarios"><span>{{ num }}</span></label>
+          <label class="form-label d-block mb-2">Sanitarios:</label>
+          <div class="escala-caritas-compacta">
+            @for (opcion of opcionesAtencion; track opcion.valor) {
+              <label class="carita-solo">
+                <input type="radio" [value]="opcion.valor" formControlName="estadoSanitarios" class="radio-oculto">
+                <img [src]="opcion.img" [alt]="opcion.label" [title]="opcion.label" class="carita-img">
+              </label>
             }
           </div>
         </div>
 
         @if (tipoServicioSeleccionado === 'taller' || tipoServicioSeleccionado === 'combinado') {
           <div class="mb-3">
-            <label class="form-label">Salones:</label>
-            <div class="escala-container">
-              @for (num of [1,2,3]; track num) {
-                <label class="escala-item"><input type="radio" [value]="num" formControlName="estadoSalones"><span>{{ num }}</span></label>
+            <label class="form-label d-block mb-2">Salones:</label>
+            <div class="escala-caritas-compacta">
+              @for (opcion of opcionesAtencion; track opcion.valor) {
+                <label class="carita-solo">
+                  <input type="radio" [value]="opcion.valor" formControlName="estadoSalones" class="radio-oculto">
+                  <img [src]="opcion.img" [alt]="opcion.label" [title]="opcion.label" class="carita-img">
+                </label>
               }
             </div>
           </div>
@@ -341,10 +532,13 @@
 
         @if (tipoServicioSeleccionado === 'visita_guiada' || tipoServicioSeleccionado === 'combinado') {
           <div class="mb-3">
-            <label class="form-label">Exteriores:</label>
-            <div class="escala-container">
-              @for (num of [1,2,3]; track num) {
-                <label class="escala-item"><input type="radio" [value]="num" formControlName="estadoExteriores"><span>{{ num }}</span></label>
+            <label class="form-label d-block mb-2">Exteriores:</label>
+            <div class="escala-caritas-compacta">
+              @for (opcion of opcionesAtencion; track opcion.valor) {
+                <label class="carita-solo">
+                  <input type="radio" [value]="opcion.valor" formControlName="estadoExteriores" class="radio-oculto">
+                  <img [src]="opcion.img" [alt]="opcion.label" [title]="opcion.label" class="carita-img">
+                </label>
               }
             </div>
           </div>

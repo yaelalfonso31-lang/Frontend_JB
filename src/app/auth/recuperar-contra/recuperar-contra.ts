@@ -18,7 +18,7 @@ import {
 } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NgOptimizedImage } from '@angular/common';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import { AuthService } from '../services/auth.service';
 
 /* ==========================================================================
