@@ -2,10 +2,11 @@ import { ChangeDetectionStrategy, Component, OnInit, inject, signal } from '@ang
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { ChecklistRegistryService } from '../../colaborador/checklists/checklist-registry.service';
+import { ProgramaActividadesService } from '../../reservas/Programa-servicio/programa-actividades.service';
 
 interface Solicitud {
   id: number;
@@ -18,6 +19,15 @@ interface Solicitud {
   folio?: string;
   servicios?: string[] | string;
   services?: string[] | string;
+  fecha?: string;
+  hora?: string;
+  horaTermino?: string;
+  nivel?: string;
+  grado?: string;
+  num_grupos?: number;
+  estudiantes_grupo?: number;
+  num_maestros?: number;
+  num_padres?: number;
 }
 
 @Component({
@@ -31,6 +41,8 @@ interface Solicitud {
 export class MonitorSolicitudesComponent implements OnInit {
   private http = inject(HttpClient);
   private checklistRegistry = inject(ChecklistRegistryService);
+  private programaActividades = inject(ProgramaActividadesService);
+  private router = inject(Router);
 
   solicitudes = signal<Solicitud[]>([
     {
@@ -140,6 +152,41 @@ export class MonitorSolicitudesComponent implements OnInit {
     return hasWorkshop
       ? '/administrador/checklist-visita-taller'
       : '/administrador/checklist-visita';
+  }
+
+  programaButtonLabel(solicitud: Solicitud): string {
+    return this.programaActividades.hasProgram(solicitud.id)
+      ? 'Consultar programa para actividades del servicio'
+      : 'Generar programa para actividades de servicio';
+  }
+
+  abrirPrograma(solicitud: Solicitud): void {
+    if (solicitud.estado !== 'aprobada') return;
+
+    const servicios = this.getServices(solicitud);
+    const nivelYGrado = [solicitud.nivel, solicitud.grado].filter(Boolean).join(' ');
+    const estudiantes = solicitud.estudiantes_grupo !== undefined
+      ? solicitud.estudiantes_grupo * (solicitud.num_grupos ?? 1)
+      : solicitud.numeroVisitantes;
+
+    this.programaActividades.setContext({
+      solicitudId: String(solicitud.id),
+      estado: solicitud.estado,
+      folio: solicitud.folio ?? '',
+      escuela: solicitud.escuela || solicitud.solicitante,
+      fecha: solicitud.fechaVisita || solicitud.fecha || '',
+      horaInicio: solicitud.hora ?? '',
+      horaTermino: solicitud.horaTermino ?? '',
+      estudiantes,
+      adultos: (solicitud.num_maestros ?? 0) + (solicitud.num_padres ?? 0),
+      gradoEdades: nivelYGrado,
+      secciones: solicitud.num_grupos ?? 1,
+      servicios
+    });
+
+    this.router.navigate(['/administrador/programa-servicio'], {
+      queryParams: { solicitudId: solicitud.id }
+    });
   }
 
   cerrarChecklist(): void {

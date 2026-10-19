@@ -72,6 +72,7 @@
           <th>Propósito</th>
           <th>Estado</th>
           <th>Procedimientos</th>
+          <th>Programa</th>
           <th>Revisión</th>
         </tr>
       </thead>
@@ -94,6 +95,15 @@
                 <a class="btn-checklist" [routerLink]="route" [queryParams]="{ folio: solicitud.folio }">Abrir checklist</a>
               } @else {
                 <span class="checklist-unavailable" title="El API debe devolver el folio y los servicios seleccionados">Sin tipo de servicio</span>
+              }
+            </td>
+            <td>
+              @if (solicitud.estado === 'aprobada') {
+                <button class="btn-programa" type="button" (click)="abrirPrograma(solicitud)">
+                  {{ programaButtonLabel(solicitud) }}
+                </button>
+              } @else {
+                <span class="programa-pendiente">Disponible al aprobar</span>
               }
             </td>
             <td>
