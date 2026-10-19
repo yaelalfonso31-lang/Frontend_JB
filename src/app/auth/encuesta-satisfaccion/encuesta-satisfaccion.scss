@@ -143,3 +143,132 @@
     border-color: #1e8449 !important;
   }
 }
+
+/* Contenedor centrado y compacto */
+.escala-caritas-compacta {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 1.75rem;
+}
+
+.carita-solo {
+  cursor: pointer;
+  position: relative;
+  display: inline-flex;
+
+  /* Ocultar el radio nativo */
+  .radio-oculto {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+
+    /* ESTADO SELECCIONADO */
+    &:checked + .carita-img {
+      filter: grayscale(0%) drop-shadow(0 4px 8px rgba(64, 133, 88, 0.35)); /* Cobra color completo + sombra sutil */
+      transform: scale(1.22); /* Se agranda ligeramente */
+      opacity: 1;
+    }
+
+    /* Accesibilidad con teclado */
+    &:focus-visible + .carita-img {
+      outline: 2px dashed var(--color-primary-green, #408558);
+      outline-offset: 4px;
+      border-radius: 50%;
+    }
+  }
+
+  /* ESTADO INICIAL / NO SELECCIONADO */
+  .carita-img {
+    width: 30px;
+    height: 30px;
+    object-fit: contain;
+    transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+    filter: grayscale(100%); /* Descolorida / escala de grises */
+    opacity: 0.55; /* Ligeramente opaca */
+
+    &:hover {
+      filter: grayscale(30%); /* Recupera un poco de color al pasar el mouse */
+      opacity: 0.85;
+      transform: scale(1.1);
+    }
+  }
+}
+
+/* ==========================================================================
+   LEYENDA EXPLICATIVA DE CARITAS
+   ========================================================================== */
+.leyenda-escala {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding: 0.85rem 1.25rem;
+  background-color: var(--color-pale-green, #d1e7de);
+  border-left: 4px solid var(--color-primary-green, #408558);
+  border-radius: 8px;
+
+  .leyenda-titulo {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--color-dark-green, #183524);
+    display: flex;
+    align-items: center;
+
+    i {
+      color: var(--color-primary-green, #408558);
+    }
+  }
+
+  .leyenda-items {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+  }
+
+  .leyenda-item {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+
+    .leyenda-img {
+      width: 26px;
+      height: 26px;
+      object-fit: contain;
+    }
+
+    span {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--color-text-dark, #2C3E50);
+    }
+  }
+}
+
+/* Responsivo para pantallas pequeñas */
+@media (max-width: 576px) {
+  .leyenda-escala {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+
+    .leyenda-items {
+      width: 100%;
+      justify-content: space-between;
+      gap: 0.5rem;
+    }
+
+    .leyenda-item {
+      span {
+        font-size: 0.78rem;
+      }
+
+      .leyenda-img {
+        width: 22px;
+        height: 22px;
+      }
+    }
+  }
+}

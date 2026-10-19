@@ -70,4 +70,10 @@ export class EncuestaSatisfaccionComponent {
       alert('Por favor responde las preguntas obligatorias antes de enviar.');
     }
   }
+
+  readonly opcionesAtencion = [
+  { valor: 1, img: '/assets/caritas/mala.png', label: 'Mala' },
+  { valor: 2, img: '/assets/caritas/regular.png', label: 'Regular' },
+  { valor: 3, img: '/assets/caritas/buena.png', label: 'Buena' }
+];
 }
