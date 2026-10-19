@@ -417,6 +417,15 @@
     background-color: #f8f9fa;
 }
 
+.input-group {
+    .flatpickr-calendar {
+        top: 100% !important;
+        left: 0 !important;
+        margin-top: 4px;
+        z-index: 1055 !important;
+    }
+}
+
 /* ==========================================================================
    8. TÉRMINOS / POLÍTICAS (PASO 2)
    ========================================================================== */

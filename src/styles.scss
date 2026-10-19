@@ -1,12 +1,5 @@
-/* ==========================================================================
-   TIPOGRAFÍAS Y FUENTES GLOBALES
-   ========================================================================== */
-@import '@fortawesome/fontawesome-free/css/all.min.css';
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+@import 'flatpickr/dist/flatpickr.min.css';
 
-/* ==========================================================================
-   VARIABLES GLOBALES (CSS Custom Properties)
-   ========================================================================== */
 :root {
     /* --- VERDES --- */
     --color-dark-green: #183524;
@@ -233,4 +226,56 @@ app-root {
         height: 50px !important;
         input { color: var(--fp-text) !important; font-weight: 600 !important; }
     }
+
+    /* ================================================================
+       BOTONES AUXILIARES (Hoy, Limpiar) si los habilitas
+       ================================================================ */
+    .flatpickr-button {
+        background-color: var(--fp-primary) !important;
+        color: #ffffff !important;
+        border-radius: 4px !important;
+        border: none !important;
+        padding: 0.4rem 0.8rem !important;
+        font-weight: 600 !important;
+        cursor: pointer !important;
+
+        &:hover {
+            background-color: var(--fp-secondary) !important;
+        }
+    }
+
+    /* ============================================================
+       CORRECCIÓN DE POSICIÓN DE FLATPICKR EN INPUT-GROUP (STATIC)
+       ============================================================ */
+    .input-group .flatpickr-wrapper {
+        position: relative !important;
+        flex: 1 1 auto !important;
+        width: 1% !important;
+        min-width: 0 !important;
+        display: flex !important;
+
+        .form-control {
+            width: 100% !important;
+            border-top-left-radius: 0 !important;
+            border-bottom-left-radius: 0 !important;
+        }
+
+        .flatpickr-calendar.static {
+            position: absolute !important;
+            top: calc(100% + 6px) !important;
+            left: 0 !important;
+            right: auto !important;
+            transform: none !important;
+            z-index: 9999 !important;
+        }
+    }
+
+    /* Asegurar que las tarjetas del formulario no recorten el calendario al abrirse */
+    .section-card,
+    .form-container,
+    .form-content {
+        overflow: visible !important;
+    }
 }
+
+@import '@fortawesome/fontawesome-free/css/all.min.css';

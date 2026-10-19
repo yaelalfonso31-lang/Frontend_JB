@@ -17,8 +17,8 @@ interface SolicitudColaborador {
   selector: 'app-aprobacion-colaboradores',
   standalone: true,
   imports: [CommonModule],
-  templateUrl: './aprobacion-colaboradores/aprobacion-colaboradores.html',
-  styleUrl: './aprobacion-colaboradores/aprobacion-colaboradores.scss',
+  templateUrl: './aprobacion-colaboradores.html',
+  styleUrl: './aprobacion-colaboradores.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AprobacionColaboradoresComponent implements OnInit {

@@ -80,12 +80,29 @@ export class ConsultarSolicitudComponent {
   }
 
   procesarCorreccion(datosActualizados: any): void {
-    alert('Correcciones guardadas con éxito (Modo Visual).');
-    this.mostrarModalCorreccion = false;
-    if (this.solicitudEncontrada) {
-      this.solicitudEncontrada.estado = 'En Revisión';
-      this.mensajeExito = true;
+    if (!this.solicitudEncontrada) return;
+
+    const formData = new FormData();
+    if (datosActualizados.asistentes !== undefined) {
+      formData.append('asistentes', String(datosActualizados.asistentes));
     }
+    if (datosActualizados.notas !== undefined) {
+      formData.append('notas', String(datosActualizados.notas));
+    }
+
+    this.http.put(`/api/solicitudes/${this.solicitudEncontrada.folio}/correccion`, formData).subscribe({
+      next: () => {
+        this.mostrarModalCorreccion = false;
+        if (this.solicitudEncontrada) {
+          this.solicitudEncontrada.estado = 'Pendiente';
+          this.mensajeExito = true;
+        }
+      },
+      error: (err) => {
+        console.error('Error al enviar corrección:', err);
+        alert('No se pudo enviar la corrección. Intenta nuevamente.');
+      }
+    });
   }
 
   regresarInicio(): void {

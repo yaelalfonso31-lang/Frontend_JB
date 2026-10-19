@@ -7,26 +7,38 @@ import { Observable } from 'rxjs';
 })
 export class AuthService {
   private http = inject(HttpClient);
-  private apiUrl = 'http://localhost:3000/api/auth'; // Dirección de tu backend Node.js
+  private apiUrl = '/api';
 
   solicitarCodigo(email: string): Observable<any> {
-    return this.http.post(`${this.apiUrl}/solicitar-codigo`, { email });
+    return this.http.post(`${this.apiUrl}/auth/solicitar-codigo`, { email });
   }
 
   validarCodigo(email: string, codigo: string): Observable<any> {
-    return this.http.post(`${this.apiUrl}/validar-codigo`, { email, codigo });
+    return this.http.post(`${this.apiUrl}/auth/validar-codigo`, { email, codigo });
   }
 
-  actualizarPassword(email: string, codigo: string, nuevaPassword: string): Observable<any> {
-    return this.http.post(`${this.apiUrl}/actualizar-password`, { email, codigo, nuevaPassword });
-  }
-  restablecerPassword(email: string, nuevaPassword: string, nueva: string): Observable<any> {
-    return this.http.post(`${this.apiUrl}/restablecer-password`, { email, nuevaPassword });
-  }
-
-  registrarColaborador(nombreCompleto: string, email: string, password: string, rol: string, mensajeNota: string): Observable<any> {
-    return this.http.post(`${this.apiUrl}/registrar-colaborador`, { nombreCompleto, email, password, rol, mensajeNota });
+  restablecerPassword(email: string, codigo: string, nuevaPassword: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}/auth/restablecer-password`, {
+      email,
+      codigo,
+      nuevaPassword
+    });
   }
 
-
+  registrarColaborador(
+    nombreCompleto: string,
+    email: string,
+    password: string,
+    rol: string,
+    mensajeNota: string
+  ): Observable<any> {
+    return this.http.post(`${this.apiUrl}/colaboradores/solicitudes`, {
+      nombre: nombreCompleto,
+      email,
+      password,
+      telefono: 'Por asignar',
+      razonSocial: rol,
+      experiencia: mensajeNota || 'Sin mensaje adicional'
+    });
+  }
 }
