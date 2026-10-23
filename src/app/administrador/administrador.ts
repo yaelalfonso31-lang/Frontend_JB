@@ -7,7 +7,7 @@ type AdminSection = 'dashboard' | 'colaboradores' | 'solicitudes' | 'checklists'
 @Component({
   selector: 'app-administrador',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, RouterLink],
+  imports: [CommonModule, RouterOutlet, RouterLink, RouterLinkActive],
   templateUrl: './administrador.html',
   styleUrl: './administrador.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -16,7 +16,7 @@ export class AdministradorComponent implements OnInit {
   activeSection: AdminSection = 'dashboard';
   private router = inject(Router);
 
-  constructor(private activatedRoute: ActivatedRoute) {}
+  constructor(private activatedRoute: ActivatedRoute) { }
 
   ngOnInit(): void {
     this.activatedRoute.firstChild?.url.subscribe(url => {

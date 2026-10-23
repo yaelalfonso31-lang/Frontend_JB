@@ -1,80 +1,163 @@
 <div class="calendar-container">
   <header class="calendar-header">
     <div>
-      <h1>Calendario de visitas</h1>
-      <p>Consulta la agenda de visitas aprobadas por fecha.</p>
-    </div>
-    <div class="month-controls">
-      <button type="button" (click)="cambiarMes(-1)">&laquo; Anterior</button>
-      <h2>{{ mesAnioActual() }}</h2>
-      <button type="button" (click)="cambiarMes(1)">Siguiente &raquo;</button>
+      <h1><i class="bi bi-calendar3"></i> Calendario de visitas</h1>
+      <p>Consulta la agenda semanal por horario y selecciona un recorrido para ver sus detalles.</p>
     </div>
   </header>
 
-  <section class="calendar-grid-card" aria-label="Calendario mensual">
-    <div class="weekdays">
-      <span>Dom</span><span>Lun</span><span>Mar</span><span>Mié</span><span>Jue</span><span>Vie</span><span>Sáb</span>
-    </div>
+  <div class="calendar-workspace">
+    <!-- COLUMNA IZQUIERDA: Mini Calendario + Detalle del Evento (Como Página 3 del PDF) -->
+    <aside class="calendar-sidebar">
+      <section class="mini-calendar-card" aria-label="Selector mensual">
+        <div class="mini-month-header">
+          <button type="button" class="btn-month-nav" (click)="cambiarMes(-1)" title="Mes anterior">
+            <i class="bi bi-caret-left-fill"></i>
+          </button>
+          <h2>{{ mesAnioActual() }}</h2>
+          <button type="button" class="btn-month-nav" (click)="cambiarMes(1)" title="Mes siguiente">
+            <i class="bi bi-caret-right-fill"></i>
+          </button>
+        </div>
 
-    <div class="days-grid">
-      @for (dia of diasDelMes(); track $index) {
-        <button
-          type="button"
-          class="calendar-day"
-          [class.empty-day]="!dia"
-          [class.selected-day]="esDiaSeleccionado(dia)"
-          [class.has-visits]="tieneVisitas(dia)"
-          [disabled]="!dia"
-          (click)="seleccionarDia(dia)"
-        >
-          @if (dia) {
+        <div class="mini-weekdays">
+          <span>L</span><span>M</span><span>Mi</span><span>J</span><span>V</span><span>S</span><span>D</span>
+        </div>
+
+        <div class="mini-days-grid">
+          @for (dia of diasDelMes(); track $index) {
+          <button type="button" class="mini-day" [class.empty-day]="!dia" [class.is-today]="esHoy(dia)"
+            [class.selected-day]="esDiaSeleccionado(dia)" [disabled]="!dia" (click)="seleccionarDia(dia)">
+            @if (dia) {
             <span>{{ dia.getDate() }}</span>
             @if (tieneVisitas(dia)) {
-              <small aria-label="Tiene visitas">•</small>
+            <span class="visit-dot" aria-label="Tiene visitas"></span>
             }
+            }
+          </button>
           }
-        </button>
-      }
-    </div>
-  </section>
+        </div>
+      </section>
 
-  @if (diaSeleccionado(); as dia) {
-    <section class="agenda-section">
-      <div class="agenda-heading">
-        <h2>Agenda del día</h2>
-        <span>{{ dia | date:'longDate' }}</span>
+      <!-- Tarjeta de Detalle del Evento Seleccionado -->
+      @if (visitaSeleccionada(); as visita) {
+      <section class="event-detail-card" aria-label="Detalle de la visita">
+        <div class="detail-card-header">
+          <div>
+            <span class="eyebrow">Evento seleccionado</span>
+            <h3>{{ visita.proposito || 'Recorrido Educativo' }}</h3>
+          </div>
+          <span class="status-badge status-aprobada">
+            <i class="bi bi-check-circle-fill"></i> {{ visita.estado | titlecase }}
+          </span>
+        </div>
+
+        <div class="detail-list">
+          <div class="detail-item">
+            <span class="detail-icon"><i class="bi bi-clock-fill"></i></span>
+            <div class="detail-text">
+              <small>Hora</small>
+              <strong>{{ formatearRangoHora(visita.horaVisita) }}</strong>
+            </div>
+          </div>
+
+          <div class="detail-item">
+            <span class="detail-icon"><i class="bi bi-person-fill"></i></span>
+            <div class="detail-text">
+              <small>Solicitante</small>
+              <strong>{{ visita.solicitante }}</strong>
+            </div>
+          </div>
+
+          <div class="detail-item">
+            <span class="detail-icon"><i class="bi bi-mortarboard-fill"></i></span>
+            <div class="detail-text">
+              <small>Escuela</small>
+              <strong>{{ visita.escuela }}</strong>
+            </div>
+          </div>
+
+          <div class="detail-item">
+            <span class="detail-icon"><i class="bi bi-people-fill"></i></span>
+            <div class="detail-text">
+              <small>Visitantes</small>
+              <strong>{{ visita.numeroVisitantes }} personas</strong>
+            </div>
+          </div>
+        </div>
+      </section>
+      } @else {
+      <div class="empty-detail-card">
+        <i class="bi bi-calendar2-Event"></i>
+        <p>Haz clic en una visita agendada dentro de la cuadrícula semanal para ver su información completa.</p>
+      </div>
+      }
+    </aside>
+
+    <!-- COLUMNA DERECHA: Agenda Semanal por Horas -->
+    <section class="weekly-schedule-card" aria-label="Agenda semanal por horas">
+      <div class="weekly-toolbar">
+        <div class="week-range-label">
+          <i class="bi bi-calendar-week"></i>
+          <span>Semana del {{ rangoSemanaTexto() }}</span>
+        </div>
+
+        <div class="week-nav-buttons">
+          <button type="button" class="btn-secondary" (click)="cambiarSemana(-1)">
+            <i class="bi bi-chevron-left"></i> Semana ant.
+          </button>
+          <button type="button" class="btn-secondary" (click)="irAHoy()">
+            Hoy
+          </button>
+          <button type="button" class="btn-secondary" (click)="cambiarSemana(1)">
+            Semana sig. <i class="bi bi-chevron-right"></i>
+          </button>
+        </div>
       </div>
 
-      <div class="agenda-table-wrapper">
-        <table>
+      <div class="weekly-grid-scroll">
+        <table class="weekly-table">
           <thead>
             <tr>
-              <th>Hora</th>
-              <th>Solicitante</th>
-              <th>Escuela</th>
-              <th>Visitantes</th>
-              <th>Estado</th>
+              <th class="time-col-header"><i class="bi bi-clock"></i></th>
+              @for (diaSem of diasSemanaActual(); track diaSem.fechaISO) {
+              <th [class.is-selected-col]="esDiaSeleccionado(diaSem.fecha)" (click)="seleccionarDia(diaSem.fecha)"
+                style="cursor: pointer;">
+                <span class="day-number">{{ diaSem.numero }}</span>
+                <span class="day-name">{{ diaSem.nombre }}</span>
+              </th>
+              }
             </tr>
           </thead>
           <tbody>
-            @for (visita of visitasDelDia(); track visita.id) {
-              <tr>
-                <td class="visit-time">{{ visita.horaVisita }}</td>
-                <td>{{ visita.solicitante }}</td>
-                <td>{{ visita.escuela }}</td>
-                <td>{{ visita.numeroVisitantes }}</td>
-                <td><span class="status-badge">{{ visita.estado | titlecase }}</span></td>
-              </tr>
-            } @empty {
-              <tr>
-                <td colspan="5" class="empty-agenda">No hay visitas programadas para esta fecha.</td>
-              </tr>
+            @for (hora of horasAgenda(); track hora) {
+            <tr>
+              <td class="time-slot-label">{{ hora }}</td>
+              @for (diaSem of diasSemanaActual(); track diaSem.fechaISO) {
+              <td class="schedule-cell" [class.is-selected-col]="esDiaSeleccionado(diaSem.fecha)"
+                (click)="seleccionarDia(diaSem.fecha)">
+                @for (visita of obtenerVisitasEnCelda(diaSem.fechaISO, hora); track visita.id) {
+                <button type="button" class="schedule-event-card"
+                  [class.event-active]="visitaSeleccionada()?.id === visita.id"
+                  (click)="seleccionarVisita(visita, $event)">
+                  <span class="event-time">
+                    <i class="bi bi-clock"></i> {{ visita.horaVisita }}
+                  </span>
+                  <span class="event-title">
+                    {{ visita.proposito || 'Visita guiada' }} – {{ visita.escuela }}
+                  </span>
+                  <span class="event-meta">
+                    <i class="bi bi-people-fill"></i> {{ visita.numeroVisitantes }} · {{ visita.solicitante }}
+                  </span>
+                </button>
+                }
+              </td>
+              }
+            </tr>
             }
           </tbody>
         </table>
       </div>
     </section>
-  } @else {
-    <div class="empty-selection">Selecciona un día para consultar su agenda.</div>
-  }
+  </div>
 </div>

@@ -1,78 +1,94 @@
-<div class="dashboard-container" style="padding: 20px;">
-  <div class="dashboard-header" style="margin-bottom: 25px;">
-    <h1>Dashboard Operativo</h1>
-    <p style="color: #666;">Bienvenido al panel de control. Aquí tienes el resumen de tus actividades y tareas asignadas.</p>
-  </div>
-
-  <!-- Tarjetas de Métricas -->
-  <div class="stats-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-bottom: 30px;">
-    
-    <div class="stat-card" style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); border-left: 5px solid #004d40;">
-      <div class="stat-number" style="font-size: 2rem; font-weight: bold; color: #004d40;">{{ totalPendientes() }}</div>
-      <div class="stat-label" style="color: #666; font-size: 0.9rem; margin-top: 5px;">Solicitudes por Revisar</div>
-    </div>
-
-    <div class="stat-card" style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); border-left: 5px solid #28a745;">
-      <div class="stat-number" style="font-size: 2rem; font-weight: bold; color: #28a745;">{{ visitasHoy() }}</div>
-      <div class="stat-label" style="color: #666; font-size: 0.9rem; margin-top: 5px;">Visitas Programadas Hoy</div>
-    </div>
-
-    <div class="stat-card" style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); border-left: 5px solid #17a2b8;">
-      <div class="stat-number" style="font-size: 2rem; font-weight: bold; color: #17a2b8;">{{ totalAsignadas() }}</div>
-      <div class="stat-label" style="color: #666; font-size: 0.9rem; margin-top: 5px;">Total Asignadas a mi Cargo</div>
-    </div>
-
-  </div>
-
-  <!-- Accesos Rápidos / Acciones Operativas -->
-  <div class="quick-actions" style="margin-bottom: 30px; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
-    <h3 style="margin-top: 0; margin-bottom: 15px; font-size: 1.1rem; color: #333;">Accesos Directos</h3>
-    <div style="display: flex; gap: 15px; flex-wrap: wrap;">
-      <a routerLink="/colaborador/solicitudes" style="text-decoration: none; background: #004d40; color: white; padding: 10px 18px; border-radius: 6px; font-weight: 500;">
-        Ir al Monitor de Solicitudes
-      </a>
-      <a routerLink="/colaborador/instalaciones" style="text-decoration: none; background: #e0f2f1; color: #004d40; padding: 10px 18px; border-radius: 6px; font-weight: 500; border: 1px solid #004d40;">
-        Reportar Estado de Instalaciones
-      </a>
-      <a routerLink="/colaborador/calendario" style="text-decoration: none; background: #f4f4f4; color: #333; padding: 10px 18px; border-radius: 6px; font-weight: 500;">
-        Ver Calendario de Visitas
-      </a>
+<div class="dashboard-container">
+  <div class="dashboard-header">
+    <div>
+      <h1><i class="bi bi-grid-1x2-fill"></i> Dashboard Operativo</h1>
+      <p>Resumen de tus actividades, visitas del día y solicitudes asignadas.</p>
     </div>
   </div>
 
-  <!-- Tareas / Solicitudes Asignadas Recientes -->
-  <div class="tareas-section" style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
-    <h3 style="margin-top: 0; margin-bottom: 15px; font-size: 1.1rem; color: #333;">Mis Solicitudes Asignadas Recientes</h3>
-    
-    <table style="width: 100%; border-collapse: collapse;">
-      <thead>
-        <tr style="background: #f8f9fa; text-align: left; border-bottom: 2px solid #dee2e6;">
-          <th style="padding: 12px;">Solicitante</th>
-          <th style="padding: 12px;">Escuela / Nivel</th>
-          <th style="padding: 12px;">Fecha y Hora</th>
-          <th style="padding: 12px;">Personas</th>
-          <th style="padding: 12px;">Acción</th>
-        </tr>
-      </thead>
-      <tbody>
-        @for (tarea of tareasAsignadas(); track tarea.id) {
-          <tr style="border-bottom: 1px solid #eee;">
-            <td style="padding: 12px;"><strong>{{ tarea.solicitante }}</strong></td>
-            <td style="padding: 12px;">{{ tarea.escuela }}</td>
-            <td style="padding: 12px;">{{ tarea.fechaVisita }} ({{ tarea.horaVisita }})</td>
-            <td style="padding: 12px;">{{ tarea.numeroVisitantes }}</td>
-            <td style="padding: 12px;">
-              <a routerLink="/colaborador/solicitudes" style="color: #004d40; font-weight: bold; text-decoration: none;">Revisar →</a>
-            </td>
-          </tr>
-        } @empty {
+  <div class="metrics-grid">
+    <div class="metric-card metric-warning">
+      <div class="metric-header">
+        <h3>Solicitudes por Revisar</h3>
+        <i class="bi bi-hourglass-split"></i>
+      </div>
+      <div class="metric-value">{{ totalPendientes() }}</div>
+      <p class="metric-label">Requieren validación</p>
+    </div>
+
+    <div class="metric-card metric-success">
+      <div class="metric-header">
+        <h3>Visitas Programadas Hoy</h3>
+        <i class="bi bi-calendar2-check-fill"></i>
+      </div>
+      <div class="metric-value">{{ visitasHoy() }}</div>
+      <p class="metric-label">Grupos agendados hoy</p>
+    </div>
+
+    <div class="metric-card metric-info">
+      <div class="metric-header">
+        <h3>Total Asignadas</h3>
+        <i class="bi bi-person-workspace"></i>
+      </div>
+      <div class="metric-value">{{ totalAsignadas() }}</div>
+      <p class="metric-label">Visitas a mi cargo</p>
+    </div>
+  </div>
+
+  <div class="quick-actions">
+    <h3><i class="bi bi-lightning-charge-fill"></i> Accesos Directos</h3>
+    <div class="actions-grid">
+      <a routerLink="/colaborador/solicitudes" class="action-btn">
+        <i class="bi bi-inboxes-fill"></i>
+        <span>Monitor de Solicitudes</span>
+      </a>
+      <a routerLink="/colaborador/instalaciones" class="action-btn">
+        <i class="bi bi-tools"></i>
+        <span>Reportar Instalaciones</span>
+      </a>
+      <a routerLink="/colaborador/calendario" class="action-btn">
+        <i class="bi bi-calendar3"></i>
+        <span>Calendario de Visitas</span>
+      </a>
+    </div>
+  </div>
+
+  <div class="tareas-section">
+    <h3><i class="bi bi-list-task"></i> Mis Solicitudes Asignadas Recientes</h3>
+    <div class="table-container">
+      <table>
+        <thead>
           <tr>
-            <td colspan="5" style="padding: 20px; text-align: center; color: #777;">
-              No tienes tareas pendientes urgentes asignadas en este momento. ¡Buen trabajo!
+            <th>Solicitante</th>
+            <th>Escuela / Nivel</th>
+            <th>Fecha y Hora</th>
+            <th>Personas</th>
+            <th>Acción</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (tarea of tareasAsignadas(); track tarea.id) {
+          <tr>
+            <td><strong>{{ tarea.solicitante }}</strong></td>
+            <td>{{ tarea.escuela }}</td>
+            <td><i class="bi bi-clock me-1"></i> {{ tarea.fechaVisita }} ({{ tarea.horaVisita }})</td>
+            <td><i class="bi bi-people me-1"></i> {{ tarea.numeroVisitantes }}</td>
+            <td>
+              <a routerLink="/colaborador/solicitudes" class="btn-review">
+                <i class="bi bi-arrow-right-circle"></i> Revisar
+              </a>
             </td>
           </tr>
-        }
-      </tbody>
-    </table>
+          } @empty {
+          <tr>
+            <td colspan="5" class="no-results">
+              <i class="bi bi-check2-all"></i>
+              <p>No tienes tareas pendientes urgentes asignadas en este momento.</p>
+            </td>
+          </tr>
+          }
+        </tbody>
+      </table>
+    </div>
   </div>
 </div>

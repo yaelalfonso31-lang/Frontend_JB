@@ -1,0 +1,1871 @@
+:host {
+    /* 60% Neutros (Fondos y Superficies) */
+    --bg-app: #f9fcf8;
+    --bg-surface: #ffffff;
+    --bg-subtle: #f1f5f9;
+    --bg-hover: #f8fafc;
+
+    /* 30% Estructura, Bordes y Tipografía */
+    --text-main: #0f172a;
+    --text-secondary: #475569;
+    --text-muted: #64748b;
+    --border-light: #e2f0e3;
+    --border-input: #cbd5e1;
+    --sidebar-bg: #0d2b1d;
+    --sidebar-hover: rgba(255, 255, 255, 0.08);
+    --sidebar-active: rgba(22, 163, 74, 0.22);
+
+    /* 10% Acento Botánico y Colores Semánticos */
+    --accent-primary: #40a316;
+    --accent-hover: #158015;
+    --accent-soft: #dcfce7;
+    --accent-ring: rgba(22, 163, 74, 0.18);
+
+    /* Estados Semánticos (Pastel + Texto de alto contraste) */
+    --success-bg: #dcfce7;
+    --success-text: #166534;
+    --warning-bg: #fef3c7;
+    --warning-text: #92400e;
+    --danger-bg: #fee2e2;
+    --danger-text: #991b1b;
+    --info-bg: #e0f2fe;
+    --info-text: #075985;
+    --neutral-bg: #f1f5f9;
+    --neutral-text: #475569;
+
+    /* Radios y Sombras */
+    --radius-sm: 12px;
+    --radius-md: 16px;
+    --radius-lg: 22px;
+    --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.04), 0 1px 2px rgba(15, 23, 42, 0.02);
+    --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.06);
+    --shadow-modal: 0 20px 25px -5px rgba(15, 23, 42, 0.15), 0 8px 10px -6px rgba(15, 23, 42, 0.1);
+
+    display: block;
+    color: var(--text-main);
+    font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+}
+
+/* ==========================================================================
+   1. LAYOUT PRINCIPAL Y SIDEBAR (administrador y colaborador)
+   ========================================================================== */
+.administrador-layout {
+    display: flex;
+    min-height: 100vh;
+    background-color: var(--bg-app);
+}
+
+.sidebar {
+    width: 260px;
+    background-color: var(--sidebar-bg);
+    color: #ffffff;
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    height: 100vh;
+    overflow-y: auto;
+    border-right: 1px solid rgba(255, 255, 255, 0.06);
+    z-index: 100;
+}
+
+.sidebar-header {
+    padding: 1.35rem 1.25rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+
+    .logo {
+        width: 44px;
+        height: 44px;
+        border-radius: var(--radius-md);
+        object-fit: cover;
+        border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+
+    .header-text {
+        flex: 1;
+        min-width: 0;
+
+        span {
+            display: block;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: #86efac;
+            font-weight: 600;
+        }
+
+        h2 {
+            margin: 0;
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: #ffffff;
+            letter-spacing: -0.01em;
+        }
+    }
+}
+
+.sidebar-nav {
+    flex: 1;
+    padding: 1rem 0.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.7rem 0.9rem;
+    border-radius: var(--radius-md);
+    color: rgba(255, 255, 255, 0.72);
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.18s ease;
+    cursor: pointer;
+    border-left: 3px solid transparent;
+
+    i,
+    svg,
+    .nav-icon {
+        font-size: 1.15rem;
+        width: 1.35rem;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        color: rgba(255, 255, 255, 0.65);
+        transition: color 0.18s ease;
+    }
+
+    &:hover {
+        background-color: var(--sidebar-hover);
+        color: #ffffff;
+
+        i,
+        svg,
+        .nav-icon {
+            color: #ffffff;
+        }
+    }
+
+    &.active {
+        background-color: var(--sidebar-active);
+        color: #ffffff;
+        font-weight: 600;
+        border-left-color: #4ade80;
+
+        i,
+        svg,
+        .nav-icon {
+            color: #4ade80;
+        }
+    }
+}
+
+.sidebar-footer {
+    padding: 1rem 0.75rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.logout-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    padding: 0.65rem 1rem;
+    background-color: rgba(255, 255, 255, 0.05);
+    color: #fca5a5;
+    border: 1px solid rgba(252, 165, 165, 0.2);
+    border-radius: var(--radius-md);
+    font-size: 0.88rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover {
+        background-color: rgba(239, 68, 68, 0.15);
+        border-color: rgba(252, 165, 165, 0.4);
+        color: #fecaca;
+    }
+}
+
+.main-content {
+    flex: 1;
+    margin-left: 260px;
+    background-color: var(--bg-app);
+    min-height: 100vh;
+}
+
+/* ==========================================================================
+   2. CONTENEDORES Y ENCABEZADOS DE PÁGINA
+   ========================================================================== */
+.dashboard-container,
+.lista-colaboradores-container,
+.aprobacion-container,
+.monitor-container,
+.calendar-container,
+.calendario-container,
+.configuracion-container,
+.instalaciones-container,
+.checklists-page,
+.checklist-page {
+    max-width: 1380px;
+    margin: 0 auto;
+    padding: 2rem clamp(1.25rem, 2.5vw, 2.5rem);
+}
+
+.header-section,
+.dashboard-header,
+.calendar-header,
+.page-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 1.75rem;
+    padding-bottom: 1.15rem;
+    border-bottom: 1px solid var(--border-light);
+}
+
+h1 {
+    margin: 0;
+    font-size: 1.65rem;
+    font-weight: 700;
+    color: var(--text-main);
+    letter-spacing: -0.02em;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+
+    i {
+        color: var(--accent-primary);
+        font-size: 1.5rem;
+    }
+}
+
+.page-description,
+.header-section p,
+.dashboard-header p,
+.calendar-header p {
+    margin: 0.35rem 0 0;
+    color: var(--text-secondary);
+    font-size: 0.92rem;
+}
+
+.eyebrow,
+.document-kicker {
+    margin: 0 0 0.25rem;
+    color: var(--accent-primary);
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+/* ==========================================================================
+   3. TARJETAS DE MÉTRICAS Y KPIs (Dashboard, Monitor, Instalaciones, Checklists)
+   ========================================================================== */
+.metrics-grid,
+.stats-grid,
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    gap: 1.15rem;
+    margin-bottom: 1.75rem;
+}
+
+.metric-card,
+.stat-card,
+.info-card {
+    background-color: var(--bg-surface);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-lg);
+    padding: 1.25rem 1.35rem;
+    box-shadow: var(--shadow-sm);
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
+    text-align: left;
+    position: relative;
+    overflow: hidden;
+
+    &:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-md);
+    }
+}
+
+.metric-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.65rem;
+
+    h3 {
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: var(--text-secondary);
+        margin: 0;
+    }
+
+    i,
+    svg {
+        width: 36px;
+        height: 36px;
+        padding: 0.45rem;
+        border-radius: var(--radius-md);
+        background-color: var(--bg-subtle);
+        color: var(--text-secondary);
+        font-size: 1.1rem;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+}
+
+.metric-value,
+.stat-number,
+.info-value {
+    font-size: 1.85rem;
+    font-weight: 700;
+    color: var(--text-main);
+    line-height: 1.2;
+    margin: 0.25rem 0;
+}
+
+.metric-label,
+.stat-label,
+.info-label {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    font-weight: 500;
+    margin: 0;
+}
+
+/* Variantes sutiles sin saturar de color */
+.metric-success,
+.stat-success {
+    border-left: 4px solid var(--accent-primary);
+
+    .metric-header i,
+    .metric-header svg {
+        background-color: var(--success-bg);
+        color: var(--success-text);
+    }
+}
+
+.metric-warning,
+.stat-warning {
+    border-left: 4px solid #f59e0b;
+
+    .metric-header i,
+    .metric-header svg {
+        background-color: var(--warning-bg);
+        color: var(--warning-text);
+    }
+}
+
+.stat-danger {
+    border-left: 4px solid #ef4444;
+}
+
+.metric-info,
+.stat-info {
+    border-left: 4px solid #0284c7;
+
+    .metric-header i,
+    .metric-header svg {
+        background-color: var(--info-bg);
+        color: var(--info-text);
+    }
+}
+
+/* ==========================================================================
+   4. CONTROLES, BUSCADOR, SEGMENTED TABS Y FILTROS
+   ========================================================================== */
+.controls,
+.controls-section {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: center;
+    justify-content: space-between;
+    background-color: var(--bg-surface);
+    padding: 1rem 1.25rem;
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 1.5rem;
+}
+
+.search-box {
+    position: relative;
+    flex: 1;
+    min-width: 260px;
+
+    .search-input {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 0.6rem 2.25rem 0.6rem 2.4rem;
+        border: 1px solid var(--border-input);
+        border-radius: var(--radius-md);
+        background-color: var(--bg-app);
+        font-size: 0.9rem;
+        color: var(--text-main);
+        transition: all 0.2s ease;
+
+        &:focus {
+            outline: none;
+            background-color: var(--bg-surface);
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 3px var(--accent-ring);
+        }
+    }
+
+    .search-icon {
+        position: absolute;
+        left: 0.85rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--text-muted);
+        pointer-events: none;
+    }
+}
+
+/* Segmented Controls (Pestañas modernas) */
+.filter-buttons,
+.tabs,
+.filter-tabs {
+    display: inline-flex;
+    background-color: var(--bg-subtle);
+    padding: 0.25rem;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-light);
+    gap: 0.25rem;
+    margin-bottom: 0;
+
+    .filter-btn,
+    .tab-btn,
+    button {
+        padding: 0.45rem 0.95rem;
+        border: none;
+        background: transparent;
+        border-radius: var(--radius-sm);
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: var(--text-secondary);
+        cursor: pointer;
+        transition: all 0.15s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+
+        &:hover {
+            color: var(--text-main);
+        }
+
+        &.active,
+        &.selected {
+            background-color: var(--bg-surface);
+            color: var(--text-main);
+            box-shadow: var(--shadow-sm);
+        }
+    }
+}
+
+.tabs {
+    margin-bottom: 1.5rem;
+}
+
+.filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: flex-end;
+    flex: 1;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+
+    label {
+        font-size: 0.78rem;
+        font-weight: 600;
+        color: var(--text-secondary);
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+    }
+}
+
+.filter-input,
+.filter-select,
+.form-input {
+    padding: 0.55rem 0.8rem;
+    border: 1px solid var(--border-input);
+    border-radius: var(--radius-md);
+    background-color: var(--bg-surface);
+    color: var(--text-main);
+    font-size: 0.88rem;
+    transition: all 0.2s ease;
+
+    &:focus {
+        outline: none;
+        border-color: var(--accent-primary);
+        box-shadow: 0 0 0 3px var(--accent-ring);
+    }
+}
+
+/* ==========================================================================
+   5. SISTEMA DE BOTONES E ICONOS (10% Acento + Ghost Buttons)
+   ========================================================================== */
+.btn,
+.btn-primary,
+.btn-secondary,
+.btn-agregar,
+.btn-success,
+.btn-danger,
+.btn-warning,
+.btn-outline,
+.btn-export,
+.btn-review,
+.btn-checklist,
+.pdf-button,
+.refresh-button,
+.open-checklist {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.45rem;
+    padding: 0.58rem 1.05rem;
+    border-radius: var(--radius-md);
+    font-size: 0.87rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    text-decoration: none;
+    border: 1px solid transparent;
+    line-height: 1.2;
+}
+
+/* Botón Primario (Único con verde sólido 10%) */
+.btn-primary,
+.btn-agregar,
+.pdf-button {
+    background-color: var(--accent-primary);
+    color: #ffffff;
+    border-color: var(--accent-primary);
+
+    &:hover {
+        background-color: var(--accent-hover);
+        border-color: var(--accent-hover);
+    }
+}
+
+/* Botones Secundarios / Neutros */
+.btn-secondary,
+.btn-outline,
+.btn-export,
+.refresh-button,
+.open-checklist {
+    background-color: var(--bg-surface);
+    color: var(--text-secondary);
+    border-color: var(--border-input);
+
+    &:hover {
+        background-color: var(--bg-subtle);
+        color: var(--text-main);
+        border-color: #94a3b8;
+    }
+}
+
+/* Botones Semánticos en Modales y Revisión */
+.btn-review {
+    background-color: var(--bg-subtle);
+    color: var(--text-main);
+    border-color: var(--border-light);
+
+    &:hover {
+        background-color: var(--accent-soft);
+        color: var(--success-text);
+        border-color: #86efac;
+    }
+}
+
+.btn-checklist {
+    background-color: var(--info-bg);
+    color: var(--info-text);
+    border-color: #bae6fd;
+
+    &:hover {
+        background-color: #bae6fd;
+    }
+}
+
+.btn-success {
+    background-color: var(--accent-primary);
+    color: #ffffff;
+
+    &:hover {
+        background-color: var(--accent-hover);
+    }
+}
+
+.btn-warning {
+    background-color: var(--warning-bg);
+    color: var(--warning-text);
+    border-color: #fde68a;
+
+    &:hover {
+        background-color: #fde68a;
+    }
+}
+
+.btn-danger {
+    background-color: var(--danger-bg);
+    color: var(--danger-text);
+    border-color: #fecaca;
+
+    &:hover {
+        background-color: #ef4444;
+        color: #ffffff;
+    }
+}
+
+/* Ghost Icon Buttons para tablas (Editar, Estado, Eliminar) */
+.actions,
+.export-buttons {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.btn-icon,
+.btn-delete-small {
+    width: 34px;
+    height: 34px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: var(--radius-sm);
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.15s ease;
+    font-size: 0.95rem;
+
+    &:hover {
+        background-color: var(--bg-subtle);
+        color: var(--text-main);
+    }
+
+    &.btn-edit:hover {
+        background-color: var(--info-bg);
+        color: var(--info-text);
+    }
+
+    &.btn-toggle:hover {
+        background-color: var(--success-bg);
+        color: var(--success-text);
+    }
+
+    &.btn-delete:hover,
+    &.btn-delete-small:hover {
+        background-color: var(--danger-bg);
+        color: var(--danger-text);
+    }
+}
+
+/* ==========================================================================
+   6. TABLAS DE DATOS (Colaboradores, Solicitudes, Agenda, Instalaciones)
+   ========================================================================== */
+.table-container,
+.agenda-table-wrapper,
+.table-responsive,
+.table-scroll {
+    background-color: var(--bg-surface);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    overflow-x: auto;
+}
+
+table,
+.colaboradores-table,
+.solicitudes-table,
+.dias-table,
+.checklists-table,
+.procedure-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+
+    thead {
+        background-color: var(--bg-app);
+        border-bottom: 1px solid var(--border-light);
+
+        th {
+            padding: 0.85rem 1.15rem;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            color: var(--text-muted);
+            white-space: nowrap;
+        }
+    }
+
+    tbody {
+        tr {
+            border-bottom: 1px solid var(--border-light);
+            transition: background-color 0.15s ease;
+
+            &:last-child {
+                border-bottom: none;
+            }
+
+            &:hover {
+                background-color: var(--bg-hover);
+            }
+
+            &.inactive-row {
+                opacity: 0.65;
+                background-color: #fafafa;
+            }
+
+            td {
+                padding: 0.9rem 1.15rem;
+                font-size: 0.88rem;
+                color: var(--text-main);
+                vertical-align: middle;
+
+                &.numeric {
+                    text-align: right;
+                    font-variant-numeric: tabular-nums;
+                    font-weight: 600;
+                }
+            }
+        }
+    }
+}
+
+/* ==========================================================================
+   7. BADGES SEMÁNTICOS DE ESTADO
+   ========================================================================== */
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.25rem 0.7rem;
+    border-radius: 9999px;
+    font-size: 0.76rem;
+    font-weight: 600;
+    line-height: 1.3;
+    white-space: nowrap;
+
+    /* Estados Positivos */
+    &.status-activo,
+    &.status-aprobada,
+    &.status-aprobado,
+    &.status-operativo,
+    &.status-done {
+        background-color: var(--success-bg);
+        color: var(--success-text);
+    }
+
+    /* Estados En Espera / Mantenimiento */
+    &.status-pendiente,
+    &.status-correccion,
+    &.status-mantenimiento,
+    &.status-progress,
+    &.status-pending {
+        background-color: var(--warning-bg);
+        color: var(--warning-text);
+    }
+
+    /* Estados Inactivos (Gris Pizarra neutro para diferenciar de eliminado) */
+    &.status-inactivo {
+        background-color: var(--neutral-bg);
+        color: var(--neutral-text);
+    }
+
+    /* Estados Negativos / Rechazados / Cerrados */
+    &.status-rechazada,
+    &.status-rechazado,
+    &.status-cerrado {
+        background-color: var(--danger-bg);
+        color: var(--danger-text);
+    }
+}
+
+/* ==========================================================================
+   8. ACCIONES RÁPIDAS Y CARDS (Dashboard, Aprobación, Configuración)
+   ========================================================================== */
+.quick-actions,
+.tareas-section,
+.config-section {
+    background-color: var(--bg-surface);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 1.5rem;
+
+    h2,
+    h3 {
+        margin: 0 0 1.15rem 0;
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: var(--text-main);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+}
+
+.actions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.action-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    padding: 1rem 1.25rem;
+    background-color: var(--bg-app);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-md);
+    color: var(--text-main);
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-decoration: none;
+    transition: all 0.18s ease;
+
+    i,
+    svg {
+        color: var(--accent-primary);
+        font-size: 1.25rem;
+        flex-shrink: 0;
+    }
+
+    &:hover {
+        background-color: var(--bg-surface);
+        border-color: var(--accent-primary);
+        box-shadow: var(--shadow-sm);
+        transform: translateY(-2px);
+    }
+}
+
+/* Grid de Aprobación de Colaboradores */
+.solicitudes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1.25rem;
+}
+
+.solicitud-card {
+    background-color: var(--bg-surface);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    display: flex;
+    flex-direction: column;
+
+    &:hover {
+        border-color: #cbd5e1;
+        box-shadow: var(--shadow-md);
+        transform: translateY(-2px);
+    }
+
+    .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem 1.25rem;
+        background-color: var(--bg-app);
+        border-bottom: 1px solid var(--border-light);
+
+        h3 {
+            margin: 0;
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+    }
+
+    .card-body {
+        padding: 1.15rem 1.25rem;
+        flex: 1;
+
+        p {
+            margin: 0.45rem 0;
+            font-size: 0.88rem;
+            color: var(--text-secondary);
+
+            strong {
+                color: var(--text-main);
+            }
+
+            &.fecha {
+                margin-top: 0.85rem;
+                padding-top: 0.75rem;
+                border-top: 1px solid var(--border-light);
+                color: var(--text-muted);
+            }
+        }
+    }
+
+    .card-actions {
+        display: flex;
+        gap: 0.6rem;
+        padding: 0.9rem 1.25rem;
+        background-color: var(--bg-app);
+        border-top: 1px solid var(--border-light);
+
+        .btn {
+            flex: 1;
+        }
+    }
+}
+
+/* ==========================================================================
+   9. CALENDARIO SEMANAL Y PANEL LATERAL (Vista dividida estilo SaaS)
+   ========================================================================== */
+.calendar-workspace {
+    display: grid;
+    grid-template-columns: 310px minmax(0, 1fr);
+    gap: 1.5rem;
+    align-items: start;
+}
+
+.calendar-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    position: sticky;
+    top: 1.5rem;
+}
+
+/* --- Mini Calendario Mensual --- */
+.mini-calendar-card {
+    background-color: var(--bg-surface);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-lg);
+    padding: 1.25rem;
+    box-shadow: var(--shadow-sm);
+}
+
+.mini-month-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+
+    h2 {
+        margin: 0;
+        font-size: 0.95rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        color: var(--text-main);
+    }
+
+    .btn-month-nav {
+        width: 30px;
+        height: 30px;
+        border: 1px solid var(--border-light);
+        border-radius: var(--radius-sm);
+        background-color: var(--bg-app);
+        color: var(--text-secondary);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.15s ease;
+
+        &:hover {
+            background-color: var(--bg-subtle);
+            color: var(--text-main);
+            border-color: var(--border-input);
+        }
+    }
+}
+
+.mini-weekdays,
+.mini-days-grid {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    text-align: center;
+}
+
+.mini-weekdays {
+    margin-bottom: 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--text-muted);
+}
+
+.mini-days-grid {
+    gap: 0.25rem;
+}
+
+.mini-day {
+    aspect-ratio: 1;
+    border: none;
+    border-radius: 50%;
+    background: transparent;
+    color: var(--text-main);
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s ease;
+
+    &:hover:not(:disabled):not(.empty-day) {
+        background-color: var(--bg-subtle);
+    }
+
+    &.is-today:not(.selected-day) {
+        color: var(--accent-primary);
+        font-weight: 800;
+        background-color: var(--accent-soft);
+    }
+
+    &.selected-day {
+        background-color: var(--accent-primary);
+        color: #ffffff;
+        box-shadow: 0 2px 6px rgba(22, 163, 74, 0.3);
+    }
+
+    &.empty-day {
+        cursor: default;
+    }
+
+    .visit-dot {
+        position: absolute;
+        bottom: 3px;
+        width: 5px;
+        height: 5px;
+        border-radius: 50%;
+        background-color: var(--accent-primary);
+    }
+
+    &.selected-day .visit-dot {
+        background-color: #ffffff;
+    }
+}
+
+/* --- Tarjeta Lateral de Detalle del Evento --- */
+.event-detail-card {
+    background-color: var(--bg-surface);
+    border: 1px solid var(--border-light);
+    border-top: 4px solid var(--accent-primary);
+    border-radius: var(--radius-lg);
+    padding: 1.25rem;
+    box-shadow: var(--shadow-sm);
+
+    .detail-card-header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 1px solid var(--border-light);
+
+        span.eyebrow {
+            margin: 0;
+        }
+
+        h3 {
+            margin: 0.2rem 0 0;
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+    }
+
+    .detail-list {
+        display: flex;
+        flex-direction: column;
+        gap: 0.85rem;
+    }
+
+    .detail-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.75rem;
+
+        .detail-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: var(--radius-sm);
+            background-color: var(--bg-subtle);
+            color: var(--accent-primary);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.95rem;
+            flex-shrink: 0;
+        }
+
+        .detail-text {
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+
+            small {
+                font-size: 0.72rem;
+                font-weight: 600;
+                text-transform: uppercase;
+                letter-spacing: 0.03em;
+                color: var(--text-muted);
+            }
+
+            strong {
+                font-size: 0.9rem;
+                color: var(--text-main);
+                word-break: break-word;
+            }
+        }
+    }
+}
+
+.empty-detail-card {
+    background-color: var(--bg-surface);
+    border: 1px dashed var(--border-input);
+    border-radius: var(--radius-lg);
+    padding: 1.75rem 1.25rem;
+    text-align: center;
+    color: var(--text-muted);
+
+    i {
+        font-size: 1.75rem;
+        color: #94a3b8;
+        display: block;
+        margin-bottom: 0.5rem;
+    }
+
+    p {
+        margin: 0;
+        font-size: 0.85rem;
+        line-height: 1.45;
+    }
+}
+
+/* --- Cuadrícula Semanal Principal (Derecha) --- */
+.weekly-schedule-card {
+    background-color: var(--bg-surface);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+}
+
+.weekly-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid var(--border-light);
+    background-color: var(--bg-surface);
+
+    .week-range-label {
+        font-size: 1rem;
+        font-weight: 700;
+        color: var(--text-main);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+
+        i {
+            color: var(--accent-primary);
+        }
+    }
+
+    .week-nav-buttons {
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+    }
+}
+
+.weekly-grid-scroll {
+    overflow-x: auto;
+}
+
+.weekly-table {
+    width: 100%;
+    min-width: 780px;
+    border-collapse: collapse;
+    table-layout: fixed;
+
+    thead th {
+        padding: 0.85rem 0.5rem;
+        background-color: var(--bg-app);
+        border-bottom: 1px solid var(--border-light);
+        border-left: 1px solid var(--border-light);
+        text-align: center;
+        vertical-align: middle;
+
+        &.time-col-header {
+            width: 82px;
+            border-left: none;
+            color: var(--text-muted);
+            font-size: 0.75rem;
+        }
+
+        .day-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 0.2rem;
+        }
+
+        .day-name {
+            display: block;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: capitalize;
+            color: var(--text-secondary);
+        }
+
+        &.is-selected-col {
+            background-color: #f0fdf4;
+
+            .day-number {
+                background-color: var(--accent-primary);
+                color: #ffffff;
+            }
+
+            .day-name {
+                color: var(--success-text);
+                font-weight: 700;
+            }
+        }
+    }
+
+    tbody tr {
+        border-bottom: 1px solid var(--border-light);
+
+        &:last-child {
+            border-bottom: none;
+        }
+
+        &:hover {
+            background-color: transparent;
+        }
+    }
+
+    td.time-slot-label {
+        padding: 0.75rem 0.6rem;
+        font-size: 0.78rem;
+        font-weight: 700;
+        color: var(--text-muted);
+        text-align: right;
+        vertical-align: top;
+        background-color: var(--bg-app);
+        font-variant-numeric: tabular-nums;
+    }
+
+    td.schedule-cell {
+        padding: 0.35rem;
+        border-left: 1px solid var(--border-light);
+        vertical-align: top;
+        height: 68px;
+        transition: background-color 0.15s ease;
+
+        &.is-selected-col {
+            background-color: rgba(240, 253, 244, 0.45);
+        }
+
+        &:hover {
+            background-color: var(--bg-hover);
+        }
+    }
+}
+
+/* Bloques de Evento dentro del Calendario Semanal */
+.schedule-event-card {
+    width: 100%;
+    text-align: left;
+    padding: 0.45rem 0.55rem;
+    border: 1px solid #caf7bb;
+    border-left: 4px solid var(--accent-primary);
+    border-radius: var(--radius-sm);
+    background-color: #f0fdf4;
+    color: var(--text-main);
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    margin-bottom: 0.3rem;
+    transition: all 0.15s ease;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+
+    &:last-child {
+        margin-bottom: 0;
+    }
+
+    &:hover {
+        transform: translateY(-1px);
+        box-shadow: var(--shadow-sm);
+        background-color: var(--success-bg);
+    }
+
+    &.event-active {
+        outline: 2px solid var(--accent-primary);
+        background-color: var(--success-bg);
+    }
+
+    .event-time {
+        font-size: 0.7rem;
+        font-weight: 700;
+        color: var(--success-text);
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+    }
+
+    .event-title {
+        font-size: 0.78rem;
+        font-weight: 700;
+        color: var(--text-main);
+        line-height: 1.25;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .event-meta {
+        font-size: 0.7rem;
+        color: var(--text-secondary);
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+    }
+}
+
+@media (max-width: 1024px) {
+    .calendar-workspace {
+        grid-template-columns: 1fr;
+    }
+
+    .calendar-sidebar {
+        position: static;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    }
+}
+
+/* ==========================================================================
+   10. MODALES Y FORMULARIOS (Agregar Colaborador, Detalles, Instalaciones)
+   ========================================================================== */
+.modal-backdrop,
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    background-color: rgba(15, 23, 42, 0.55);
+    backdrop-filter: blur(3px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+}
+
+.modal-card,
+.modal-content {
+    background-color: var(--bg-surface);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-lg);
+    width: min(580px, 100%);
+    max-height: calc(100vh - 2rem);
+    overflow-y: auto;
+    box-shadow: var(--shadow-modal);
+    position: relative;
+}
+
+.modal-content {
+    padding: 1.75rem;
+}
+
+.modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid var(--border-light);
+
+    h2,
+    h3 {
+        margin: 0;
+        font-size: 1.15rem;
+        font-weight: 700;
+        color: var(--text-main);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+}
+
+.close-btn,
+.btn-close {
+    width: 32px;
+    height: 32px;
+    border: none;
+    border-radius: var(--radius-sm);
+    background: transparent;
+    color: var(--text-muted);
+    font-size: 1.25rem;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    &:hover {
+        background-color: var(--bg-subtle);
+        color: var(--text-main);
+    }
+}
+
+.modal-body {
+    padding: 1.5rem;
+    color: var(--text-secondary);
+    font-size: 0.92rem;
+
+    p {
+        margin: 0.5rem 0;
+    }
+}
+
+.form-intro {
+    margin: 0 0 1.25rem !important;
+    color: var(--text-muted);
+    font-size: 0.88rem;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+}
+
+.form-group,
+.form-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    margin-bottom: 0.85rem;
+
+    label {
+        font-size: 0.84rem;
+        font-weight: 600;
+        color: var(--text-main);
+
+        span {
+            color: #ef4444;
+        }
+    }
+
+    input,
+    select,
+    textarea {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 0.62rem 0.8rem;
+        border: 1px solid var(--border-input);
+        border-radius: var(--radius-md);
+        background-color: var(--bg-surface);
+        color: var(--text-main);
+        font: inherit;
+        font-size: 0.9rem;
+        transition: all 0.18s ease;
+
+        &:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 3px var(--accent-ring);
+        }
+    }
+}
+
+.form-group-wide {
+    grid-column: span 2;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.65rem;
+    padding: 1rem 1.5rem;
+    background-color: var(--bg-app);
+    border-top: 1px solid var(--border-light);
+}
+
+/* Configuración y Detalles */
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.25rem;
+    padding-bottom: 0.85rem;
+    border-bottom: 1px solid var(--border-light);
+
+    h2 {
+        margin: 0;
+        font-size: 1.1rem;
+        color: var(--text-main);
+    }
+
+    i,
+    svg {
+        color: var(--accent-primary);
+    }
+}
+
+.input-group {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.form-card {
+    background-color: var(--bg-app);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-md);
+    padding: 1.25rem;
+    margin-bottom: 1.25rem;
+}
+
+.form-inline {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: flex-end;
+
+    .form-field {
+        flex: 1;
+        min-width: 200px;
+        margin-bottom: 0;
+    }
+}
+
+.detail-section {
+    margin-bottom: 1.25rem;
+
+    h3 {
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        color: var(--text-muted);
+        margin-bottom: 0.75rem;
+        padding-bottom: 0.4rem;
+        border-bottom: 1px solid var(--border-light);
+    }
+}
+
+.detail-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.4rem 0;
+    font-size: 0.9rem;
+
+    .label {
+        font-weight: 600;
+        color: var(--text-secondary);
+    }
+}
+
+/* ==========================================================================
+   11. CHECKLISTS OPERATIVOS (Administrador y Colaborador)
+   ========================================================================== */
+.overview-strip {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-lg);
+    background-color: var(--bg-surface);
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 1.5rem;
+}
+
+.overview-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1.35rem;
+
+    &+.overview-item {
+        border-left: 1px solid var(--border-light);
+    }
+
+    .overview-label {
+        color: var(--text-secondary);
+        font-size: 0.85rem;
+        font-weight: 600;
+    }
+
+    strong {
+        font-size: 1.5rem;
+        color: var(--text-main);
+    }
+
+    &.active-total strong {
+        color: #d97706;
+    }
+
+    &.completed-total strong {
+        color: var(--accent-primary);
+    }
+}
+
+.list-heading-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.checklist-entry {
+    margin-bottom: 0.75rem;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+}
+
+.document-header,
+.progress-panel,
+.procedure-section {
+    background-color: var(--bg-surface);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 1.25rem;
+}
+
+.document-header {
+    padding: 1.5rem;
+    border-top: 4px solid var(--accent-primary);
+}
+
+.document-title-row,
+.progress-heading,
+.section-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.document-actions {
+    display: flex;
+    align-items: flex-end;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.folio-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+
+    input {
+        padding: 0.5rem 0.75rem;
+        border: 1px solid var(--border-input);
+        border-radius: var(--radius-md);
+        font-size: 0.85rem;
+    }
+}
+
+.progress-panel {
+    padding: 1.25rem 1.5rem;
+}
+
+.progress-track {
+    height: 8px;
+    margin-top: 0.75rem;
+    border-radius: 999px;
+    background-color: var(--bg-subtle);
+    overflow: hidden;
+
+    span {
+        display: block;
+        height: 100%;
+        background-color: var(--accent-primary);
+        transition: width 0.25s ease;
+    }
+}
+
+.phase-overview {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.phase-marker {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+
+    .phase-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background-color: var(--border-input);
+    }
+
+    &.phase-current,
+    &.phase-done {
+        color: var(--accent-hover);
+        font-weight: 600;
+
+        .phase-dot {
+            background-color: var(--accent-primary);
+        }
+    }
+}
+
+.section-heading {
+    padding: 1rem 1.25rem;
+    background-color: var(--bg-app);
+    border-bottom: 1px solid var(--border-light);
+}
+
+.section-number {
+    width: 34px;
+    height: 34px;
+    border-radius: var(--radius-sm);
+    background-color: var(--accent-soft);
+    color: var(--success-text);
+    font-weight: 700;
+    font-size: 0.85rem;
+    display: grid;
+    place-items: center;
+}
+
+.procedure-check {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.65rem;
+    cursor: pointer;
+
+    input[type='checkbox'] {
+        width: 17px;
+        height: 17px;
+        margin-top: 0.15rem;
+        accent-color: var(--accent-primary);
+    }
+}
+
+.document-footer {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding-top: 0.5rem;
+    color: var(--text-muted);
+    font-size: 0.78rem;
+}
+
+/* ==========================================================================
+   12. ESTADOS VACÍOS Y RESPONSIVO
+   ========================================================================== */
+.no-results,
+.empty-state,
+.empty-agenda,
+.empty-selection,
+.empty-message {
+    padding: 2.5rem 1.5rem;
+    text-align: center;
+    color: var(--text-muted);
+    background-color: var(--bg-surface);
+    border-radius: var(--radius-lg);
+
+    i {
+        font-size: 2rem;
+        color: #94a3b8;
+        margin-bottom: 0.5rem;
+        display: block;
+    }
+
+    p {
+        margin: 0.25rem 0 0;
+        font-size: 0.95rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .administrador-layout {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+    }
+
+    .sidebar-nav {
+        flex-direction: row;
+        overflow-x: auto;
+        padding: 0.5rem;
+
+        .nav-item {
+            white-space: nowrap;
+        }
+    }
+
+    .main-content {
+        margin-left: 0;
+    }
+
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .form-group-wide {
+        grid-column: span 1;
+    }
+
+    .overview-strip {
+        grid-template-columns: 1fr;
+
+        .overview-item+.overview-item {
+            border-left: none;
+            border-top: 1px solid var(--border-light);
+        }
+    }
+}

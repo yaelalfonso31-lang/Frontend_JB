@@ -1,228 +1,155 @@
 <div class="lista-colaboradores-container">
-  <h1>Gestión de Colaboradores</h1>
+  <div class="header-section">
+    <div>
+      <h1><i class="bi bi-people-fill"></i> Gestión de Colaboradores</h1>
+      <p>Administra las cuentas, roles y estados del personal del Jardín Botánico.</p>
+    </div>
+    <button class="btn-agregar" (click)="abrirModalCrear()">
+      <i class="bi bi-person-plus-fill"></i> Agregar Colaborador
+    </button>
+  </div>
 
   <div class="controls">
     <div class="search-box">
-      <input
-        type="text"
-        placeholder="Buscar por nombre, email o cargo..."
-        (input)="onSearch($event.target.value)"
-        class="search-input"
-      />
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="16"
-        height="16"
-        fill="currentColor"
-        class="search-icon bi bi-search"
-        viewBox="0 0 16 16"
-      >
-        <path
-          d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"
-        />
-      </svg>
+      <i class="bi bi-search search-icon"></i>
+      <input type="text" placeholder="Buscar por nombre, correo o cargo..."
+        (input)="onSearch($any($event.target).value)" class="search-input" />
     </div>
 
     <div class="filter-buttons">
-      <button
-        class="filter-btn"
-        [class.active]="filterEstado() === 'todos'"
-        (click)="onFilterEstado('todos')"
-      >
-        Todos
+      <button class="filter-btn" [class.active]="filterEstado() === 'todos'" (click)="onFilterEstado('todos')">
+        <i class="bi bi-layers"></i> Todos
       </button>
-      <button
-        class="filter-btn"
-        [class.active]="filterEstado() === 'activo'"
-        (click)="onFilterEstado('activo')"
-      >
-        Activos
+      <button class="filter-btn" [class.active]="filterEstado() === 'activo'" (click)="onFilterEstado('activo')">
+        <i class="bi bi-check-circle"></i> Activos
       </button>
-      <button
-        class="filter-btn"
-        [class.active]="filterEstado() === 'inactivo'"
-        (click)="onFilterEstado('inactivo')"
-      >
-        Inactivos
+      <button class="filter-btn" [class.active]="filterEstado() === 'inactivo'" (click)="onFilterEstado('inactivo')">
+        <i class="bi bi-Pause-circle"></i> Inactivos
       </button>
     </div>
-
-    <button class="btn-agregar" (click)="abrirModalCrear()">+ Agregar Colaborador</button>
   </div>
 
   <div class="table-container">
     <table class="colaboradores-table">
       <thead>
         <tr>
-          <th>Nombre</th>
-          <th>Email</th>
-          <th>Teléfono</th>
-          <th>Cargo</th>
+          <th><i class="bi bi-person me-1"></i> Nombre</th>
+          <th><i class="bi bi-envelope me-1"></i> Correo</th>
+          <th><i class="bi bi-telephone me-1"></i> Teléfono</th>
+          <th><i class="bi bi-briefcase me-1"></i> Cargo</th>
           <th>Estado</th>
-          <th>Fecha Registro</th>
+          <th><i class="bi bi-calendar-event me-1"></i> Registro</th>
           <th>Acciones</th>
         </tr>
       </thead>
       <tbody>
         @for (colaborador of filteredColaboradores(); track colaborador.id) {
-          <tr [class.inactive-row]="colaborador.estado === 'inactivo'">
-            <td>{{ colaborador.nombre }}</td>
-            <td>{{ colaborador.email }}</td>
-            <td>{{ colaborador.telefono }}</td>
-            <td>{{ colaborador.cargo }}</td>
-            <td>
-              <span [class]="'status-badge status-' + colaborador.estado">
-                {{ colaborador.estado | titlecase }}
-              </span>
-            </td>
-            <td>{{ colaborador.fechaRegistro }}</td>
-            <td>
-              <div class="actions">
-                <button
-                  class="btn-icon btn-edit"
-                  (click)="editarColaborador(colaborador.id)"
-                  title="Editar"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-fill"
-                    viewBox="0 0 16 16">
-                    <path
-                      d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.5.5 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11z" />
-                  </svg>
-                </button>
-                <button
-                  class="btn-icon btn-toggle"
-                  (click)="toggleEstado(colaborador.id)"
-                  [title]="
-                    colaborador.estado === 'activo'
-                      ? 'Desactivar'
-                      : 'Activar'
-                  "
-                >
-                  {{ colaborador.estado === 'activo' ? '🔴' : '🟢' }}
-                </button>
-                <button
-                  class="btn-icon btn-delete"
-                  (click)="eliminarColaborador(colaborador.id)"
-                  title="Eliminar"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3-fill"
-                    viewBox="0 0 16 16">
-                    <path
-                      d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5m-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5M4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06m6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528M8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5" />
-                  </svg>
-                </button>
-              </div>
-            </td>
-          </tr>
+        <tr [class.inactive-row]="colaborador.estado === 'inactivo'">
+          <td><strong>{{ colaborador.nombre }}</strong></td>
+          <td>{{ colaborador.email }}</td>
+          <td>{{ colaborador.telefono }}</td>
+          <td>{{ colaborador.cargo }}</td>
+          <td>
+            <span [class]="'status-badge status-' + colaborador.estado">
+              <i class="bi" [class.bi-check-circle-fill]="colaborador.estado === 'activo'"
+                [class.bi-dash-circle]="colaborador.estado === 'inactivo'"></i>
+              {{ colaborador.estado | titlecase }}
+            </span>
+          </td>
+          <td>{{ colaborador.fechaRegistro }}</td>
+          <td>
+            <div class="actions">
+              <button class="btn-icon btn-edit" (click)="editarColaborador(colaborador.id)" title="Editar">
+                <i class="bi bi-pencil-square"></i>
+              </button>
+              <button class="btn-icon btn-toggle" (click)="toggleEstado(colaborador.id)"
+                [title]="colaborador.estado === 'activo' ? 'Desactivar colaborador' : 'Activar colaborador'">
+                <i class="bi" [class.bi-toggle-on]="colaborador.estado === 'activo'"
+                  [class.bi-toggle-off]="colaborador.estado === 'inactivo'"></i>
+              </button>
+              <button class="btn-icon btn-delete" (click)="eliminarColaborador(colaborador.id)" title="Eliminar">
+                <i class="bi bi-trash3"></i>
+              </button>
+            </div>
+          </td>
+        </tr>
         }
       </tbody>
     </table>
 
     @if (filteredColaboradores().length === 0) {
-      <div class="no-results">
-        <p>No se encontraron colaboradores</p>
-      </div>
+    <div class="no-results">
+      <i class="bi bi-people"></i>
+      <p>No se encontraron colaboradores con los criterios actuales</p>
+    </div>
     }
   </div>
 </div>
 
 @if (modalAbierto()) {
-  <div class="modal-backdrop" (click)="cerrarModal()">
-    <div class="modal-card" (click)="$event.stopPropagation()">
-      <div class="modal-header">
-        <h3>{{ modoModal() === 'create' ? 'Agregar colaborador' : 'Editar colaborador' }}</h3>
-        <button class="close-btn" type="button" (click)="cerrarModal()">×</button>
-      </div>
+<div class="modal-backdrop" (click)="cerrarModal()">
+  <div class="modal-card" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>
+        <i class="bi" [class.bi-person-plus-fill]="modoModal() === 'create'"
+          [class.bi-person-gear]="modoModal() === 'edit'"></i>
+        {{ modoModal() === 'create' ? 'Agregar colaborador' : 'Editar colaborador' }}
+      </h3>
+      <button class="close-btn" type="button" (click)="cerrarModal()"><i class="bi bi-x-lg"></i></button>
+    </div>
 
-      <form class="collaborator-form" (ngSubmit)="guardarColaborador()">
-        <div class="modal-body">
-          <p class="form-intro">
-            Completa la información del colaborador para incorporarlo al equipo.
-          </p>
+    <form class="collaborator-form" (ngSubmit)="guardarColaborador()">
+      <div class="modal-body">
+        <p class="form-intro">Completa la información del colaborador para incorporarlo al equipo.</p>
 
-          <div class="form-grid">
-            <div class="form-group form-group-wide">
-              <label for="nombre-colaborador">Nombre completo <span>*</span></label>
-              <input
-                id="nombre-colaborador"
-                name="nombre"
-                type="text"
-                placeholder="Ej. Ana García"
-                required
-                [ngModel]="formulario().nombre"
-                (ngModelChange)="actualizarCampo('nombre', $event)"
-              />
-            </div>
+        <div class="form-grid">
+          <div class="form-group form-group-wide">
+            <label for="nombre-colaborador"><i class="bi bi-person me-1"></i> Nombre completo <span>*</span></label>
+            <input id="nombre-colaborador" name="nombre" type="text" placeholder="Ej. Ana García" required
+              [ngModel]="formulario().nombre" (ngModelChange)="actualizarCampo('nombre', $event)" />
+          </div>
 
-            <div class="form-group form-group-wide">
-              <label for="email-colaborador">Correo institucional <span>*</span></label>
-              <input
-                id="email-colaborador"
-                name="email"
-                type="email"
-                placeholder="nombre@jb.edu.mx"
-                required
-                [ngModel]="formulario().email"
-                (ngModelChange)="actualizarCampo('email', $event)"
-              />
-            </div>
+          <div class="form-group form-group-wide">
+            <label for="email-colaborador"><i class="bi bi-envelope me-1"></i> Correo institucional
+              <span>*</span></label>
+            <input id="email-colaborador" name="email" type="email" placeholder="nombre@correo.buap.mx" required
+              [ngModel]="formulario().email" (ngModelChange)="actualizarCampo('email', $event)" />
+          </div>
 
-            <div class="form-group">
-              <label for="telefono-colaborador">Teléfono</label>
-              <input
-                id="telefono-colaborador"
-                name="telefono"
-                type="tel"
-                placeholder="555-0123"
-                [ngModel]="formulario().telefono"
-                (ngModelChange)="actualizarCampo('telefono', $event)"
-              />
-            </div>
+          <div class="form-group">
+            <label for="telefono-colaborador"><i class="bi bi-telephone me-1"></i> Teléfono</label>
+            <input id="telefono-colaborador" name="telefono" type="tel" placeholder="222-000-0000"
+              [ngModel]="formulario().telefono" (ngModelChange)="actualizarCampo('telefono', $event)" />
+          </div>
 
-            <div class="form-group">
-              <label for="cargo-colaborador">Cargo <span>*</span></label>
-              <input
-                id="cargo-colaborador"
-                name="cargo"
-                type="text"
-                placeholder="Ej. Coordinador de visitas"
-                required
-                [ngModel]="formulario().cargo"
-                (ngModelChange)="actualizarCampo('cargo', $event)"
-              />
-            </div>
+          <div class="form-group">
+            <label for="cargo-colaborador"><i class="bi bi-briefcase me-1"></i> Cargo <span>*</span></label>
+            <input id="cargo-colaborador" name="cargo" type="text" placeholder="Ej. Coordinador de visitas" required
+              [ngModel]="formulario().cargo" (ngModelChange)="actualizarCampo('cargo', $event)" />
+          </div>
 
-            <div class="form-group">
-              <label for="estado-colaborador">Estado</label>
-              <select
-                id="estado-colaborador"
-                name="estado"
-                [ngModel]="formulario().estado"
-                (ngModelChange)="actualizarCampo('estado', $event)"
-              >
-                <option value="activo">Activo</option>
-                <option value="inactivo">Inactivo</option>
-              </select>
-            </div>
+          <div class="form-group">
+            <label for="estado-colaborador"><i class="bi bi-activity me-1"></i> Estado</label>
+            <select id="estado-colaborador" name="estado" [ngModel]="formulario().estado"
+              (ngModelChange)="actualizarCampo('estado', $event)">
+              <option value="activo">Activo</option>
+              <option value="inactivo">Inactivo</option>
+            </select>
+          </div>
 
-            <div class="form-group">
-              <label for="fecha-colaborador">Fecha de registro</label>
-              <input
-                id="fecha-colaborador"
-                name="fechaRegistro"
-                type="date"
-                [ngModel]="formulario().fechaRegistro"
-                (ngModelChange)="actualizarCampo('fechaRegistro', $event)"
-              />
-            </div>
+          <div class="form-group">
+            <label for="fecha-colaborador"><i class="bi bi-calendar3 me-1"></i> Fecha de registro</label>
+            <input id="fecha-colaborador" name="fechaRegistro" type="date" [ngModel]="formulario().fechaRegistro"
+              (ngModelChange)="actualizarCampo('fechaRegistro', $event)" />
           </div>
         </div>
+      </div>
 
-        <div class="modal-actions">
-          <button type="button" class="btn-secondary" (click)="cerrarModal()">Cancelar</button>
-          <button type="submit" class="btn-primary">Guardar colaborador</button>
-        </div>
-      </form>
-    </div>
+      <div class="modal-actions">
+        <button type="button" class="btn-secondary" (click)="cerrarModal()">Cancelar</button>
+        <button type="submit" class="btn-primary"><i class="bi bi-check2-circle"></i> Guardar colaborador</button>
+      </div>
+    </form>
   </div>
+</div>
 }

@@ -32,11 +32,30 @@ export class LoginComponent {
 
       const credenciales = this.loginForm.getRawValue();
 
+      // --- INICIO BYPASS LOCAL ---
+      // Usuario Administrador Local
+      if (credenciales.email === 'admin@local.com' && credenciales.password === 'admin123') {
+        this.isLoading.set(false);
+        localStorage.setItem('usuarioRol', 'administrador');
+        localStorage.setItem('token', 'token-mock-admin');
+        this.router.navigate(['/administrador/dashboard']);
+        return;
+      }
+
+      // Usuario Colaborador Local
+      if (credenciales.email === 'colab@local.com' && credenciales.password === 'colab123') {
+        this.isLoading.set(false);
+        localStorage.setItem('usuarioRol', 'colaborador');
+        localStorage.setItem('token', 'token-mock-colab');
+        this.router.navigate(['/colaborador/dashboard']);
+        return;
+      }
+
       this.http.post('/api/login', credenciales).subscribe({
         next: (respuesta: any) => {
           console.log('Login exitoso:', respuesta);
           this.isLoading.set(false);
-          
+
           // Aquí viene la magia: Leemos el rol que manda Python
           const rol = respuesta.usuario?.rol?.toLowerCase();
 
