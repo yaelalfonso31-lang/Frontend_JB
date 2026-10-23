@@ -66,6 +66,10 @@ export const routes: Routes = [
                 loadComponent: () => import('./administrador/monitor-solicitudes/monitor-solicitudes').then(m => m.MonitorSolicitudesComponent)
             },
             {
+                path: 'programa-servicio',
+                loadComponent: () => import('./reservas/Programa-servicio/Programa-servicio').then(m => m.ProgramaServicioComponent)
+            },
+            {
                 path: 'checklists',
                 loadComponent: () => import('./colaborador/checklists/checklists').then(m => m.ChecklistsComponent)
             },

@@ -1,11 +1,11 @@
-import { Component, ChangeDetectionStrategy, inject, computed, AfterViewInit, ElementRef, viewChild } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, computed, OnInit, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators, FormArray, FormGroup, AbstractControl } from '@angular/forms';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { NgOptimizedImage } from '@angular/common';
-import flatpickr from 'flatpickr';
-import { Spanish } from 'flatpickr/dist/l10n/es.js';
+import { ActivatedRoute } from '@angular/router';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
+import { ProgramaActividadesService, ProgramaServicioData, ProgramaServicioRecord } from './programa-actividades.service';
 
 type TipoBloque = 'tabla' | 'grupo';
 
@@ -17,12 +17,15 @@ type TipoBloque = 'tabla' | 'grupo';
   styleUrl: './Programa-servicio.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ProgramaServicioComponent implements AfterViewInit {
+export class ProgramaServicioComponent implements OnInit {
   private fb = inject(FormBuilder).nonNullable;
+  private route = inject(ActivatedRoute);
+  private programaStore = inject(ProgramaActividadesService);
 
-  fechaInput = viewChild<ElementRef>('fechaInput');
-  horaInicioInput = viewChild<ElementRef>('horaInicioInput');
-  horaTerminoInput = viewChild<ElementRef>('horaTerminoInput');
+  readonly solicitudId = this.route.snapshot.queryParamMap.get('solicitudId');
+  readonly puedeGenerar = signal(false);
+  readonly modoConsulta = signal(false);
+  readonly estadoSolicitud = signal('');
 
   private regexNombres = /^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑüÜ\s.,#()–-]+$/;
 
@@ -64,31 +67,36 @@ export class ProgramaServicioComponent implements AfterViewInit {
     // Sin bloques precargados - usuario los agrega según sea necesario
   }
 
-  ngAfterViewInit() {
-    if (this.fechaInput()?.nativeElement) {
-      flatpickr(this.fechaInput()!.nativeElement, {
-        locale: Spanish,
-        disable: [(date) => date.getDay() === 0 || date.getDay() === 6]
-      });
+  ngOnInit(): void {
+    if (!this.solicitudId) return;
+
+    const programaGuardado = this.programaStore.getProgram(this.solicitudId);
+    if (programaGuardado) {
+      this.cargarProgramaGuardado(programaGuardado);
+      return;
     }
 
-    const configHora = {
-      enableTime: true,
-      noCalendar: true,
-      dateFormat: 'H:i',
-      minTime: '09:00',
-      maxTime: '15:00',
-      time_24hr: true,
-      minuteIncrement: 5,
-      disableMobile: true
-    };
+    const solicitud = this.programaStore.getContext(this.solicitudId);
+    if (!solicitud || solicitud.estado !== 'aprobada') {
+      this.programaForm.disable({ emitEvent: false });
+      return;
+    }
 
-    if (this.horaInicioInput()?.nativeElement) {
-      flatpickr(this.horaInicioInput()!.nativeElement, configHora);
-    }
-    if (this.horaTerminoInput()?.nativeElement) {
-      flatpickr(this.horaTerminoInput()!.nativeElement, configHora);
-    }
+    this.estadoSolicitud.set(solicitud.estado);
+    this.puedeGenerar.set(true);
+    this.datosGenerales.patchValue({
+      escuela: solicitud.escuela,
+      fecha: solicitud.fecha,
+      horaInicio: solicitud.horaInicio,
+      horaTermino: solicitud.horaTermino,
+      gradoEdades: solicitud.gradoEdades,
+      estudiantes: solicitud.estudiantes,
+      adultos: solicitud.adultos,
+      secciones: solicitud.secciones,
+      servicioEducativo: this.nombreServicios(solicitud.servicios),
+      folio: solicitud.folio
+    });
+    this.agregarBloque('tabla');
   }
 
   // ---------------------------------------------------------------------
@@ -149,6 +157,18 @@ export class ProgramaServicioComponent implements AfterViewInit {
   }
 
   descargarProgramaPDF() {
+    if (this.solicitudId && this.modoConsulta()) {
+      if (!this.programaStore.downloadSavedPdf(this.solicitudId)) {
+        alert('No se encontró el PDF guardado para esta solicitud.');
+      }
+      return;
+    }
+
+    if (this.solicitudId && !this.puedeGenerar()) {
+      alert('El programa solo puede generarse para una solicitud aprobada.');
+      return;
+    }
+
     if (this.programaForm.invalid) {
       this.programaForm.markAllAsTouched();
       alert('Revisa los campos marcados: hay datos incompletos en el Programa para Actividades de Servicio.');
@@ -220,6 +240,66 @@ export class ProgramaServicioComponent implements AfterViewInit {
       cursorY = (doc as unknown as { lastAutoTable: { finalY: number } }).lastAutoTable.finalY + 10;
     });
 
-    doc.save(`Programa_Servicio_${dg.folio || 'sf'}.pdf`);
+    if (this.solicitudId) {
+      const result = this.programaStore.saveProgram(
+        this.solicitudId,
+        this.estadoSolicitud(),
+        this.programaForm.getRawValue() as ProgramaServicioData,
+        doc.output('datauristring')
+      );
+
+      if (result !== 'guardado') {
+        if (result === 'ya-generado') {
+          const existing = this.programaStore.getProgram(this.solicitudId);
+          if (existing) this.cargarProgramaGuardado(existing);
+        }
+        alert(result === 'ya-generado'
+          ? 'El programa de esta solicitud ya fue generado. Se abrió en modo consulta.'
+          : 'No fue posible guardar el programa. Verifica que la solicitud continúe aprobada.');
+        return;
+      }
+
+      this.modoConsulta.set(true);
+      this.puedeGenerar.set(false);
+      this.programaForm.disable({ emitEvent: false });
+    }
+
+    doc.save(`Programa_Servicio_${dg.folio || this.solicitudId || 'sf'}.pdf`);
+  }
+
+  private cargarProgramaGuardado(record: ProgramaServicioRecord): void {
+    this.estadoSolicitud.set(record.estado);
+    this.datosGenerales.patchValue(record.programa.datosGenerales, { emitEvent: false });
+    this.bloques.clear({ emitEvent: false });
+
+    for (const bloque of record.programa.bloques) {
+      const filas = bloque.filas.map(fila =>
+        this.crearFila(fila.horario, fila.lugar, fila.actividad, fila.responsables)
+      );
+      this.bloques.push(this.crearBloque(bloque.tipo, bloque.titulo, filas), { emitEvent: false });
+    }
+
+    this.modoConsulta.set(true);
+    this.puedeGenerar.set(false);
+    this.programaForm.disable({ emitEvent: false });
+  }
+
+  private nombreServicios(servicios: string[]): string {
+    const nombres: Record<string, string> = {
+      visita_guiada: 'Visita guiada',
+      visita_tematica: 'Visita temática',
+      conociendo_medio_ambiente: 'Conociendo el medio ambiente',
+      crea_herbario: 'Crea tu herbario',
+      fosiles_plantas: 'De fósiles y plantas',
+      detective_botanico: 'Detective botánico',
+      horticultura: 'Horticultura',
+      insectos: 'Insectos',
+      lombricomposta: 'Lombricomposta',
+      terrarios: 'Terrarios',
+      colecta_plantas: 'Colecta de plantas',
+      plantas_medicinales: 'Plantas medicinales'
+    };
+
+    return servicios.map(servicio => nombres[servicio] ?? servicio).join(', ');
   }
 }
