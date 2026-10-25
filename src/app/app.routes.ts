@@ -97,7 +97,11 @@ export const routes: Routes = [
                 path: '',
                 redirectTo: '/administrador/dashboard',
                 pathMatch: 'full'
-            }
+            },
+            {
+                path: 'programa-servicio',
+                loadComponent: () => import('./reservas/Programa-servicio/Programa-servicio').then(m => m.ProgramaServicioComponent)
+            },
         ]
     },
     {

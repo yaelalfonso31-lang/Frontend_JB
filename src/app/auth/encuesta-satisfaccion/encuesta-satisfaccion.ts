@@ -45,22 +45,29 @@ export class EncuestaSatisfaccionComponent {
     estadoExteriores: [null],
     estadoSalones: [null],
     pidioPropina: ['', Validators.required],
-    comentarios: ['']
+    comentarios: [''],
   });
 
   get tipoServicioSeleccionado(): string {
     return this.encuestaForm.get('tipoServicio')?.value || 'visita_guiada';
   }
 
+  enviando = false;
+
   enviarEncuesta(): void {
+    if (this.enviando) return;
+
     if (this.encuestaForm.valid) {
+      this.enviando = true;
       this.http.post('/api/encuestas', this.encuestaForm.getRawValue()).subscribe({
         next: () => {
+          this.enviando = false;
           alert('¡Muchas gracias! Tu encuesta ha sido registrada exitosamente.');
           this.encuestaForm.reset({ tipoServicio: 'visita_guiada' });
           this.router.navigate(['/inicio']);
         },
         error: (err) => {
+          this.enviando = false;
           console.error('Error al guardar encuesta:', err);
           alert('No se pudo enviar la encuesta. Por favor intenta de nuevo.');
         }

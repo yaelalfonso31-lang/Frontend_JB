@@ -1,186 +1,190 @@
-import { Component, ElementRef, ViewChild, AfterViewInit, OnDestroy, inject, signal, effect } from '@angular/core';
-import { CommonModule, NgOptimizedImage } from '@angular/common';
-import {
-  FormBuilder,
-  FormArray,
-  FormControl,
-  ReactiveFormsModule,
-  Validators,
-  AbstractControl,
-  ValidationErrors
-} from '@angular/forms';
+import { Component, ChangeDetectionStrategy, inject, signal, computed, AfterViewInit, OnInit, ElementRef, viewChild } from '@angular/core';
+import { FormBuilder, ReactiveFormsModule, Validators, FormArray, AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { NgOptimizedImage } from '@angular/common';
 import { Router, RouterOutlet } from '@angular/router';
-import { HeaderComponent } from '../../shared/header/header';
+import { HttpClient } from '@angular/common/http';
 import flatpickr from 'flatpickr';
 import { Spanish } from 'flatpickr/dist/l10n/es.js';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
+import { HeaderComponent } from '../../shared/header/header';
+import { ChecklistRegistryService } from '../../colaborador/checklists/checklist-registry.service';
+
+export function serviciosValidator(): ValidatorFn {
+  return (control: AbstractControl): ValidationErrors | null => {
+    const seleccionados = control.value as string[];
+
+    if (!seleccionados || seleccionados.length === 0) return { required: true };
+    if (seleccionados.length > 3) return { maxSelections: true };
+
+    const visitas = ['visita_guiada', 'visita_tematica'];
+    const visitasSeleccionadas = seleccionados.filter(s => visitas.includes(s));
+
+    if (visitasSeleccionadas.length > 1) return { maxVisitas: true };
+
+    return null;
+  };
+}
 
 @Component({
   selector: 'app-solicitud-wizard',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterOutlet, NgOptimizedImage, HeaderComponent],
+  imports: [ReactiveFormsModule, NgOptimizedImage, HeaderComponent, RouterOutlet],
   templateUrl: './solicitud-wizard.html',
-  styleUrl: './solicitud-wizard.scss'
+  styleUrl: './solicitud-wizard.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class SolicitudWizardComponent implements AfterViewInit, OnDestroy {
-  private fb = inject(FormBuilder);
+export class SolicitudWizardComponent implements OnInit, AfterViewInit {
+  private fb = inject(FormBuilder).nonNullable;
   private router = inject(Router);
+  private http = inject(HttpClient);
+  private checklistRegistry = inject(ChecklistRegistryService);
 
-  // Referencias a los inputs de Fecha y Hora en el Paso 1
-  @ViewChild('fechaInput') fechaInput?: ElementRef<HTMLInputElement>;
-  @ViewChild('horaInput') horaInput?: ElementRef<HTMLInputElement>;
+  fechaInput = viewChild<ElementRef>('fechaInput');
+  horaInput = viewChild<ElementRef>('horaInput');
 
-  private fpFecha: any;
-  private fpHora: any;
-
-  // Signals de estado del Wizard
   pasoActual = signal<number>(1);
+  archivoFisico: File | null = null;
+  nombreArchivo = signal<string>('');
+
   folioAsignado = signal<string>('');
+  fechaGeneracion = signal<Date>(new Date());
   politicasAceptadas = signal<boolean>(false);
+  enviandoSolicitud = signal<boolean>(false);
+  fechasBloqueadas = signal<string[]>([]);
 
-  // Signals para cálculos de totales
-  totalAlumnos = signal<number>(0);
-  montoTotal = signal<number>(0);
-  montoAnticipo = signal<number>(0);
-
-  // Archivo de comprobante adjunto en Paso 3
-  archivoComprobante: File | null = null;
-
-  // Catálogo de precios y nombres de los servicios educativos
-  readonly catalogoServicios: Record<string, { nombre: string; precio: number; tipo: 'visita' | 'taller' }> = {
-    visita_guiada: { nombre: 'Visita Guiada', precio: 30, tipo: 'visita' },
-    visita_tematica: { nombre: 'Visita Temática', precio: 99, tipo: 'visita' },
-    conociendo_medio_ambiente: { nombre: 'Conociendo y conservando el medio ambiente', precio: 125, tipo: 'taller' },
-    crea_herbario: { nombre: 'Crea tu herbario', precio: 125, tipo: 'taller' },
-    fosiles_plantas: { nombre: 'De fósiles y plantas', precio: 99, tipo: 'taller' },
-    detective_botanico: { nombre: 'El detective botánico', precio: 99, tipo: 'taller' },
-    horticultura: { nombre: 'Horticultura', precio: 125, tipo: 'taller' },
-    insectos: { nombre: 'Insectos', precio: 99, tipo: 'taller' },
-    lombricomposta: { nombre: 'Lombricomposta', precio: 125, tipo: 'taller' },
-    terrarios: { nombre: 'Terrarios (un mini jardín)', precio: 145, tipo: 'taller' },
-    colecta_plantas: { nombre: 'Colecta de plantas', precio: 190, tipo: 'taller' },
-    plantas_medicinales: { nombre: 'Plantas medicinales', precio: 190, tipo: 'taller' }
+  preciosServicios: Record<string, number> = {
+    visita_guiada: 30, visita_tematica: 99, conociendo_medio_ambiente: 125,
+    crea_herbario: 125, fosiles_plantas: 99, detective_botanico: 99,
+    horticultura: 125, insectos: 99, lombricomposta: 125, terrarios: 145,
+    colecta_plantas: 190, plantas_medicinales: 190
   };
 
-  // Definición del Formulario Reactivo
+  private regexNombres = /^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\s\.,'-]+$/;
+  private regexDireccion = /^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑüÜ\s\.,#()°"'-]+$/;
+  private regexAlfanumerico = /^[a-zA-Z0-9\s\/-]+$/;
+  // Permite números con o sin "$", comas y "MXN" (ej. 350, 350.00, $350.00 MXN)
+  private regexMonto = /^\$?\s*\d+(,\d{3})*(\.\d{1,2})?(\s*MXN)?$/i;
+
   solicitudForm = this.fb.group({
-    // Datos de la Institución
-    escuela: ['', Validators.required],
-    calle: ['', Validators.required],
-    num_ext: ['', Validators.required],
-    num_int: [''],
-    colonia: ['', Validators.required],
-    cp: ['', [Validators.required, Validators.pattern(/^\d{5}$/)]],
-    municipio: ['', Validators.required],
+    escuela: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(120), Validators.pattern(this.regexDireccion)]],
+    calle: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(100), Validators.pattern(this.regexDireccion)]],
+    num_ext: ['', [Validators.required, Validators.maxLength(15), Validators.pattern(this.regexAlfanumerico)]],
+    num_int: ['', [Validators.maxLength(15), Validators.pattern(this.regexAlfanumerico)]],
+    colonia: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(100), Validators.pattern(this.regexDireccion)]],
+    cp: ['', [Validators.required, Validators.pattern('^[0-9]{5}$')]],
+    municipio: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(60), Validators.pattern(this.regexDireccion)]],
 
-    // Contacto y Nivel
-    profesores: this.fb.array([this.fb.control('', Validators.required)]),
-    telefonos: this.fb.array([this.fb.control('', [Validators.required, Validators.pattern(/^\d{10}$/)])]),
-    correos: this.fb.array([this.fb.control('', [Validators.required, Validators.email])]),
-    nivel: ['', Validators.required],
-    grado: ['', Validators.required],
-
-    // Detalles del Servicio
-    servicios: this.fb.nonNullable.control<string[]>([], [
-      Validators.required,
-      this.validarServicios.bind(this)
+    profesores: this.fb.array([
+      this.fb.control('', [Validators.required, Validators.minLength(3), Validators.maxLength(80), Validators.pattern(this.regexNombres)])
     ]),
+    telefonos: this.fb.array([
+      this.fb.control('', [Validators.required, Validators.pattern('^[0-9]{10}$')])
+    ]),
+    correos: this.fb.array([
+      this.fb.control('', [Validators.required, Validators.email, Validators.maxLength(80)])
+    ]),
+
+    nivel: ['', Validators.required],
+    grado: ['', [Validators.required, Validators.minLength(1), Validators.maxLength(60)]],
+
+    servicios: [[] as string[], [serviciosValidator()]],
+    notas: ['', [Validators.maxLength(500)]],
+
     fecha: ['', Validators.required],
     hora: ['', Validators.required],
-    num_grupos: [1, [Validators.required, Validators.min(1)]],
-    estudiantes_grupo: [10, [Validators.required, Validators.min(1)]],
-    num_maestros: [1, [Validators.required, Validators.min(0)]],
-    num_padres: [0, [Validators.required, Validators.min(0)]],
-    lunch: ['no', Validators.required],
-    notas: [''],
+    num_grupos: [1, [Validators.required, Validators.min(1), Validators.max(20)]],
+    estudiantes_grupo: [20, [Validators.required, Validators.min(10), Validators.max(60)]],
+    num_maestros: [2, [Validators.required, Validators.min(0), Validators.max(20)]],
+    num_padres: [0, [Validators.required, Validators.min(0), Validators.max(50)]],
+    lunch: ['', Validators.required],
 
-    // Paso 3: Reporte de Pago
     comprobante: [''],
-    titular: [''],
-    monto_pagar: [''],
-    concepto_pago: ['']
+    titular: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(100), Validators.pattern(this.regexDireccion)]],
+    monto_pagar: ['', [Validators.required, Validators.pattern(this.regexMonto)]],
+    concepto_pago: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(150)]]
   });
 
-  constructor() {
-    // Suscribirse a cambios en el formulario para recalcular totales automáticamente
-    this.solicitudForm.valueChanges.subscribe(() => {
-      this.calcularTotales();
-    });
+  formValues = toSignal(this.solicitudForm.valueChanges, { initialValue: this.solicitudForm.getRawValue() });
 
-    // Calcular totales iniciales
-    this.calcularTotales();
+  totalAlumnos = computed(() => {
+    const vals = this.formValues();
+    return (vals.num_grupos || 1) * (vals.estudiantes_grupo || 0);
+  });
 
-    // Efecto reactivo: cada vez que el usuario está o regresa al Paso 1,
-    // se vuelven a inicializar el calendario y el reloj sobre los inputs del DOM
-    effect(() => {
-      if (this.pasoActual() === 1) {
-        setTimeout(() => {
-          this.inicializarPickers();
-        }, 50);
-      }
-    });
+  montoTotal = computed(() => {
+    const vals = this.formValues();
+    const seleccionados = vals.servicios || [];
+
+    const sumaPrecios = seleccionados.reduce((suma, servicioId) => {
+      return suma + (this.preciosServicios[servicioId] || 0);
+    }, 0);
+
+    const totalPagantes = this.totalAlumnos() + (vals.num_padres || 0);
+    return totalPagantes * sumaPrecios;
+  });
+
+  montoAnticipo = computed(() => this.montoTotal() * 0.5);
+
+  ngOnInit(): void {
+    this.http.get<{ limiteVisitantes: number; diasFestivos: { id: number; fecha: string; nombre: string }[] }>('/api/configuracion')
+      .subscribe({
+        next: (config) => {
+          const fechas = (config.diasFestivos || []).map(d => d.fecha);
+          this.fechasBloqueadas.set(fechas);
+          this.inicializarCalendarios();
+        },
+        error: () => this.inicializarCalendarios()
+      });
   }
 
   ngAfterViewInit(): void {
-    this.inicializarPickers();
+    this.inicializarCalendarios();
   }
 
-  ngOnDestroy(): void {
-    this.destruirPickers();
-  }
+  inicializarCalendarios(): void {
+    if (this.fechaInput()?.nativeElement) {
+      const minDate = new Date();
+      minDate.setDate(minDate.getDate() + 14);
+      const bloqueadas = new Set(this.fechasBloqueadas());
 
-  // ============================================================
-  // CONFIGURACIÓN DE FLATPICKR (CALENDARIO Y RELOJ)
-  // ============================================================
-  private destruirPickers(): void {
-    if (this.fpFecha) {
-      this.fpFecha.destroy();
-      this.fpFecha = null;
-    }
-    if (this.fpHora) {
-      this.fpHora.destroy();
-      this.fpHora = null;
-    }
-  }
-
-  private inicializarPickers(): void {
-    this.destruirPickers();
-
-    // 1. Inicializar Calendario (Fecha de visita Lun-Vie)
-    if (this.fechaInput?.nativeElement) {
-      const inputEl = this.fechaInput.nativeElement;
-
-      this.fpFecha = flatpickr(inputEl, {
+      flatpickr(this.fechaInput()!.nativeElement, {
         locale: Spanish,
-        dateFormat: 'Y-m-d',
-        minDate: 'today',
-        disableMobile: true,
-        static: true, // <--- CLAVE: Evita que Flatpickr calcule coordenadas erróneas en la página
-        disable: [
-          (date: Date) => date.getDay() === 0 || date.getDay() === 6 // Bloquear domingo (0) y sábado (6)
-        ],
+        minDate: minDate,
         defaultDate: this.solicitudForm.controls.fecha.value || undefined,
-        onChange: (_selectedDates: Date[], dateStr: string) => {
+        disable: [
+          (date) => {
+            const yyyy = date.getFullYear();
+            const mm = String(date.getMonth() + 1).padStart(2, '0');
+            const dd = String(date.getDate()).padStart(2, '0');
+            const iso = `${yyyy}-${mm}-${dd}`;
+            return date.getDay() === 0 || date.getDay() === 6 || bloqueadas.has(iso);
+          }
+        ],
+        disableMobile: true,
+        monthSelectorType: 'static',
+        dateFormat: 'Y-m-d',
+        altInput: false,
+        onChange: (_selectedDates, dateStr) => {
           this.solicitudForm.controls.fecha.setValue(dateStr);
           this.solicitudForm.controls.fecha.markAsTouched();
         }
       });
     }
 
-    // 2. Inicializar Reloj (Horario 09:00 - 15:00)
-    if (this.horaInput?.nativeElement) {
-      const inputEl = this.horaInput.nativeElement;
-
-      this.fpHora = flatpickr(inputEl, {
+    if (this.horaInput()?.nativeElement) {
+      flatpickr(this.horaInput()!.nativeElement, {
         enableTime: true,
         noCalendar: true,
         dateFormat: 'H:i',
-        time_24hr: true,
+        defaultDate: this.solicitudForm.controls.hora.value || undefined,
         minTime: '09:00',
         maxTime: '15:00',
+        time_24hr: true,
+        minuteIncrement: 30,
         disableMobile: true,
-        static: true, // <--- CLAVE: Lo mantiene anclado exactamente a su input
-        defaultDate: this.solicitudForm.controls.hora.value || undefined,
-        onChange: (_selectedDates: Date[], dateStr: string) => {
+        onChange: (_selectedDates, dateStr) => {
           this.solicitudForm.controls.hora.setValue(dateStr);
           this.solicitudForm.controls.hora.markAsTouched();
         }
@@ -188,172 +192,224 @@ export class SolicitudWizardComponent implements AfterViewInit, OnDestroy {
     }
   }
 
-  // ============================================================
-  // GETTERS Y MANEJO DE FORMARRAYS (PROFESORES, TELÉFONOS, CORREOS)
-  // ============================================================
-  get profesores(): FormArray<FormControl> {
-    return this.solicitudForm.get('profesores') as FormArray<FormControl>;
+  capturarArchivo(event: any): void {
+    if (event.target.files && event.target.files.length > 0) {
+      const file: File = event.target.files[0];
+      if (file.size > 15 * 1024 * 1024) {
+        alert('El archivo supera el límite permitido de 15MB.');
+        event.target.value = '';
+        return;
+      }
+      this.archivoFisico = file;
+      this.nombreArchivo.set(file.name);
+    }
   }
 
-  get telefonos(): FormArray<FormControl> {
-    return this.solicitudForm.get('telefonos') as FormArray<FormControl>;
+  toggleServicio(id: string, event: Event): void {
+    const isChecked = (event.target as HTMLInputElement).checked;
+    const ctrl = this.solicitudForm.controls.servicios;
+    let actuales = [...ctrl.value];
+
+    if (isChecked) {
+      if (!actuales.includes(id)) actuales.push(id);
+    } else {
+      actuales = actuales.filter(s => s !== id);
+    }
+
+    ctrl.setValue(actuales);
+    ctrl.markAsTouched();
   }
 
-  get correos(): FormArray<FormControl> {
-    return this.solicitudForm.get('correos') as FormArray<FormControl>;
-  }
+  get profesores() { return this.solicitudForm.get('profesores') as FormArray; }
+  get telefonos() { return this.solicitudForm.get('telefonos') as FormArray; }
+  get correos() { return this.solicitudForm.get('correos') as FormArray; }
 
   agregarCampo(tipo: 'profesor' | 'telefono' | 'correo'): void {
-    if (tipo === 'profesor') {
-      this.profesores.push(this.fb.control('', Validators.required));
-    } else if (tipo === 'telefono') {
-      this.telefonos.push(this.fb.control('', [Validators.required, Validators.pattern(/^\d{10}$/)]));
-    } else if (tipo === 'correo') {
-      this.correos.push(this.fb.control('', [Validators.required, Validators.email]));
-    }
+    if (tipo === 'profesor') this.profesores.push(this.fb.control('', [Validators.required, Validators.minLength(3), Validators.maxLength(80), Validators.pattern(this.regexNombres)]));
+    if (tipo === 'telefono') this.telefonos.push(this.fb.control('', [Validators.required, Validators.pattern('^[0-9]{10}$')]));
+    if (tipo === 'correo') this.correos.push(this.fb.control('', [Validators.required, Validators.email, Validators.maxLength(80)]));
   }
 
   eliminarCampo(tipo: 'profesor' | 'telefono' | 'correo', index: number): void {
-    if (tipo === 'profesor' && this.profesores.length > 1) {
-      this.profesores.removeAt(index);
-    } else if (tipo === 'telefono' && this.telefonos.length > 1) {
-      this.telefonos.removeAt(index);
-    } else if (tipo === 'correo' && this.correos.length > 1) {
-      this.correos.removeAt(index);
-    }
+    if (tipo === 'profesor') this.profesores.removeAt(index);
+    if (tipo === 'telefono') this.telefonos.removeAt(index);
+    if (tipo === 'correo') this.correos.removeAt(index);
   }
 
-  // ============================================================
-  // VALIDACIÓN Y SELECCIÓN DE SERVICIOS EDUCATIVOS
-  // ============================================================
-  validarServicios(control: AbstractControl): ValidationErrors | null {
-    const seleccionados: string[] = control.value || [];
-    if (seleccionados.length === 0) {
-      return { required: true };
+  esPasoValido(paso: number): boolean {
+    const ctrl = this.solicitudForm.controls;
+
+    if (paso === 1) {
+      return ctrl.escuela.valid && ctrl.calle.valid && ctrl.num_ext.valid && ctrl.num_int.valid &&
+        ctrl.colonia.valid && ctrl.cp.valid && ctrl.municipio.valid && ctrl.profesores.valid &&
+        ctrl.telefonos.valid && ctrl.correos.valid && ctrl.nivel.valid && ctrl.grado.valid &&
+        ctrl.servicios.valid && ctrl.fecha.valid && ctrl.hora.valid && ctrl.num_grupos.valid &&
+        ctrl.estudiantes_grupo.valid && ctrl.num_maestros.valid && ctrl.num_padres.valid &&
+        ctrl.lunch.valid && ctrl.notas.valid;
     }
-    if (seleccionados.length > 3) {
-      return { maxSelections: true };
+
+    if (paso === 3) {
+      const tieneArchivo = this.archivoFisico !== null;
+      return tieneArchivo && ctrl.titular.valid && ctrl.monto_pagar.valid && ctrl.concepto_pago.valid;
     }
-    const visitasSeleccionadas = seleccionados.filter(
-      (id) => this.catalogoServicios[id]?.tipo === 'visita'
-    );
-    if (visitasSeleccionadas.length > 1) {
-      return { maxVisitas: true };
-    }
-    return null;
+
+    return true;
   }
 
-  toggleServicio(servicioId: string, event: Event): void {
-    const checked = (event.target as HTMLInputElement).checked;
-    const actuales = [...this.solicitudForm.controls.servicios.value];
-
-    if (checked) {
-      if (!actuales.includes(servicioId)) {
-        actuales.push(servicioId);
-      }
-    } else {
-      const idx = actuales.indexOf(servicioId);
-      if (idx > -1) {
-        actuales.splice(idx, 1);
-      }
+  private obtenerCamposInvalidosPaso1(): string[] {
+    const ctrl = this.solicitudForm.controls;
+    const faltantes: string[] = [];
+    if (ctrl.escuela.invalid) faltantes.push('Nombre de la Escuela');
+    if (ctrl.calle.invalid || ctrl.num_ext.invalid || ctrl.colonia.invalid || ctrl.cp.invalid || ctrl.municipio.invalid) {
+      faltantes.push('Dirección completa (C.P. de 5 dígitos)');
     }
-
-    this.solicitudForm.controls.servicios.setValue(actuales);
-    this.solicitudForm.controls.servicios.markAsTouched();
-    this.solicitudForm.controls.servicios.updateValueAndValidity();
-  }
-
-  // ============================================================
-  // CÁLCULO DE TOTALES Y ANTICIPO
-  // ============================================================
-  calcularTotales(): void {
-    const grupos = Number(this.solicitudForm.controls.num_grupos.value) || 0;
-    const alumnosPorGrupo = Number(this.solicitudForm.controls.estudiantes_grupo.value) || 0;
-    const padres = Number(this.solicitudForm.controls.num_padres.value) || 0;
-
-    const totalEstudiantes = grupos * alumnosPorGrupo;
-    this.totalAlumnos.set(totalEstudiantes);
-
-    // Los docentes acompañantes no pagan; pagan alumnos y padres acompañantes
-    const personasQuePagan = totalEstudiantes + padres;
-
-    const serviciosSeleccionados = this.solicitudForm.controls.servicios.value || [];
-    const costoPorPersona = serviciosSeleccionados.reduce((acc, id) => {
-      return acc + (this.catalogoServicios[id]?.precio || 0);
-    }, 0);
-
-    const total = personasQuePagan * costoPorPersona;
-    this.montoTotal.set(total);
-    this.montoAnticipo.set(total * 0.5);
-  }
-
-  // ============================================================
-  // ARCHIVO DE COMPROBANTE (PASO 3)
-  // ============================================================
-  capturarArchivo(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    if (input.files && input.files.length > 0) {
-      this.archivoComprobante = input.files[0];
+    if (ctrl.profesores.invalid) faltantes.push('Profesor(es) responsable(s) (solo letras)');
+    if (ctrl.telefonos.invalid) faltantes.push('Teléfono(s) (10 dígitos numéricos)');
+    if (ctrl.correos.invalid) faltantes.push('Correo(s) electrónico(s) válido(s)');
+    if (ctrl.nivel.invalid || ctrl.grado.invalid) faltantes.push('Nivel Escolar y Grado/Carrera');
+    if (ctrl.servicios.invalid) faltantes.push('Selección de Servicios (1 a 3 opciones, máx. 1 visita)');
+    if (ctrl.fecha.invalid || ctrl.hora.invalid) faltantes.push('Fecha y Horario de visita');
+    if (ctrl.num_grupos.invalid || ctrl.estudiantes_grupo.invalid || ctrl.num_maestros.invalid || ctrl.num_padres.invalid) {
+      faltantes.push('Número de grupos y asistentes (10 a 60 alumnos por grupo)');
     }
+    if (ctrl.lunch.invalid) faltantes.push('Indicar si tomarán lunch (Sí / No)');
+    return faltantes;
   }
 
-  // ============================================================
-  // NAVEGACIÓN ENTRE PASOS Y ACCIONES FINALES
-  // ============================================================
   irAPaso(paso: number): void {
-    // Si intenta avanzar del Paso 1, validamos los campos obligatorios del Paso 1
-    if (this.pasoActual() === 1 && paso > 1) {
-      const controlesPaso1 = [
-        this.solicitudForm.controls.escuela,
-        this.solicitudForm.controls.calle,
-        this.solicitudForm.controls.num_ext,
-        this.solicitudForm.controls.colonia,
-        this.solicitudForm.controls.cp,
-        this.solicitudForm.controls.municipio,
-        this.solicitudForm.controls.profesores,
-        this.solicitudForm.controls.telefonos,
-        this.solicitudForm.controls.correos,
-        this.solicitudForm.controls.nivel,
-        this.solicitudForm.controls.grado,
-        this.solicitudForm.controls.servicios,
-        this.solicitudForm.controls.fecha,
-        this.solicitudForm.controls.hora
-      ];
+    const actual = this.pasoActual();
 
-      controlesPaso1.forEach((ctrl) => ctrl.markAllAsTouched());
+    // Validar Paso 1 antes de avanzar
+    if (paso > actual && actual === 1 && !this.esPasoValido(1)) {
+      this.solicitudForm.markAllAsTouched();
+      const errores = this.obtenerCamposInvalidosPaso1();
+      alert('Por favor revisa los siguientes campos antes de continuar:\n\n• ' + errores.join('\n• '));
+      return;
+    }
 
-      // Si quieres permitir avanzar durante pruebas aunque falten campos, puedes comentar este bloque:
-      const invalido = controlesPaso1.some((ctrl) => ctrl.invalid);
-      if (invalido) {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-        return;
+    // Validar Paso 3 antes de avanzar
+    if (paso > actual && actual === 3 && !this.esPasoValido(3)) {
+      this.solicitudForm.controls.titular.markAsTouched();
+      this.solicitudForm.controls.monto_pagar.markAsTouched();
+      this.solicitudForm.controls.concepto_pago.markAsTouched();
+      if (!this.archivoFisico) {
+        alert('Debes adjuntar el archivo o foto de tu comprobante de pago (PDF, JPG o PNG).');
+      } else {
+        alert('Revisa los datos del reporte de pago: Nombre del titular, Monto a pagar y Concepto (mínimo 5 caracteres).');
+      }
+      return;
+    }
+
+    // Si entra al Paso 3 y el monto a pagar está vacío, sugerimos el 50% de anticipo
+    if (paso === 3 && !this.solicitudForm.controls.monto_pagar.value && this.montoAnticipo() > 0) {
+      this.solicitudForm.controls.monto_pagar.setValue(this.montoAnticipo().toFixed(2));
+    }
+
+    if (paso >= 1 && paso <= 6) {
+      this.pasoActual.set(paso);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      if (paso === 1) {
+        setTimeout(() => this.inicializarCalendarios(), 50);
       }
     }
-
-    // Al llegar al Paso 6 (Resumen), generamos el folio si aún no existe
-    if (paso === 6 && !this.folioAsignado()) {
-      const anio = new Date().getFullYear();
-      const aleatorio = Math.floor(1000 + Math.random() * 9000);
-      this.folioAsignado.set(`JB-${anio}-${aleatorio}`);
-    }
-
-    this.pasoActual.set(paso);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-  regresarACorrecciones(): void {
-    this.irAPaso(1);
+  enviarSolicitud(): void {
+    // Candado estricto: evita múltiples clics rápidos o reenvíos si ya tiene folio
+    if (this.enviandoSolicitud() || this.folioAsignado()) {
+      return;
+    }
+
+    if (!this.esPasoValido(1)) {
+      alert('Hay datos incompletos en el Paso 1.');
+      this.irAPaso(1);
+      return;
+    }
+
+    if (!this.esPasoValido(3) || !this.archivoFisico) {
+      alert('Falta información o el archivo del comprobante en el Paso 3.');
+      this.irAPaso(3);
+      return;
+    }
+
+    this.enviandoSolicitud.set(true);
+
+    const formVal = this.solicitudForm.getRawValue();
+    // Limpiamos "$" Carlos, comas o "MXN" del monto_pagar para enviar un número limpio a Python
+    const montoLimpio = String(formVal.monto_pagar).replace(/[^0-9.]/g, '') || String(this.montoAnticipo());
+
+    const datosParaPython = {
+      ...formVal,
+      monto_pagar: montoLimpio,
+      monto_estimado: this.montoTotal()
+    };
+
+    const formData = new FormData();
+    formData.append('datos', JSON.stringify(datosParaPython));
+    formData.append('comprobante', this.archivoFisico);
+
+    this.http.post<{ folio: string }>('/api/solicitudes', formData)
+      .subscribe({
+        next: (respuesta: any) => {
+          this.enviandoSolicitud.set(false);
+          this.folioAsignado.set(respuesta.folio);
+          this.checklistRegistry.registerSubmittedRequest({
+            folio: respuesta.folio,
+            school: formVal.escuela,
+            date: formVal.fecha,
+            services: formVal.servicios
+          });
+          this.irAPaso(6);
+        },
+        error: (err) => {
+          this.enviandoSolicitud.set(false);
+          console.error('Error del servidor:', err);
+          alert('Hubo un problema de conexión al guardar la solicitud. Intenta nuevamente.');
+        }
+      });
   }
 
   salirAlMenu(): void {
-    this.router.navigate(['/']);
-  }
-
-  descargarPoliticas(): void {
-    window.print();
+    this.router.navigate(['/inicio']);
   }
 
   descargarResumenPDF(): void {
-    window.print();
+    const doc = new jsPDF();
+    const vals = this.solicitudForm.getRawValue();
+    const folio = this.folioAsignado();
+
+    doc.setFillColor(143, 186, 66);
+    doc.rect(0, 0, 210, 25, 'F');
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(16);
+    doc.text('RESUMEN DE SOLICITUD - JARDÍN BOTÁNICO', 14, 16);
+
+    doc.setTextColor(44, 62, 80);
+    doc.setFontSize(12);
+    doc.text(`Folio Asignado: ${folio}`, 14, 40);
+    doc.text(`Fecha de Emisión: ${this.fechaGeneracion().toLocaleDateString()}`, 14, 48);
+
+    autoTable(doc, {
+      startY: 55,
+      headStyles: { fillColor: [27, 55, 31] },
+      body: [
+        ['Institución / Escuela', vals.escuela],
+        ['Nivel y Grado', `${vals.nivel} - ${vals.grado}`],
+        ['Fecha de Visita', vals.fecha],
+        ['Horario', vals.hora],
+        ['Total de Alumnos', this.totalAlumnos().toString()],
+        ['Monto Total Estimado', `$${this.montoTotal().toFixed(2)} MXN`],
+        ['Anticipo a Pagar (50%)', `$${this.montoAnticipo().toFixed(2)} MXN`]
+      ],
+    });
+
+    doc.save(`Solicitud_${folio}.pdf`);
+  }
+
+  descargarPoliticas(): void {
+    const link = document.createElement('a');
+    link.href = '/Reglamento_JardinBotanico.pdf';
+    link.download = 'Politicas_y_Reglamento.pdf';
+    link.click();
   }
 }

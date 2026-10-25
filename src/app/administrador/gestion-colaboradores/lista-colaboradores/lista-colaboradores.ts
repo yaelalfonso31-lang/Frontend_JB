@@ -11,6 +11,7 @@ interface Colaborador {
   cargo: string;
   estado: 'activo' | 'inactivo';
   fechaRegistro: string;
+  password?: string;
 }
 
 interface ColaboradorForm {
@@ -20,6 +21,7 @@ interface ColaboradorForm {
   cargo: string;
   estado: 'activo' | 'inactivo';
   fechaRegistro: string;
+  password?: string;
 }
 
 @Component({
@@ -45,7 +47,8 @@ export class ListaColaboradoresComponent implements OnInit {
     telefono: '',
     cargo: '',
     estado: 'activo',
-    fechaRegistro: new Date().toISOString().slice(0, 10)
+    fechaRegistro: new Date().toISOString().slice(0, 10),
+    password: ''
   });
 
   ngOnInit(): void {
@@ -98,7 +101,8 @@ export class ListaColaboradoresComponent implements OnInit {
       telefono: '',
       cargo: '',
       estado: 'activo',
-      fechaRegistro: new Date().toISOString().slice(0, 10)
+      fechaRegistro: new Date().toISOString().slice(0, 10),
+      password: ''
     });
     this.modalAbierto.set(true);
   }
@@ -112,7 +116,8 @@ export class ListaColaboradoresComponent implements OnInit {
       telefono: colaborador.telefono,
       cargo: colaborador.cargo,
       estado: colaborador.estado,
-      fechaRegistro: colaborador.fechaRegistro
+      fechaRegistro: colaborador.fechaRegistro,
+      password: ''
     });
     this.modalAbierto.set(true);
   }
