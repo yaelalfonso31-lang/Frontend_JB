@@ -2,55 +2,57 @@
   <h1>Aprobación de Nuevos Colaboradores</h1>
 
   <div class="tabs">
-    <button class="tab-btn active">
+    <button class="tab-btn" [class.active]="tabActiva() === 'pendiente'" (click)="cambiarTab('pendiente')">
       Pendientes ({{ solicitudesPendientes.length }})
     </button>
-    <button class="tab-btn">
+    <button class="tab-btn" [class.active]="tabActiva() === 'aprobado'" (click)="cambiarTab('aprobado')">
       Aprobados ({{ solicitudesAprobadas.length }})
     </button>
-    <button class="tab-btn">
+    <button class="tab-btn" [class.active]="tabActiva() === 'rechazado'" (click)="cambiarTab('rechazado')">
       Rechazados ({{ solicitudesRechazadas.length }})
     </button>
   </div>
 
   <div class="solicitudes-grid">
-    @for (solicitud of solicitudesPendientes; track solicitud.id) {
+    @for (solicitud of solicitudesFiltradas(); track solicitud.id) {
       <div class="solicitud-card" (click)="selectSolicitud(solicitud)">
         <div class="card-header">
           <h3>{{ solicitud.nombre }}</h3>
-          <span class="status-badge status-pendiente">Pendiente</span>
+          <span [class]="'status-badge status-' + solicitud.estado">{{ solicitud.estado | titlecase }}</span>
         </div>
 
         <div class="card-body">
           <p><strong>Email:</strong> {{ solicitud.email }}</p>
           <p><strong>Teléfono:</strong> {{ solicitud.telefono }}</p>
           @if (solicitud.razonSocial) {
-            <p><strong>Organización:</strong> {{ solicitud.razonSocial }}</p>
+            <p><strong>Rol solicitado:</strong> {{ solicitud.razonSocial }}</p>
           }
-          <p><strong>Experiencia:</strong> {{ solicitud.experiencia }}</p>
+          <p><strong>Mensaje / Experiencia:</strong> {{ solicitud.experiencia }}</p>
           <p class="fecha"><small>Solicitud: {{ solicitud.fechaSolicitud }}</small></p>
         </div>
 
-        <div class="card-actions">
-          <button
-            class="btn btn-success"
-            (click)="aprobarSolicitud(solicitud.id); $event.stopPropagation()"
-          >
-            ✓ Aprobar
-          </button>
-          <button
-            class="btn btn-danger"
-            (click)="rechazarSolicitud(solicitud.id); $event.stopPropagation()"
-          >
-            ✕ Rechazar
-          </button>
-        </div>
+        @if (solicitud.estado === 'pendiente') {
+          <div class="card-actions">
+            <button
+              class="btn btn-success"
+              (click)="aprobarSolicitud(solicitud.id); $event.stopPropagation()"
+            >
+              ✓ Aprobar
+            </button>
+            <button
+              class="btn btn-danger"
+              (click)="rechazarSolicitud(solicitud.id); $event.stopPropagation()"
+            >
+              ✕ Rechazar
+            </button>
+          </div>
+        }
       </div>
     }
 
-    @if (solicitudesPendientes.length === 0) {
+    @if (solicitudesFiltradas().length === 0) {
       <div class="empty-state">
-        <p>No hay solicitudes pendientes de aprobación</p>
+        <p>No hay solicitudes en esta sección</p>
       </div>
     }
   </div>

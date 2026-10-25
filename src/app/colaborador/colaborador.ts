@@ -43,6 +43,8 @@ export class ColaboradorComponent implements OnInit {
   }
 
   cerrarSesion() {
+    localStorage.removeItem('token');
+    localStorage.removeItem('usuarioRol');
     this.router.navigate(['/login']);
   }
 }

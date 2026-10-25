@@ -1196,17 +1196,22 @@
                     </div>
 
                     <div class="upload-box mb-4">
-                        <label for="comprobante" class="form-label fw-bold">
-                            <i class="bi bi-cloud-arrow-up-fill me-2" style="color: var(--color-primary-green);"></i>
-                            Adjuntar Ficha de Depósito (50% de anticipo) *
-                        </label>
-                        <input type="file" id="comprobante" class="form-control form-control-lg"
-                            formControlName="comprobante" accept=".pdf,.jpg,.jpeg,.png"
-                            (change)="capturarArchivo($event)">
-                        <small class="form-hint">
-                            <i class="bi bi-info-circle me-1"></i>Formatos permitidos: PDF, JPG, PNG (máx. 5MB)
-                        </small>
-                    </div>
+                         <label for="comprobante" class="form-label fw-bold">
+                             <i class="bi bi-cloud-arrow-up-fill me-2" style="color: var(--color-primary-green);"></i>
+                             Adjuntar Ficha de Depósito (50% de anticipo) *
+                         </label>
+                         <input type="file" id="comprobante" class="form-control form-control-lg"
+                             accept=".pdf,.jpg,.jpeg,.png"
+                             (change)="capturarArchivo($event)">
+                         @if (nombreArchivo()) {
+                             <div class="text-success fw-semibold small mt-2">
+                                 <i class="bi bi-check-circle-fill me-1"></i> Archivo listo: {{ nombreArchivo() }}
+                             </div>
+                         }
+                         <small class="form-hint d-block mt-1">
+                             <i class="bi bi-info-circle me-1"></i>Formatos permitidos: PDF, JPG, PNG (máx. 15MB)
+                         </small>
+                     </div>
 
                     <fieldset>
                         <legend class="legend-secondary">Información que debe incluir en su reporte de pago</legend>
@@ -1520,16 +1525,23 @@
                         aprovechamiento de su visita.</p>
                 </div>
 
-                <div class="d-flex justify-content-between mt-4">
-                    <button type="button" class="btn btn-outline-secondary btn-lg px-4" (click)="irAPaso(4)">
+               <div class="d-flex justify-content-between mt-4">
+                    <button type="button" class="btn btn-outline-secondary btn-lg px-4" [disabled]="enviandoSolicitud()" (click)="irAPaso(4)">
                         <i class="bi bi-arrow-left me-2"></i> Anterior
                     </button>
                     <div class="d-flex gap-2">
-                        <button type="button" class="btn btn-outline-success btn-lg px-4" (click)="irAPaso(1)">
+                        <button type="button" class="btn btn-outline-success btn-lg px-4" [disabled]="enviandoSolicitud()" (click)="irAPaso(1)">
                             <i class="bi bi-search me-2"></i> Revisar Datos
                         </button>
-                        <button type="button" class="btn btn-success btn-lg px-5" (click)="irAPaso(6)">
-                            <i class="bi bi-send-check-fill me-2"></i> Finalizar y Enviar
+                        <button type="button" class="btn btn-success btn-lg px-5" [disabled]="enviandoSolicitud()" (click)="enviarSolicitud()">
+                            @if (!enviandoSolicitud()) {
+                                <span><i class="bi bi-send-check-fill me-2"></i> Finalizar y Enviar</span>
+                            } @else {
+                                <span>
+                                    <span class="spinner-border spinner-border-sm me-2"></span>
+                                    Enviando...
+                                </span>
+                            }
                         </button>
                     </div>
                 </div>
@@ -1618,11 +1630,6 @@
                 </div>
 
                 <div class="d-flex flex-column flex-md-row justify-content-between gap-3 mt-5 border-top pt-4">
-                    <button type="button" class="btn btn-outline-secondary btn-lg px-4"
-                        (click)="regresarACorrecciones()">
-                        <i class="bi bi-pencil-square me-2"></i> Regresar a corregir
-                    </button>
-
                     <div class="d-flex flex-column flex-md-row gap-3">
                         <button type="button" class="btn btn-danger btn-lg px-4 shadow-sm"
                             (click)="descargarResumenPDF()">

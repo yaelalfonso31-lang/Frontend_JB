@@ -18,12 +18,10 @@ import {
 } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NgOptimizedImage } from '@angular/common';
-import { takeUntilDestroyed} from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { AuthService } from '../services/auth.service';
+import { emailEstrictoValidator } from '../registro-colaborador/registro-colaborador';
 
-/* ==========================================================================
-   Validador de coincidencia (función pura, con bind correcto)
-   ========================================================================== */
 export const passwordsMatchValidator: ValidatorFn = (
   group: AbstractControl
 ): ValidationErrors | null => {
@@ -46,26 +44,21 @@ export class RecuperarContraComponent implements OnInit, OnDestroy {
   private authService = inject(AuthService);
   private destroyRef = inject(DestroyRef);
 
-  /* ---------- Estado general ---------- */
   readonly currentStep = signal<1 | 2 | 3 | 4>(1);
   readonly isLoading = signal(false);
   readonly errorMessage = signal<string | null>(null);
   readonly successMessage = signal<string | null>(null);
 
-  /* ---------- Reenvío con countdown ---------- */
-  readonly reenviandoEn = signal(0);            // segundos restantes
+  readonly reenviandoEn = signal(0);
   private countdownInterval?: ReturnType<typeof setInterval>;
 
-  /* ---------- Mostrar/ocultar passwords ---------- */
   readonly mostrarPassword = signal(false);
   readonly mostrarConfirm = signal(false);
 
-  /* ---------- Paso 1: correo ---------- */
   readonly step1Form = this.fb.nonNullable.group({
-    email: ['', [Validators.required, Validators.email]],
+    email: ['', [Validators.required, emailEstrictoValidator]],
   });
 
-  /* ---------- Paso 2: código OTP de 6 dígitos ---------- */
   readonly step2Form = this.fb.nonNullable.group({
     d1: ['', [Validators.required, Validators.pattern(/^\d$/)]],
     d2: ['', [Validators.required, Validators.pattern(/^\d$/)]],
@@ -75,13 +68,6 @@ export class RecuperarContraComponent implements OnInit, OnDestroy {
     d6: ['', [Validators.required, Validators.pattern(/^\d$/)]],
   });
 
-  readonly codigoCompleto = computed(() =>
-    ['d1', 'd2', 'd3', 'd4', 'd5', 'd6']
-      .map((k) => this.step2Form.get(k)?.value ?? '')
-      .join('')
-  );
-
-  /* ---------- Paso 3: nueva contraseña ---------- */
   readonly step3Form = this.fb.nonNullable.group(
     {
       nuevaPassword: ['', [Validators.required, Validators.minLength(8)]],
@@ -90,9 +76,14 @@ export class RecuperarContraComponent implements OnInit, OnDestroy {
     { validators: passwordsMatchValidator }
   );
 
-  /* ---------- Fortaleza de la contraseña ---------- */
+  // Signal reactivo para que la barra de fortaleza funcione en tiempo real
+  readonly nuevaPasswordValue = toSignal(
+    this.step3Form.controls.nuevaPassword.valueChanges,
+    { initialValue: '' }
+  );
+
   readonly fortaleza = computed(() => {
-    const pass = this.step3Form.controls.nuevaPassword.value;
+    const pass = this.nuevaPasswordValue();
     if (!pass) return { nivel: 0, texto: '', clase: '' };
 
     let score = 0;
@@ -108,68 +99,75 @@ export class RecuperarContraComponent implements OnInit, OnDestroy {
     return { nivel: 3, texto: 'Fuerte', clase: 'strong' };
   });
 
-  /* ========================================================================
-     CICLO DE VIDA
-     ======================================================================== */
-  ngOnInit(): void {
-    // Nada especial por ahora; el form está limpio al iniciar
-  }
+  ngOnInit(): void {}
 
   ngOnDestroy(): void {
     this.detenerCountdown();
   }
 
-  /* ========================================================================
-     PASO 1: enviar código
-     ======================================================================== */
+  private obtenerCodigoActual(): string {
+    const raw = this.step2Form.getRawValue();
+    return `${raw.d1}${raw.d2}${raw.d3}${raw.d4}${raw.d5}${raw.d6}`;
+  }
+
+  private extraerError(err: any, porDefecto: string): string {
+    return (
+      err?.error?.detail?.message ||
+      (typeof err?.error?.detail === 'string' ? err.error.detail : null) ||
+      err?.error?.message ||
+      porDefecto
+    );
+  }
+
   enviarCodigo(): void {
     if (this.step1Form.invalid) {
       this.step1Form.markAllAsTouched();
       return;
     }
 
+    if (this.isLoading()) return;
     this.isLoading.set(true);
     this.errorMessage.set(null);
     this.successMessage.set(null);
 
-    const email = this.step1Form.controls.email.value;
+    const email = this.step1Form.controls.email.value.trim();
 
     this.authService
       .solicitarCodigo(email)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
-        next: () => {
+        next: (res) => {
           this.isLoading.set(false);
           this.currentStep.set(2);
           this.iniciarCountdown(30);
-          // Autofoco al primer dígito
+          if (res?.codigo_debug) {
+            alert(`Código de verificación generado: ${res.codigo_debug}`);
+          }
           setTimeout(() => document.getElementById('otp-1')?.focus(), 50);
         },
         error: (err) => {
           this.isLoading.set(false);
           this.errorMessage.set(
-            err?.error?.message ?? 'No pudimos enviar el correo. Intenta de nuevo.'
+            this.extraerError(err, 'No pudimos enviar el código. Verifica que el correo esté registrado.')
           );
         },
       });
   }
 
-  /* ========================================================================
-     PASO 2: validar OTP
-     ======================================================================== */
   validarCodigo(): void {
     if (this.step2Form.invalid) {
       this.step2Form.markAllAsTouched();
       return;
     }
 
+    if (this.isLoading()) return;
     this.isLoading.set(true);
     this.errorMessage.set(null);
 
-    const codigo = this.codigoCompleto();
+    const codigo = this.obtenerCodigoActual();
 
     this.authService
-      .validarCodigo(this.step1Form.controls.email.value, codigo)
+      .validarCodigo(this.step1Form.controls.email.value.trim(), codigo)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
@@ -179,13 +177,12 @@ export class RecuperarContraComponent implements OnInit, OnDestroy {
         error: (err) => {
           this.isLoading.set(false);
           this.errorMessage.set(
-            err?.error?.message ?? 'El código es incorrecto o ya expiró.'
+            this.extraerError(err, 'El código es incorrecto o ya expiró.')
           );
         },
       });
   }
 
-  /** Avanza el foco automáticamente entre los 6 inputs OTP */
   onOtpInput(index: number, event: Event): void {
     const input = event.target as HTMLInputElement;
     const value = input.value.replace(/\D/g, '');
@@ -197,7 +194,6 @@ export class RecuperarContraComponent implements OnInit, OnDestroy {
     }
   }
 
-  /** Permite borrar con Backspace y retrocede el foco */
   onOtpKeydown(index: number, event: KeyboardEvent): void {
     if (event.key === 'Backspace') {
       const input = event.target as HTMLInputElement;
@@ -207,7 +203,6 @@ export class RecuperarContraComponent implements OnInit, OnDestroy {
     }
   }
 
-  /** Pegar el código completo desde el portapapeles */
   onOtpPaste(event: ClipboardEvent): void {
     event.preventDefault();
     const text = event.clipboardData?.getData('text')?.replace(/\D/g, '') ?? '';
@@ -219,15 +214,13 @@ export class RecuperarContraComponent implements OnInit, OnDestroy {
     document.getElementById('otp-6')?.focus();
   }
 
-  /* ========================================================================
-     PASO 3: actualizar contraseña
-     ======================================================================== */
   actualizarPassword(): void {
     if (this.step3Form.invalid) {
       this.step3Form.markAllAsTouched();
       return;
     }
 
+    if (this.isLoading()) return;
     this.isLoading.set(true);
     this.errorMessage.set(null);
 
@@ -235,8 +228,8 @@ export class RecuperarContraComponent implements OnInit, OnDestroy {
 
     this.authService
       .restablecerPassword(
-        this.step1Form.controls.email.value,
-        this.codigoCompleto(),
+        this.step1Form.controls.email.value.trim(),
+        this.obtenerCodigoActual(),
         nueva
       )
       .pipe(takeUntilDestroyed(this.destroyRef))
@@ -248,15 +241,12 @@ export class RecuperarContraComponent implements OnInit, OnDestroy {
         error: (err) => {
           this.isLoading.set(false);
           this.errorMessage.set(
-            err?.error?.message ?? 'No pudimos actualizar la contraseña.'
+            this.extraerError(err, 'No pudimos actualizar la contraseña.')
           );
         },
       });
   }
 
-  /* ========================================================================
-     NAVEGACIÓN ENTRE PASOS
-     ======================================================================== */
   volverPaso(paso: 1 | 2 | 3): void {
     this.errorMessage.set(null);
     this.successMessage.set(null);
@@ -267,9 +257,6 @@ export class RecuperarContraComponent implements OnInit, OnDestroy {
     this.router.navigate(['/login']);
   }
 
-  /* ========================================================================
-     REENVÍO CON COUNTDOWN
-     ======================================================================== */
   reenviarCodigo(): void {
     if (this.reenviandoEn() > 0 || this.isLoading()) return;
     this.enviarCodigo();

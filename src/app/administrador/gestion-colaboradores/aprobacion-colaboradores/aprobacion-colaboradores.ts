@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, signal, inject, OnInit } from '@angular/core';
+import { Component, ChangeDetectionStrategy, signal, computed, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 
@@ -24,9 +24,13 @@ interface SolicitudColaborador {
 export class AprobacionColaboradoresComponent implements OnInit {
   private http = inject(HttpClient);
 
-  // Inicializamos el signal vacío
   solicitudes = signal<SolicitudColaborador[]>([]);
   selectedSolicitud = signal<SolicitudColaborador | null>(null);
+  tabActiva = signal<'pendiente' | 'aprobado' | 'rechazado'>('pendiente');
+
+  solicitudesFiltradas = computed(() =>
+    this.solicitudes().filter(s => s.estado === this.tabActiva())
+  );
 
   ngOnInit(): void {
     this.cargarSolicitudes();
@@ -37,6 +41,10 @@ export class AprobacionColaboradoresComponent implements OnInit {
       next: (data) => this.solicitudes.set(data),
       error: (err) => console.error('Error al cargar solicitudes', err)
     });
+  }
+
+  cambiarTab(tab: 'pendiente' | 'aprobado' | 'rechazado') {
+    this.tabActiva.set(tab);
   }
 
   selectSolicitud(solicitud: SolicitudColaborador) {
@@ -50,7 +58,6 @@ export class AprobacionColaboradoresComponent implements OnInit {
   cambiarEstado(id: number, nuevoEstado: 'aprobado' | 'rechazado') {
     this.http.put(`/api/colaboradores/solicitudes/${id}/estado`, { estado: nuevoEstado }).subscribe({
       next: () => {
-        // Actualizamos el estado localmente para no tener que recargar toda la tabla
         const current = this.solicitudes();
         this.solicitudes.set(
           current.map(s => (s.id === id ? { ...s, estado: nuevoEstado } : s))

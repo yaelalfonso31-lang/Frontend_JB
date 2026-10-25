@@ -28,12 +28,12 @@
     <div class="filters">
       <div class="filter-group">
         <label>Fecha de Visita:</label>
-        <input type="date" (change)="onFilterFecha($event.target.value)" class="filter-input" />
+        <input type="date" [value]="filterFecha()" (change)="onFilterFecha($any($event.target).value)" class="filter-input" />
       </div>
 
       <div class="filter-group">
         <label>Estado:</label>
-        <select (change)="onFilterEstado($any($event.target).value)" class="filter-select">
+        <select [value]="filterEstado()" (change)="onFilterEstado($any($event.target).value)" class="filter-select">
           <option value="todos">Todos</option>
           <option value="aprobada">Aprobada</option>
           <option value="pendiente">Pendiente</option>
@@ -43,11 +43,13 @@
 
       <div class="filter-group">
         <label>Escuela:</label>
-        <select (change)="onFilterEscuela($any($event.target).value)" class="filter-select">
+        <select [value]="filterEscuela()" (change)="onFilterEscuela($any($event.target).value)" class="filter-select">
           <option value="todos">Todos</option>
-          <option value="Primaria">Primaria</option>
-          <option value="Secundaria">Secundaria</option>
-          <option value="Técnica">Técnica</option>
+          <option value="prescolar">Preescolar</option>
+          <option value="primaria">Primaria</option>
+          <option value="secundaria">Secundaria</option>
+          <option value="preparatoria">Preparatoria</option>
+          <option value="licenciatura">Licenciatura</option>
         </select>
       </div>
     </div>

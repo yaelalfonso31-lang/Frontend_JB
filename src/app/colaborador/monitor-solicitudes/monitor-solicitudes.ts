@@ -2,6 +2,8 @@ import { Component, ChangeDetectionStrategy, signal, inject, OnInit } from '@ang
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 
 interface Solicitud {
   id: number;
@@ -71,9 +73,54 @@ export class MonitorSolicitudes implements OnInit {
   onFilterEstado(value: 'todos' | 'aprobada' | 'pendiente' | 'rechazada' | 'correccion') { this.filterEstado.set(value); }
   onFilterEscuela(value: string) { this.filterEscuela.set(value); }
 
-  exportarPDF() { console.log('Exportar a PDF - Próximamente'); }
-  exportarExcel() { console.log('Exportar a Excel - Próximamente'); }
-  exportarCSV() { console.log('Exportar a CSV - Próximamente'); }
+  exportarPDF(): void {
+    const rows = this.filteredSolicitudes.map((s) => [
+      s.id, s.solicitante, s.escuela, s.fechaVisita, s.numeroVisitantes, s.estado
+    ]);
+    const doc = new jsPDF();
+    doc.text('Solicitudes de visitas', 14, 15);
+    autoTable(doc, {
+      head: [['#', 'Solicitante', 'Escuela', 'Fecha', 'Visitantes', 'Estado']],
+      body: rows,
+      startY: 22,
+      styles: { fontSize: 8 },
+      headStyles: { fillColor: [16, 124, 94] }
+    });
+    doc.save('solicitudes_colaborador.pdf');
+  }
+
+  exportarExcel(): void {
+    const headers = ['#', 'Solicitante', 'Escuela', 'Fecha', 'Visitantes', 'Estado'];
+    const rows = this.filteredSolicitudes.map((s) => [
+      s.id, s.solicitante, s.escuela, s.fechaVisita, s.numeroVisitantes, s.estado
+    ]);
+    this.descargarArchivo(
+      [headers, ...rows].map((row) => row.join(',')).join('\n'),
+      'solicitudes_colaborador.xls',
+      'application/vnd.ms-excel;charset=utf-8'
+    );
+  }
+
+  exportarCSV(): void {
+    const headers = ['#', 'Solicitante', 'Escuela', 'Fecha', 'Visitantes', 'Estado'];
+    const rows = this.filteredSolicitudes.map((s) => [
+      s.id, s.solicitante, s.escuela, s.fechaVisita, s.numeroVisitantes, s.estado
+    ]);
+    const contenido = [headers, ...rows]
+      .map((row) => row.map((value) => `"${String(value).replace(/"/g, '""')}"`).join(','))
+      .join('\n');
+    this.descargarArchivo(contenido, 'solicitudes_colaborador.csv', 'text/csv;charset=utf-8;');
+  }
+
+  private descargarArchivo(contenido: string, nombre: string, tipo: string): void {
+    const blob = new Blob([contenido], { type: tipo });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = nombre;
+    link.click();
+    URL.revokeObjectURL(url);
+  }
 
   get estadisticas() {
     return {

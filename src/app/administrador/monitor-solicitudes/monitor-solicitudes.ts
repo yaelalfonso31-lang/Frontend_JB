@@ -137,22 +137,26 @@ export class MonitorSolicitudesComponent implements OnInit {
     if (solicitud.estado !== 'aprobada') return;
 
     const servicios = this.getServices(solicitud);
-    const nivelYGrado = [solicitud.nivel, solicitud.grado].filter(Boolean).join(' ');
+    const nivelYGrado = [solicitud.nivel || solicitud.escuela, solicitud.grado].filter(Boolean).join(' - ');
     const estudiantes = solicitud.estudiantes_grupo !== undefined
       ? solicitud.estudiantes_grupo * (solicitud.num_grupos ?? 1)
       : solicitud.numeroVisitantes;
+
+    const horaInicio = solicitud.hora || solicitud.horaVisita || '09:00';
+    const [hh, mm] = horaInicio.split(':').map(Number);
+    const horaFinDefault = !isNaN(hh) ? `${String(Math.min(hh + 2, 17)).padStart(2, '0')}:${String(mm || 0).padStart(2, '0')}` : '11:00';
 
     this.programaActividades.setContext({
       solicitudId: String(solicitud.id),
       estado: solicitud.estado,
       folio: solicitud.folio ?? '',
-      escuela: solicitud.escuela || solicitud.solicitante,
+      escuela: solicitud.solicitante || solicitud.escuela,
       fecha: solicitud.fechaVisita || solicitud.fecha || '',
-      horaInicio: solicitud.hora ?? '',
-      horaTermino: solicitud.horaTermino ?? '',
+      horaInicio: horaInicio,
+      horaTermino: solicitud.horaTermino || horaFinDefault,
       estudiantes,
       adultos: (solicitud.num_maestros ?? 0) + (solicitud.num_padres ?? 0),
-      gradoEdades: nivelYGrado,
+      gradoEdades: nivelYGrado || solicitud.escuela,
       secciones: solicitud.num_grupos ?? 1,
       servicios
     });
