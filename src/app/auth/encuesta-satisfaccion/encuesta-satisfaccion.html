@@ -38,7 +38,7 @@
 
         <!-- Preguntas Generales (1, 2, 3) -->
         <div class="mb-4">
-          <label class="form-label fw-bold">1. ¿Conocía el Jardín Botánico Universitario?</label>
+          <label class="form-label">1. ¿Conocía el Jardín Botánico Universitario?</label>
           <div class="d-flex gap-4 mt-1">
             <div class="form-check">
               <input class="form-check-input" type="radio" id="conociaSi" value="SI" formControlName="conociaJardin">
@@ -52,7 +52,7 @@
         </div>
 
         <div class="mb-4">
-          <label class="form-label fw-bold">2. ¿Le gustó su visita/actividad en el jardín?</label>
+          <label class="form-label">2. ¿Le gustó su visita/actividad en el jardín?</label>
           <div class="d-flex gap-4 mt-1">
             <div class="form-check">
               <input class="form-check-input" type="radio" id="gustoSi" value="SI" formControlName="gustoVisita">
@@ -71,7 +71,7 @@
         </div>
 
         <div class="mb-4">
-          <label for="contactos" class="form-label fw-bold">3. ¿Cómo nos contactó?</label>
+          <label for="contactos" class="form-label">3. ¿Cómo nos contactó?</label>
           <select id="contactos" class="form-select" formControlName="comoContacto">
             <option value="" disabled selected>Seleccione una opción</option>
             <option value="redes">Redes Sociales / Sitio Web</option>
@@ -122,11 +122,11 @@
 
         <!-- P5: EVALUACIÓN DEL CONTENIDO -->
         <div class="mb-4">
-          <h3 class="h6 fw-bold text-success mb-3">5. Evaluación del Contenido</h3>
+          <h3 class="h6 mb-3">5. Evaluación del Contenido</h3>
 
           <!-- Subcriterio A -->
           <div class="subcriterio-block mb-3">
-            <label class="form-label small fw-bold">a) La calidad de la información contenida fue:</label>
+            <label class="form-label small">a) La calidad de la información contenida fue:</label>
             @if (tipoServicioSeleccionado === 'visita_guiada') {
               <div class="escala-caritas-compacta">
                 @for (opcion of opcionesAtencion; track opcion.valor) {
@@ -173,7 +173,7 @@
 
           <!-- Subcriterio B -->
           <div class="subcriterio-block mb-3">
-            <label class="form-label small fw-bold">b) La información obtenida cumplió con su objetivo:</label>
+            <label class="form-label small">b) La información obtenida cumplió con su objetivo:</label>
             @if (tipoServicioSeleccionado === 'visita_guiada') {
               <div class="escala-caritas-compacta">
                 @for (opcion of opcionesAtencion; track opcion.valor) {
@@ -220,7 +220,7 @@
 
           <!-- Subcriterio C -->
           <div class="subcriterio-block mb-3">
-            <label class="form-label small fw-bold">c) Los materiales educativos utilizados fueron los adecuados:</label>
+            <label class="form-label small">c) Los materiales educativos utilizados fueron los adecuados:</label>
             @if (tipoServicioSeleccionado === 'visita_guiada') {
               <div class="escala-caritas-compacta">
                 @for (opcion of opcionesAtencion; track opcion.valor) {
@@ -267,7 +267,7 @@
 
           <!-- Subcriterio D -->
           <div class="subcriterio-block mb-3">
-            <label class="form-label small fw-bold">d) Las instalaciones utilizadas fueron las adecuadas para su servicio:</label>
+            <label class="form-label small">d) Las instalaciones utilizadas fueron las adecuadas para su servicio:</label>
             @if (tipoServicioSeleccionado === 'visita_guiada') {
               <div class="escala-caritas-compacta">
                 @for (opcion of opcionesAtencion; track opcion.valor) {
@@ -327,7 +327,7 @@
           
           <!-- Subcriterio 6a -->
           <div class="subcriterio-block mb-3">
-            <label class="form-label small fw-bold">a) La explicación del instructor fue clara:</label>
+            <label class="form-label small">a) La explicación del instructor fue clara:</label>
             @if (tipoServicioSeleccionado === 'visita_guiada') {
               <div class="escala-caritas-compacta">
                 @for (opcion of opcionesAtencion; track opcion.valor) {
@@ -374,7 +374,7 @@
 
           <!-- Subcriterio 6b -->
           <div class="subcriterio-block mb-3">
-            <label class="form-label small fw-bold">b) Resolvió sus dudas:</label>
+            <label class="form-label small">b) Resolvió sus dudas:</label>
             @if (tipoServicioSeleccionado === 'visita_guiada') {
               <div class="escala-caritas-compacta">
                 @for (opcion of opcionesAtencion; track opcion.valor) {
@@ -421,7 +421,7 @@
 
           <!-- Subcriterio 6c -->
           <div class="subcriterio-block mb-3">
-            <label class="form-label small fw-bold">c) Captó la atención del grupo:</label>
+            <label class="form-label small">c) Captó la atención del grupo:</label>
             @if (tipoServicioSeleccionado === 'visita_guiada') {
               <div class="escala-caritas-compacta">
                 @for (opcion of opcionesAtencion; track opcion.valor) {
@@ -483,7 +483,7 @@
 
         <!-- P8: Expectativas -->
         <div class="mb-4">
-          <label class="form-label fw-bold">8. ¿Se cumplieron sus expectativas?</label>
+          <label class="form-label">8. ¿Se cumplieron sus expectativas?</label>
           <div class="d-flex gap-4 mt-1">
             <div class="form-check">
               <input class="form-check-input" type="radio" id="expSi" value="SI" formControlName="cumplioExpectativas">
@@ -502,7 +502,7 @@
         </div>
 
         <!-- P9: Instalaciones -->
-        <h2 class="subtitulo">9. Instalaciones del Jardín Botánico</h2>
+        <label class="form-label">9. Instalaciones del Jardín Botánico</label>
 
         <div class="mb-3">
           <label class="form-label d-block mb-2">Sanitarios:</label>
@@ -548,7 +548,7 @@
 
         <!-- P10 y P11 -->
         <div class="mb-4">
-          <label class="form-label fw-bold">10. ¿Durante su servicio el instructor le pidió algún tipo de propina?</label>
+          <label class="form-label">10. ¿Durante su servicio el instructor le pidió algún tipo de propina?</label>
           <div class="d-flex gap-4 mt-1">
             <div class="form-check">
               <input class="form-check-input" type="radio" id="propinaSi" value="SI" formControlName="pidioPropina">
@@ -562,7 +562,7 @@
         </div>
 
         <div class="mb-4">
-          <label for="comentarios" class="form-label fw-bold">11. Comentarios y sugerencias:</label>
+          <label for="comentarios" class="form-label">11. Comentarios y sugerencias:</label>
           <textarea id="comentarios" class="form-control" rows="3" placeholder="Escriba aquí sus opiniones..." formControlName="comentarios"></textarea>
         </div>
 
