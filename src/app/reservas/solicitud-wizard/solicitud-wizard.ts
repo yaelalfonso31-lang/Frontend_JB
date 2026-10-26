@@ -26,7 +26,6 @@ export function serviciosValidator(): ValidatorFn {
     return null;
   };
 }
-
 @Component({
   selector: 'app-solicitud-wizard',
   standalone: true,
@@ -40,10 +39,10 @@ export class SolicitudWizardComponent implements OnInit, AfterViewInit {
   private router = inject(Router);
   private http = inject(HttpClient);
   private checklistRegistry = inject(ChecklistRegistryService);
-
   fechaInput = viewChild<ElementRef>('fechaInput');
+  fechaContainer = viewChild<ElementRef>('fechaContainer');
   horaInput = viewChild<ElementRef>('horaInput');
-
+  horaContainer = viewChild<ElementRef>('horaContainer');
   pasoActual = signal<number>(1);
   archivoFisico: File | null = null;
   nombreArchivo = signal<string>('');
@@ -126,7 +125,6 @@ export class SolicitudWizardComponent implements OnInit, AfterViewInit {
   });
 
   montoAnticipo = computed(() => this.montoTotal() * 0.5);
-
   ngOnInit(): void {
     this.http.get<{ limiteVisitantes: number; diasFestivos: { id: number; fecha: string; nombre: string }[] }>('/api/configuracion')
       .subscribe({
@@ -152,6 +150,7 @@ export class SolicitudWizardComponent implements OnInit, AfterViewInit {
       flatpickr(this.fechaInput()!.nativeElement, {
         locale: Spanish,
         minDate: minDate,
+        appendTo: this.fechaContainer()!.nativeElement,
         defaultDate: this.solicitudForm.controls.fecha.value || undefined,
         disable: [
           (date) => {
@@ -175,6 +174,7 @@ export class SolicitudWizardComponent implements OnInit, AfterViewInit {
 
     if (this.horaInput()?.nativeElement) {
       flatpickr(this.horaInput()!.nativeElement, {
+        appendTo: this.horaContainer()!.nativeElement, // <--- CLAVE: Lo mete dentro del input-group
         enableTime: true,
         noCalendar: true,
         dateFormat: 'H:i',
