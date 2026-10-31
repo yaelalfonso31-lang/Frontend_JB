@@ -1,8 +1,22 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router, Routes } from '@angular/router';
 
-// Guardián para verificar que el usuario haya iniciado sesión
-const authGuard: CanActivateFn = () => {
+// Guardián exclusivo para el panel de Administrador
+const adminGuard: CanActivateFn = () => {
+    const router = inject(Router);
+    const token = localStorage.getItem('token');
+    const rol = localStorage.getItem('usuarioRol');
+    if (!token) {
+        return router.createUrlTree(['/login']);
+    }
+    if (rol !== 'admin' && rol !== 'administrador') {
+        return router.createUrlTree(['/colaborador/dashboard']);
+    }
+    return true;
+};
+
+// Guardián para el panel de Colaborador
+const colaboradorGuard: CanActivateFn = () => {
     const router = inject(Router);
     const token = localStorage.getItem('token');
     if (!token) {
@@ -46,7 +60,7 @@ export const routes: Routes = [
     },
     {
         path: 'administrador',
-        canActivate: [authGuard],
+        canActivate: [adminGuard],
         loadComponent: () => import('./administrador/administrador').then(m => m.AdministradorComponent),
         children: [
             {
@@ -97,16 +111,12 @@ export const routes: Routes = [
                 path: '',
                 redirectTo: '/administrador/dashboard',
                 pathMatch: 'full'
-            },
-            {
-                path: 'programa-servicio',
-                loadComponent: () => import('./reservas/Programa-servicio/Programa-servicio').then(m => m.ProgramaServicioComponent)
-            },
+            }
         ]
     },
     {
         path: 'colaborador',
-        canActivate: [authGuard],
+        canActivate: [colaboradorGuard],
         loadComponent: () => import('./colaborador/colaborador').then(m => m.ColaboradorComponent),
         children: [
             {

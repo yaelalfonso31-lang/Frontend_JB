@@ -24,7 +24,7 @@
         <i class="bi bi-check-circle"></i> Activos
       </button>
       <button class="filter-btn" [class.active]="filterEstado() === 'inactivo'" (click)="onFilterEstado('inactivo')">
-        <i class="bi bi-Pause-circle"></i> Inactivos
+        <i class="bi bi-pause-circle"></i> Inactivos
       </button>
     </div>
   </div>
@@ -81,6 +81,88 @@
     <div class="no-results">
       <i class="bi bi-people"></i>
       <p>No se encontraron colaboradores con los criterios actuales</p>
+    </div>
+    }
+  </div>
+
+  <!-- =====================================================================
+       NUEVA SECCIÓN: DISTRIBUCIÓN Y ASIGNACIÓN DE SOLICITUDES
+       ===================================================================== -->
+  <div class="header-section" style="margin-top: 3rem;">
+    <div>
+      <h2><i class="bi bi-person-check-fill"></i> Distribución y Asignación de Solicitudes</h2>
+      <p>
+        Las nuevas solicitudes se asignan automáticamente a un colaborador activo al recibirse.
+        Desde aquí puedes consultar quién atiende cada visita o reasignarla manualmente sin necesidad de aprobarla primero.
+      </p>
+    </div>
+  </div>
+
+  <div class="controls">
+    <div class="search-box">
+      <i class="bi bi-search search-icon"></i>
+      <input type="text" placeholder="Buscar solicitud por folio, escuela o colaborador asignado..."
+        (input)="onSearchSolicitud($any($event.target).value)" class="search-input" />
+    </div>
+  </div>
+
+  <div class="table-container">
+    <table class="colaboradores-table">
+      <thead>
+        <tr>
+          <th>Folio</th>
+          <th>Escuela / Institución</th>
+          <th>Fecha de Visita</th>
+          <th>Visitantes</th>
+          <th>Estado Solicitud</th>
+          <th>Colaborador Asignado</th>
+          <th>Asignar / Reasignar Manualmente</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (sol of filteredSolicitudes(); track sol.id) {
+        <tr>
+          <td><strong>{{ sol.folio }}</strong></td>
+          <td>{{ sol.nombre_escuela }} <small class="text-muted">({{ sol.nivel_educativo | titlecase }})</small></td>
+          <td>{{ sol.fecha_visita }} {{ sol.hora_visita || '' }}</td>
+          <td>{{ sol.total_personas }} personas</td>
+          <td>
+            <span class="status-badge"
+              [class.status-activo]="sol.estado === 'Confirmada' || sol.estado === 'Anticipo_Pagado' || sol.estado === 'Pagada'"
+              [class.status-pendiente]="sol.estado === 'Pendiente' || sol.estado === 'Correccion'"
+              [class.status-inactivo]="sol.estado === 'Rechazada' || sol.estado === 'Cancelada'">
+              {{ sol.estado }}
+            </span>
+          </td>
+          <td>
+            @if (sol.colaborador_id) {
+              <strong><i class="bi bi-person-badge me-1"></i> {{ sol.colaborador_nombre }}</strong>
+            } @else {
+              <span class="text-danger fw-bold"><i class="bi bi-exclamation-circle me-1"></i> Sin asignar</span>
+            }
+          </td>
+          <td>
+            <select class="form-select form-select-sm"
+              [disabled]="guardandoAsignacionId() === sol.id"
+              [value]="sol.colaborador_id ?? ''"
+              (change)="asignarColaborador(sol.id, $any($event.target).value)">
+              <option value="">-- Sin asignar --</option>
+              @for (col of colaboradoresActivos(); track col.id) {
+                <option [value]="col.id" [selected]="col.id === sol.colaborador_id">
+                  {{ col.nombre }} ({{ col.cargo }})
+                </option>
+              }
+            </select>
+          </td>
+        </tr>
+        }
+      </tbody>
+    </table>
+
+    @if (filteredSolicitudes().length === 0) {
+    <div class="no-results">
+      <i class="bi bi-inbox"></i>
+      <p>No hay solicitudes registradas para mostrar</p>
     </div>
     }
   </div>
