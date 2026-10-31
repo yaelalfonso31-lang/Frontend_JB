@@ -1,4 +1,5 @@
 import { Component, ChangeDetectionStrategy, signal, inject, OnInit } from '@angular/core';
+import { ChecklistRegistryService } from '../checklists/checklist-registry.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
@@ -50,9 +51,28 @@ export class MonitorSolicitudes implements OnInit {
     this.cargarSolicitudes();
   }
 
+  private checklistRegistry = inject(ChecklistRegistryService);
+
   cargarSolicitudes() {
     this.http.get<Solicitud[]>('/api/monitor/solicitudes').subscribe({
-      next: (data) => this.solicitudes.set(data),
+      next: (data) => {
+        this.solicitudes.set(data);
+        for (const sol of data) {
+          const rawServices = sol.servicios ?? sol.services ?? [];
+          const servicios = Array.isArray(rawServices)
+            ? rawServices
+            : String(rawServices).split(',').map(s => s.trim()).filter(Boolean);
+
+          if (sol.folio && servicios.length && sol.estado !== 'rechazada') {
+            this.checklistRegistry.registerSubmittedRequest({
+              folio: sol.folio,
+              school: sol.solicitante || sol.escuela,
+              date: sol.fechaVisita,
+              services: servicios
+            });
+          }
+        }
+      },
       error: (err) => console.error('Error al cargar el monitor:', err)
     });
   }

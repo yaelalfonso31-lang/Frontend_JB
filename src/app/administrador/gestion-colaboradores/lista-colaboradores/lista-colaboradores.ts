@@ -24,6 +24,20 @@ interface ColaboradorForm {
   password?: string;
 }
 
+interface SolicitudAsignacion {
+  id: number;
+  folio: string;
+  nombre_escuela: string;
+  nivel_educativo: string;
+  fecha_visita: string;
+  hora_visita?: string;
+  total_personas: number;
+  estado: string;
+  colaborador_id: number | null;
+  colaborador_nombre: string;
+  fecha_registro: string;
+}
+
 @Component({
   selector: 'app-lista-colaboradores',
   standalone: true,
@@ -36,8 +50,12 @@ export class ListaColaboradoresComponent implements OnInit {
   private http = inject(HttpClient);
 
   colaboradores = signal<Colaborador[]>([]);
+  solicitudes = signal<SolicitudAsignacion[]>([]);
   searchTerm = signal('');
   filterEstado = signal<'todos' | 'activo' | 'inactivo'>('todos');
+  searchSolicitud = signal('');
+  guardandoAsignacionId = signal<number | null>(null);
+
   modalAbierto = signal(false);
   modoModal = signal<'create' | 'edit'>('create');
   colaboradorSeleccionado = signal<Colaborador | null>(null);
@@ -53,6 +71,7 @@ export class ListaColaboradoresComponent implements OnInit {
 
   ngOnInit(): void {
     this.cargarColaboradores();
+    this.cargarSolicitudes();
   }
 
   cargarColaboradores() {
@@ -61,6 +80,17 @@ export class ListaColaboradoresComponent implements OnInit {
       error: (err) => console.error('Error al cargar colaboradores:', err)
     });
   }
+
+  cargarSolicitudes() {
+    this.http.get<SolicitudAsignacion[]>('/api/solicitudes').subscribe({
+      next: (data) => this.solicitudes.set(data),
+      error: (err) => console.error('Error al cargar solicitudes para asignación:', err)
+    });
+  }
+
+  colaboradoresActivos = computed(() =>
+    this.colaboradores().filter(c => c.estado === 'activo')
+  );
 
   filteredColaboradores = computed(() => {
     return this.colaboradores().filter(col => {
@@ -76,8 +106,49 @@ export class ListaColaboradoresComponent implements OnInit {
     });
   });
 
+  filteredSolicitudes = computed(() => {
+    const term = this.searchSolicitud().toLowerCase().trim();
+    if (!term) return this.solicitudes();
+    return this.solicitudes().filter(s =>
+      (s.folio || '').toLowerCase().includes(term) ||
+      (s.nombre_escuela || '').toLowerCase().includes(term) ||
+      (s.colaborador_nombre || '').toLowerCase().includes(term)
+    );
+  });
+
+  asignarColaborador(solicitudId: number, valorSelect: string) {
+    const colaboradorId = valorSelect ? Number(valorSelect) : null;
+    this.guardandoAsignacionId.set(solicitudId);
+
+    this.http.put<{ colaborador_id: number | null; colaborador_nombre: string }>(
+      `/api/solicitudes/${solicitudId}/asignar`,
+      { colaborador_id: colaboradorId }
+    ).subscribe({
+      next: (res) => {
+        this.solicitudes.update(lista =>
+          lista.map(s =>
+            s.id === solicitudId
+              ? { ...s, colaborador_id: res.colaborador_id, colaborador_nombre: res.colaborador_nombre }
+              : s
+          )
+        );
+        this.guardandoAsignacionId.set(null);
+      },
+      error: (err) => {
+        console.error('Error al asignar colaborador:', err);
+        alert(err?.error?.detail || 'No se pudo asignar el colaborador.');
+        this.guardandoAsignacionId.set(null);
+        this.cargarSolicitudes();
+      }
+    });
+  }
+
   onSearch(value: string) {
     this.searchTerm.set(value);
+  }
+
+  onSearchSolicitud(value: string) {
+    this.searchSolicitud.set(value);
   }
 
   onFilterEstado(value: 'todos' | 'activo' | 'inactivo') {
@@ -142,6 +213,7 @@ export class ListaColaboradoresComponent implements OnInit {
       this.http.put(`/api/colaboradores/${colaboradorActual.id}`, payload).subscribe({
         next: () => {
           this.cargarColaboradores();
+          this.cargarSolicitudes();
           this.cerrarModal();
         },
         error: (err) => console.error('Error al actualizar colaborador:', err)
@@ -168,6 +240,7 @@ export class ListaColaboradoresComponent implements OnInit {
     this.http.delete(`/api/colaboradores/${id}`).subscribe({
       next: () => {
         this.colaboradores.set(this.colaboradores().filter(col => col.id !== id));
+        this.cargarSolicitudes();
       },
       error: (err) => console.error('Error al eliminar colaborador:', err)
     });
