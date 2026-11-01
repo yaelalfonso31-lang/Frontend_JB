@@ -56,7 +56,11 @@ export const routes: Routes = [
     },
     {
         path: 'encuesta-satisfaccion',
-        loadComponent: () => import('./auth/encuesta-satisfaccion/encuesta-satisfaccion').then(m => m.EncuestaSatisfaccionComponent)
+        loadComponent: () => import('./encuestas/encuesta-satisfaccion/encuesta-satisfaccion').then(m => m.EncuestaSatisfaccionComponent)
+    },
+    {
+        path: 'evaluacion-servicios',
+        loadComponent: () => import('./encuestas/evaluacion-servicios/evaluacion-servicios').then(m => m.EvaluacionServiciosComponent)
     },
     {
         path: 'administrador',

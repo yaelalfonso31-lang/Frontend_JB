@@ -1,0 +1,57 @@
+@import '../../../styles/panel-sistema.scss';
+
+.evaluacion-interno-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem clamp(1.25rem, 2.5vw, 2.5rem);
+}
+
+.sub-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text-main);
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+
+  i {
+    color: var(--accent-primary);
+  }
+}
+
+/* Grids Especializados */
+.indicador-comparativa-grid,
+.tiempos-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.25rem;
+}
+
+.card-indicador,
+.tiempo-box {
+  background-color: var(--bg-app);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  padding: 1.25rem;
+  transition: border-color 0.18s ease;
+
+  &:hover {
+    border-color: var(--border-input);
+  }
+}
+
+.card-indicador.reservado {
+  border-left: 4px solid #0284c7; // Azul para reservados
+}
+
+.card-indicador.recibido {
+  border-left: 4px solid var(--accent-primary); // Verde botánico para recibidos
+}
+
+@media (max-width: 768px) {
+  .indicador-comparativa-grid,
+  .tiempos-grid {
+    grid-template-columns: 1fr;
+  }
+}

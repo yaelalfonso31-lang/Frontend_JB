@@ -1,0 +1,157 @@
+<div class="evaluacion-interno-container">
+  
+  <!-- ENCABEZADO DE LA PÁGINA -->
+  <header class="header-section">
+    <div>
+      <p class="eyebrow">Área de Educación y Divulgación</p>
+      <h1>
+        <i class="fa-solid fa-clipboard-check"></i>
+        Evaluación Interna de Servicios
+      </h1>
+      <p class="page-description">Registro operativo, revisión de procedimientos e indicadores de asistencia.</p>
+    </div>
+    <div class="document-actions">
+      <div class="folio-field">
+        <label for="folioInput">FOLIO</label>
+        <input id="folioInput" type="text" [formControl]="form.controls.folio" placeholder="Ej. F-2026-001" readonly />
+      </div>
+      <button type="button" class="btn btn-primary" (click)="guardarEvaluacion()">
+        <i class="fa-solid fa-floppy-disk"></i> Guardar Registro
+      </button>
+    </div>
+  </header>
+
+  <form [formGroup]="form">
+    
+    <!-- SECCIÓN 1: DATOS GENERALES DEL SERVICIO -->
+    <section class="quick-actions mb-4">
+      <h2><i class="fa-solid fa-circle-info"></i> Datos del Servicio</h2>
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="fecha">Fecha <span>*</span></label>
+          <input id="fecha" type="date" formControlName="fecha" />
+        </div>
+
+        <div class="form-group">
+          <label for="nombreEscuela">Nombre de la Escuela / Institución <span>*</span></label>
+          <input id="nombreEscuela" type="text" formControlName="nombreEscuela" placeholder="Ej. Escuela Primaria Benito Juárez" />
+        </div>
+
+        <div class="form-group form-group-wide">
+          <label for="instructorRecorrido">Instructor(es) del Recorrido / Taller <span>*</span></label>
+          <input id="instructorRecorrido" type="text" formControlName="instructorRecorrido" placeholder="Nombre completo del instructor responsable" />
+        </div>
+      </div>
+    </section>
+
+    <!-- SECCIÓN 2: REVISIÓN DE LISTA DE PROCEDIMIENTOS -->
+    <section class="quick-actions mb-4">
+      <div class="section-header">
+        <h2><i class="fa-solid fa-list-check"></i> Revisión de Lista de Procedimientos</h2>
+        <span class="status-badge status-pendiente">(1 día antes del Servicio)</span>
+      </div>
+
+      <div class="form-grid mb-3">
+        <div class="form-group">
+          <label for="fechaRevision">Fecha de Revisión</label>
+          <input id="fechaRevision" type="date" formControlName="fechaRevision" />
+        </div>
+
+        <div class="form-group">
+          <label for="instructorRevision">Nombre y Firma del Instructor Responsable</label>
+          <input id="instructorRevision" type="text" formControlName="instructorRevision" placeholder="Nombre del instructor que verificó" />
+        </div>
+      </div>
+
+      <div class="form-group form-group-wide">
+        <label for="observaciones">Observaciones</label>
+        <textarea id="observaciones" rows="3" formControlName="observaciones" placeholder="Escriba las observaciones o eventualidades previas al servicio..."></textarea>
+      </div>
+    </section>
+
+    <!-- SECCIÓN 3: INDICADORES DE ASISTENCIA Y TIEMPOS -->
+    <section class="quick-actions">
+      <h2><i class="fa-solid fa-chart-column"></i> Indicadores del Servicio</h2>
+      
+      <!-- Comparativa de Asistencia -->
+      <div class="indicador-comparativa-grid mb-4">
+        
+        <!-- Reservados -->
+        <div class="card-indicador reservado">
+          <h3 class="sub-title"><i class="fa-solid fa-bookmark"></i> Estudiantes / Asistentes Reservados</h3>
+          <div class="form-group">
+            <label for="estudiantesReservados">Estudiantes Reservados</label>
+            <input id="estudiantesReservados" type="number" min="0" formControlName="estudiantesReservados" />
+          </div>
+          <div class="form-group">
+            <label for="maestrosReservados">Maestros / Docentes</label>
+            <input id="maestrosReservados" type="number" min="0" formControlName="maestrosReservados" />
+          </div>
+          <div class="form-group">
+            <label for="padresReservados">Padres de Familia</label>
+            <input id="padresReservados" type="number" min="0" formControlName="padresReservados" />
+          </div>
+        </div>
+
+        <!-- Recibidos -->
+        <div class="card-indicador recibido">
+          <h3 class="sub-title"><i class="fa-solid fa-users-check"></i> Estudiantes / Asistentes Recibidos</h3>
+          <div class="form-group">
+            <label for="estudiantesRecibidos">Estudiantes Recibidos</label>
+            <input id="estudiantesRecibidos" type="number" min="0" formControlName="estudiantesRecibidos" />
+          </div>
+          <div class="form-group">
+            <label for="maestrosRecibidos">Maestros / Docentes</label>
+            <input id="maestrosRecibidos" type="number" min="0" formControlName="maestrosRecibidos" />
+          </div>
+          <div class="form-group">
+            <label for="padresRecibidos">Padres de Familia</label>
+            <input id="padresRecibidos" type="number" min="0" formControlName="padresRecibidos" />
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Tiempos de Inicio y Término -->
+      <div class="tiempos-grid">
+        
+        <!-- Inicio -->
+        <div class="tiempo-box">
+          <h3 class="sub-title"><i class="fa-regular fa-clock"></i> TIEMPO DE INICIO</h3>
+          <div class="form-group">
+            <label for="horaInicio">Hora de Inicio</label>
+            <input id="horaInicio" type="time" formControlName="horaInicio" />
+          </div>
+          <div class="form-group">
+            <label for="retrasoInicio">Retraso (en minutos)</label>
+            <input id="retrasoInicio" type="number" min="0" formControlName="retrasoInicio" placeholder="0" />
+          </div>
+          <div class="form-group">
+            <label for="causaInicio">Causa del Retraso</label>
+            <input id="causaInicio" type="text" formControlName="causaInicio" placeholder="Tráfico, llegada tardía del autobús, etc." />
+          </div>
+        </div>
+
+        <!-- Término -->
+        <div class="tiempo-box">
+          <h3 class="sub-title"><i class="fa-solid fa-flag-checkered"></i> TIEMPO DE TÉRMINO</h3>
+          <div class="form-group">
+            <label for="horaTermino">Hora de Término</label>
+            <input id="horaTermino" type="time" formControlName="horaTermino" />
+          </div>
+          <div class="form-group">
+            <label for="retrasoTermino">Retraso (en minutos)</label>
+            <input id="retrasoTermino" type="number" min="0" formControlName="retrasoTermino" placeholder="0" />
+          </div>
+          <div class="form-group">
+            <label for="causaTermino">Causa del Retraso</label>
+            <input id="causaTermino" type="text" formControlName="causaTermino" placeholder="Preguntas extra, condiciones climáticas, etc." />
+          </div>
+        </div>
+
+      </div>
+
+    </section>
+
+  </form>
+</div>
