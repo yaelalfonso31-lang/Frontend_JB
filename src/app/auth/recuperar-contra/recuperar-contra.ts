@@ -27,6 +27,12 @@ export const passwordsMatchValidator: ValidatorFn = (
 ): ValidationErrors | null => {
   const pass = group.get('nuevaPassword')?.value;
   const confirm = group.get('confirmarPassword')?.value;
+
+  // Si ambos tienen valor y son exactamente iguales, no hay error
+  if (pass && confirm && pass === confirm) {
+    return null;
+  }
+
   return pass && confirm && pass === confirm ? null : { mismatch: true };
 };
 
@@ -215,8 +221,16 @@ export class RecuperarContraComponent implements OnInit, OnDestroy {
   }
 
   actualizarPassword(): void {
+    // 1. Marca todos los campos como tocados para activar los mensajes de error en el HTML
     if (this.step3Form.invalid) {
       this.step3Form.markAllAsTouched();
+      
+      // Si la falla es por falta de coincidencia
+      if (this.step3Form.errors?.['mismatch']) {
+        this.errorMessage.set('Las contraseñas ingresadas no coinciden. Por favor verifica ambos campos.');
+      } else {
+        this.errorMessage.set('Asegúrate de cumplir con los requisitos mínimos de la contraseña.');
+      }
       return;
     }
 

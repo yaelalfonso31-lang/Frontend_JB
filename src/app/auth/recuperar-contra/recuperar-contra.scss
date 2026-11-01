@@ -298,7 +298,7 @@
 
   &.is-invalid {
     border-color: #dc3545;
-    background-image: none;
+    background-image: none !important; //Quita el color rojo nativo de Bootstrap
 
     &:focus {
       box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.15);

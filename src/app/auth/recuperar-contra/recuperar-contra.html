@@ -319,7 +319,7 @@
               <input id="confirmarPassword" [type]="mostrarConfirm() ? 'text' : 'password'"
                 formControlName="confirmarPassword" class="form-control"
                 placeholder="Repite tu contraseña" autocomplete="new-password"
-                [class.is-invalid]="(step3Form.controls.confirmarPassword.touched && step3Form.controls.confirmarPassword.invalid) || (step3Form.errors?.['mismatch'] && step3Form.controls.confirmarPassword.touched)">
+                [class.is-invalid]="step3Form.controls.confirmarPassword.touched && (step3Form.controls.confirmarPassword.invalid || step3Form.hasError('mismatch'))">
               <button type="button" class="btn-toggle-password"
                 (click)="mostrarConfirm.set(!mostrarConfirm())"
                 [attr.aria-label]="mostrarConfirm() ? 'Ocultar contraseña' : 'Mostrar contraseña'">
@@ -343,7 +343,7 @@
             <button type="button" class="btn btn-outline-secondary" (click)="volverPaso(2)">
               <i class="fa-solid fa-arrow-left me-2"></i> Atrás
             </button>
-            <button type="submit" class="btn btn-siguiente" [disabled]="isLoading()">
+            <button type="submit" class="btn btn-siguiente" [disabled]="step3Form.invalid || isLoading()">
               @if (!isLoading()) {
               <span>
                 <i class="fa-solid fa-floppy-disk me-2"></i>
