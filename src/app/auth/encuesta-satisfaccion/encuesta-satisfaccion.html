@@ -72,13 +72,9 @@
 
         <div class="mb-4">
           <label for="contactos" class="form-label">3. ¿Cómo nos contactó?</label>
-          <select id="contactos" class="form-select" formControlName="comoContacto">
-            <option value="" disabled selected>Seleccione una opción</option>
-            <option value="redes">Redes Sociales / Sitio Web</option>
-            <option value="recomendacion">Recomendación de un conocido</option>
-            <option value="escuela">Institución Educativa</option>
-            <option value="otro">Otro medio</option>
-          </select>
+          <div class="mt-2">
+            <input type="text" class="form-control" formControlName="comoContacto">
+          </div>
         </div>
 
         <hr class="my-4">
@@ -120,13 +116,15 @@
           </div>
         </div>
 
+        <hr class="my-4">
+
         <!-- P5: EVALUACIÓN DEL CONTENIDO -->
         <div class="mb-4">
-          <h3 class="h6 mb-3">5. Evaluación del Contenido</h3>
+          <label class="form-label font-medium d-block mb-3">5. Evaluación del Contenido</label>
 
           <!-- Subcriterio A -->
           <div class="subcriterio-block mb-3">
-            <label class="form-label small">a) La calidad de la información contenida fue:</label>
+            <label class="form-label small">a) La calidad de la información contenida durante el recorrido fue:</label>
             @if (tipoServicioSeleccionado === 'visita_guiada') {
               <div class="escala-caritas-compacta">
                 @for (opcion of opcionesAtencion; track opcion.valor) {
@@ -220,7 +218,7 @@
 
           <!-- Subcriterio C -->
           <div class="subcriterio-block mb-3">
-            <label class="form-label small">c) Los materiales educativos utilizados fueron los adecuados:</label>
+            <label class="form-label small">c) Los materiales educativos utilizados para su servicio fueron los adecuados:</label>
             @if (tipoServicioSeleccionado === 'visita_guiada') {
               <div class="escala-caritas-compacta">
                 @for (opcion of opcionesAtencion; track opcion.valor) {
@@ -317,11 +315,11 @@
         <hr class="my-4">
 
         <!-- P6: SUBDIVISIONES DEL INSTRUCTOR -->
-        <h2 class="subtitulo">
-          @if (tipoServicioSeleccionado === 'visita_guiada') { Instructor de la Visita Guiada }
-          @if (tipoServicioSeleccionado === 'taller') { Instructor del Taller }
-          @if (tipoServicioSeleccionado === 'combinado') { Instructores (Visita Guiada / Taller) }
-        </h2>
+        <div class="form-label font-medium d-block mb-3">
+          @if (tipoServicioSeleccionado === 'visita_guiada') {6. Instructor de la Visita Guiada }
+          @if (tipoServicioSeleccionado === 'taller') {6. Instructor del Taller }
+          @if (tipoServicioSeleccionado === 'combinado') {6. Instructores (Visita Guiada / Taller) }
+        </div>
 
         <div class="mb-4">
           
@@ -467,6 +465,8 @@
           </div>
 
         </div>
+
+        <hr class="my-4">
 
         <!-- P7: Calificación General -->
         <div class="mb-4">
