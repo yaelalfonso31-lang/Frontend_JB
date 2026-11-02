@@ -1,87 +1,113 @@
-<div class="login-wrapper">
-    <!-- Capa oscura/verde para que el texto resalte sobre el fondo -->
-    <div class="overlay"></div>
+<main class="login-wrapper">
 
+    <!-- Lado izquierdo: identidad institucional sobre la foto del jardín -->
+    <section class="welcome-section">
+        <div class="logos-container">
+            <img ngSrc="assets/logoJB_BN.png" width="250" height="120" alt="Jardín Botánico BUAP" class="logo logo-jb"
+                priority>
+            <img ngSrc="assets/logoBUAP_BN.png" width="120" height="120" alt="BUAP" class="logo logo-buap" priority>
+        </div>
 
-    <div class="login-content">
-
-        <div class="welcome-section">
-            <div class="logos-container">
-                <img ngSrc="assets/logoJB_BN.png" width="230" height="100" alt="Logo Jardín Botánico"
-                    class="logo logo-jb" priority>
-                <img ngSrc="assets/logoBUAP_BN.png" width="100" height="100" alt="Logo BUAP" class="logo logo-buap"
-                    priority>
-            </div>
-            <h1>Bienvenido<br>al Sistema</h1>
+        <div class="welcome-text">
+            <h1>Plataforma de Servicios Educativos Escolares</h1>
             <p>
-                Plataforma operativa y de control de accesos del Jardín Botánico.
-                Ingresa tus credenciales para continuar al panel de administración.
+                <i class="bi bi-info-circle-fill me-1"></i> Plataforma operativa y de control de accesos.<br>
+                <i class="bi bi-person-check-fill me-1"></i> Ingresa con tu cuenta para continuar al panel de
+                administración.
             </p>
         </div>
 
-        <!-- Lado Derecho: Formulario -->
-        <div class="form-section">
-            <div class="login-card">
-                <h2>Iniciar sesión</h2>
+        <p class="university"><i class="bi bi-geo-alt-fill me-1"></i> Benemérita Universidad Autónoma de Puebla</p>
+    </section>
 
-                <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+    <!-- Lado derecho: formulario -->
+    <section class="form-section">
+        <div class="login-card">
+            <h2><i class="bi bi-door-open-fill me-2"></i>Iniciar sesión</h2>
 
-                    <div class="form-group">
-                        <label for="email">Correo Electrónico</label>
-                        <input id="email" type="email" formControlName="email" placeholder="ejemplo@botanico.com"
+            <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" novalidate>
+
+                <div class="form-group">
+                    <label for="email"><i class="bi bi-envelope-fill me-1"></i> Correo electrónico</label>
+                    <!-- Contenedor con ícono integrado -->
+                    <div class="input-icon-wrapper">
+                        <i class="bi bi-at input-icon"></i>
+                        <input id="email" type="email" formControlName="email" autocomplete="username"
+                            placeholder="ejemplo@botanico.com"
+                            [attr.aria-invalid]="loginForm.controls.email.invalid && loginForm.controls.email.touched"
+                            aria-describedby="email-error"
                             [class.is-invalid]="loginForm.controls.email.invalid && loginForm.controls.email.touched">
                     </div>
-
-                    <div class="form-group">
-                        <label for="password">Contraseña</label>
-                        <input id="password" type="password" formControlName="password" placeholder="••••••••"
-                            [class.is-invalid]="loginForm.controls.password.invalid && loginForm.controls.password.touched">
-                    </div>
-
-                    <div class="text-end mb-4">
-                        <button type="button" class="btn-link-clean" (click)="irARecuperarContra()">
-                            ¿Olvidaste tu contraseña?
-                        </button>
-                    </div>
-
-                    @if (errorMessage()) {
-                    <div class="alert alert-danger">
-                        {{ errorMessage() }}
-                    </div>
+                    @if (loginForm.controls.email.touched && loginForm.controls.email.invalid) {
+                    <p class="field-error" id="email-error">
+                        <i class="bi bi-exclamation-circle-fill me-1"></i>
+                        @if (loginForm.controls.email.hasError('required')) {
+                        Escribe tu correo electrónico.
+                        } @else {
+                        Revisa que el correo tenga el formato nombre&#64;dominio.com.
+                        }
+                    </p>
                     }
+                </div>
 
-                    <button type="submit" [disabled]="isLoading()" class="btn-submit">
-                        @if (!isLoading()) {
-                        <span>Ingresar ahora</span>
-                        }
-                        @if (isLoading()) {
-                        <span>Verificando...</span>
-                        }
+                <div class="form-group">
+                    <label for="password"><i class="bi bi-lock-fill me-1"></i> Contraseña</label>
+                    <div class="input-icon-wrapper password-field">
+                        <i class="bi bi-key-fill input-icon"></i>
+                        <input id="password" [type]="showPassword() ? 'text' : 'password'" formControlName="password"
+                            autocomplete="current-password" placeholder="••••••••"
+                            [attr.aria-invalid]="loginForm.controls.password.invalid && loginForm.controls.password.touched"
+                            aria-describedby="password-error"
+                            [class.is-invalid]="loginForm.controls.password.invalid && loginForm.controls.password.touched">
+                        <button type="button" class="toggle-password" (click)="togglePassword()"
+                            [attr.aria-label]="showPassword() ? 'Ocultar contraseña' : 'Mostrar contraseña'"
+                            [attr.aria-pressed]="showPassword()">
+                            <!-- Ícono de ojo reemplazado por Bootstrap Icons -->
+                            @if (!showPassword()) {
+                            <i class="bi bi-eye-slash-fill"></i>
+                            } @else {
+                            <i class="bi bi-eye-fill"></i>
+                            }
+                        </button>
+                    </div>
+                    @if (loginForm.controls.password.touched && loginForm.controls.password.invalid) {
+                    <p class="field-error" id="password-error"><i class="bi bi-exclamation-circle-fill me-1"></i>
+                        Escribe tu contraseña.</p>
+                    }
+                </div>
+
+                <div class="form-extras">
+                    <button type="button" class="btn-link-clean" (click)="irARecuperarContra()">
+                        <i class="bi bi-shield-lock-fill me-1"></i> ¿Olvidaste tu contraseña?
                     </button>
+                </div>
 
-                    <div class="guest-section">
-                        <div class="divider">
-                            <span>o</span>
-                        </div>
-                        <p>¿Eres una escuela interesada en visitarnos?</p>
-                        <button type="button" class="btn-secondary" (click)="irAlFormulario()">
-                            Llenar Solicitud de Visita
-                        </button>
-                    </div>
+                @if (errorMessage()) {
+                <div class="alert alert-danger d-flex align-items-center" role="alert">
+                    <i class="bi bi-exclamation-triangle-fill me-2 fs-5"></i>
+                    <div>{{ errorMessage() }}</div>
+                </div>
+                }
 
-                    <div class="guest-section">
-                        <div class="divider">
-                            <span>o</span>
-                        </div>
-                        <p>¿Eres un colaborador?, Crea tu cuenta aquí</p>
-                        <button type="button" class="btn-secondary" (click)="irARegistrarColaborador()">
-                            Crear Cuenta de Colaborador
-                        </button>
-                    </div>
+                <button type="submit" [disabled]="isLoading()" class="btn-submit">
+                    @if (!isLoading()) {
+                    <span><i class="bi bi-box-arrow-in-right me-2"></i> Ingresar</span>
+                    } @else {
+                    <span><span class="spinner-border spinner-border-sm me-2"></span> Verificando…</span>
+                    }
+                </button>
+            </form>
 
-                </form>
+            <div class="other-access">
+                <h3><i class="bi bi-question-circle-fill me-1"></i> ¿Aún no tienes cuenta?</h3>
+                <button type="button" class="btn-secondary" (click)="irAlFormulario()">
+                    <i class="bi bi-calendar2-check-fill me-2"></i> Solicitar visita escolar
+                </button>
+                <button type="button" class="btn-secondary" (click)="irARegistrarColaborador()">
+                    <i class="bi bi-person-vcard-fill me-2"></i> Registrarme como colaborador
+                </button>
             </div>
         </div>
+    </section>
 
-    </div>
-</div>
+</main>

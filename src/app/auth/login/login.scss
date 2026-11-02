@@ -1,318 +1,502 @@
-$primary-green: #2e7d32;
-$primary-hover: #1b5e20;
-$error-color: #ff5252;
+@import url('https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700&family=Source+Serif+4:opsz,wght@8..60,500;8..60,600&display=swap');
+
+// ── Paleta: follaje profundo, hoja, musgo y una nota de flor ──
+$forest-deep: #0b2219;
+$forest: #12372a;
+$leaf: #2e7d4f;
+$leaf-hover: #1f6340;
+$moss: #8fb573;
+$bloom: #d9a441;
+$panel: #f2fbeb;
+$ink: #1c2b24;
+$muted: #55665c;
+$line: #c6d4c8;
+$error: #b3261e;
+
+$font-display: 'Source Serif 4', Georgia, 'Times New Roman', serif;
+$font-body: 'Nunito Sans', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
+// Forma "hoja": esquinas opuestas redondeadas
+$leaf-radius: 1.4rem 0.35rem 1.4rem 0.35rem;
+
+:host {
+    display: block;
+}
 
 .login-wrapper {
     position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
     min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    /* El fondo ocupará toda la pantalla */
-    background: url('/assets/fondoJB.jpg') no-repeat center center fixed;
-    background-size: cover;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    color: #ffffff;
+    min-height: 100dvh;
+    background: $forest-deep;
+    font-family: $font-body;
+    color: $ink;
 }
 
-/* Filtro superpuesto para oscurecer y dar un tono verdoso al fondo */
-.overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(135deg, rgba(10, 30, 10, 0.85) 0%, rgba(20, 60, 20, 0.6) 100%);
-    z-index: 1;
-}
-
-.login-content {
-    position: relative;
-    z-index: 2;
-    display: flex;
-    flex-wrap: wrap;
-    width: 100%;
-    max-width: 1200px;
-    padding: 2rem;
-    gap: 4rem;
-}
-
-/* --- SECCIÓN IZQUIERDA --- */
+/* ───────── Lado izquierdo: foto + identidad ───────── */
 .welcome-section {
-    flex: 1;
-    min-width: 300px;
+    grid-column: 1 / -1;
+    grid-row: 1;
+    position: relative;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    /* Antes 3rem */
+    padding: clamp(1.5rem, 3vw, 2.5rem);
+    /* Reducido para evitar scroll */
+    padding-right: calc(46.5% + clamp(1.5rem, 3vw, 2.5rem));
+    color: #fff;
+    background:
+        linear-gradient(165deg, rgba($forest-deep, 0.92) 0%, rgba($forest, 0.74) 55%, rgba($forest, 0.5) 100%),
+        url('/assets/fondoJB.jpg') center / cover no-repeat;
 
     .logos-container {
         display: flex;
-        align-items: center; // alineación vertical centrada
-        gap: 1.5rem; // separación entre logos
-        margin-bottom: 2rem; // espacio debajo de los logos
-        flex-wrap: wrap; // por si el espacio es reducido en móvil
-
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1.5rem;
     }
 
     .logo {
-        height: auto;
-        object-fit: contain;
-        border-radius: 8px;
-        background: rgba(164, 155, 155, 0);
-        backdrop-filter: blur(8px);
-        -webkit-backdrop-filter: blur(8px);
-        border: 1px solid rgba(255, 255, 255, 0);
-        border-radius: 12px;
-        padding: 1rem 1.5rem;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
-
-    }
-
-    .logo-jb {
-        width: 230px;
+        display: block;
+        height: 4rem;
+        /* Ligeramente más pequeño */
+        width: auto;
         max-width: 100%;
-
+        object-fit: contain;
     }
 
     .logo-buap {
-        width: 230px;
-        max-width: 100%;
+        padding-left: 1.5rem;
+        border-left: 1px solid rgba(255, 255, 255, 0.35);
     }
 
+    .welcome-text {
+        max-width: 34rem;
+    }
 
     h1 {
-        font-size: 4rem;
-        font-weight: 800;
-        margin: 0 0 1rem 0;
-        line-height: 1.1;
-        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        margin: 0 0 0.8rem;
+        /* Reducido */
+        font-family: $font-display;
+        font-size: clamp(2rem, 4vw, 3.2rem);
+        /* Letra ajustada */
+        font-weight: 600;
+        line-height: 1.05;
+        letter-spacing: -0.015em;
     }
 
-    p {
-        font-size: 1.1rem;
-        line-height: 1.6;
-        max-width: 90%;
-        color: #e8f5e9;
-        text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+    .welcome-text p {
+        margin: 0;
+        font-size: 1rem;
+        /* Reducido */
+        line-height: 1.5;
+        color: #e3efe2;
+        max-width: 30rem;
+    }
+
+    .university {
+        margin: 0;
+        font-size: 0.85rem;
+        color: $moss;
+        letter-spacing: 0.01em;
     }
 }
 
-/* --- SECCIÓN DERECHA --- */
+/* ───────── Lado derecho: formulario ───────── */
 .form-section {
-    flex: 1;
-    min-width: 320px;
+    grid-column: 2;
+    grid-row: 1;
+    position: relative;
+    z-index: 2;
     display: flex;
-    justify-content: flex-end;
     align-items: center;
+    justify-content: center;
+    padding: clamp(1.5rem, 3vw, 2.5rem);
+    /* Reducido */
+    background: $panel;
+    border-radius: 3.5rem 0 0 3.5rem;
+    overflow: hidden;
+
+    &::after {
+        content: '';
+        position: absolute;
+        right: -3rem;
+        bottom: -3rem;
+        width: 20rem;
+        height: 20rem;
+        pointer-events: none;
+        opacity: 0.1;
+        background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200' fill='none' stroke='%232e7d4f' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M20 180C20 80 90 20 180 20c0 90-70 160-160 160Z'/%3E%3Cpath d='M20 180 150 50'/%3E%3Cpath d='M58 142c4-22 14-34 30-44M86 114c3-18 12-30 26-40M114 86c2-14 8-22 20-30M58 142c20-2 34 4 46 18M86 114c18 0 32 5 44 16M114 86c14 0 24 4 34 12'/%3E%3C/svg%3E") center / contain no-repeat;
+    }
 }
 
 .login-card {
-    /* Efecto Glassmorphism */
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    padding: 3rem;
-    border-radius: 16px;
+    position: relative;
+    z-index: 1;
     width: 100%;
-    max-width: 450px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    max-width: 25rem;
+    /* Ligeramente más angosto */
+    animation: card-in 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) both;
 
     h2 {
-        font-size: 2.2rem;
-        margin: 0 0 2rem 0;
-        font-weight: 700;
+        margin: 0 0 1.25rem;
+        /* Antes 2rem */
+        font-family: $font-display;
+        font-size: 1.8rem;
+        /* Antes 2.2rem */
+        font-weight: 600;
+        line-height: 1.1;
+        color: $forest;
     }
 }
 
+@keyframes card-in {
+    from {
+        opacity: 0;
+        transform: translateY(14px);
+    }
+
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+/* ───────── Campos ───────── */
+/* Reemplaza la sección del input dentro de .form-group con esto: */
 .form-group {
-    margin-bottom: 1.5rem;
+    margin-bottom: 0.9rem;
 
     label {
         display: block;
-        margin-bottom: 0.5rem;
-        font-size: 0.9rem;
-        color: #e0e0e0;
+        margin-bottom: 0.25rem;
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: $forest;
     }
 
-    input {
-        width: 100%;
-        padding: 0.9rem;
-        background: rgba(255, 255, 255, 0.9);
-        border: 2px solid transparent;
-        border-radius: 8px;
-        font-size: 1rem;
-        color: #333;
-        box-sizing: border-box;
-        transition: all 0.3s ease;
-
-        &:focus {
-            outline: none;
-            background: #ffffff;
-            border-color: $primary-green;
-            box-shadow: 0 0 0 4px rgba(46, 125, 50, 0.3);
-        }
-
-        &.is-invalid {
-            border-color: $error-color;
-        }
-    }
-}
-
-.form-options {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 2rem;
-    font-size: 0.9rem;
-
-    .remember-me {
+    /* NUEVA ESTRUCTURA PARA ICONOS DENTRO DEL INPUT */
+    .input-icon-wrapper {
+        position: relative;
         display: flex;
         align-items: center;
-        gap: 0.5rem;
-        cursor: pointer;
-    }
+        width: 100%;
 
-    .forgot-password {
-        color: #a5d6a7;
-        text-decoration: none;
-        transition: color 0.3s;
+        .input-icon {
+            position: absolute;
+            left: 1rem;
+            color: $leaf;
+            font-size: 1.15rem;
+            pointer-events: none;
+            /* Permite hacer clic a través del ícono */
+            z-index: 2;
+        }
 
-        &:hover {
-            color: #ffffff;
-            text-decoration: underline;
+        input {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 0.7rem 1rem 0.7rem 2.7rem;
+            /* Importante: 2.7rem de padding izquierdo para el ícono */
+            background: #fff;
+            border: 1.5px solid $line;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 0.95rem;
+            color: $ink;
+            transition: border-color 0.2s, box-shadow 0.2s;
+
+            &::placeholder {
+                color: #6b7a70;
+            }
+
+            &:hover {
+                border-color: $moss;
+            }
+
+            &:focus {
+                outline: none;
+                border-color: $leaf;
+                box-shadow: 0 0 0 4px rgba($leaf, 0.2);
+            }
+
+            &.is-invalid {
+                border-color: $error;
+
+                &:focus {
+                    box-shadow: 0 0 0 4px rgba($error, 0.15);
+                }
+            }
         }
     }
 }
 
-.btn-submit {
-    width: 100%;
-    padding: 1rem;
-    background-color: $primary-green;
-    color: white;
+.password-field {
+    position: relative;
+
+    input {
+        padding-right: 3rem;
+    }
+}
+
+.toggle-password {
+    position: absolute;
+    top: 50%;
+    right: 0.4rem;
+    transform: translateY(-50%);
+    display: grid;
+    place-items: center;
+    width: 2.4rem;
+    height: 2.4rem;
+    padding: 0;
+    background: transparent;
     border: none;
     border-radius: 8px;
-    font-size: 1.1rem;
-    font-weight: bold;
+    color: $muted;
     cursor: pointer;
-    transition: background-color 0.3s, transform 0.1s;
+    transition: color 0.2s, background-color 0.2s;
 
     &:hover {
-        background-color: $primary-hover;
+        color: $forest;
+        background: rgba($leaf, 0.1);
+    }
+
+    &:focus-visible {
+        outline: 3px solid $bloom;
+        outline-offset: 1px;
+    }
+}
+
+.toggle-password i {
+    font-size: 1.25rem;
+}
+
+.field-error {
+    margin: 0.4rem 0 0;
+    font-size: 0.85rem;
+    color: $error;
+}
+
+.form-extras {
+    display: flex;
+    justify-content: flex-end;
+    margin: -0.25rem 0 1.5rem;
+}
+
+.btn-link-clean {
+    padding: 0.15rem 0;
+    background: transparent;
+    border: none;
+    border-radius: 4px;
+    font-family: inherit;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: $leaf-hover;
+    text-decoration: underline;
+    text-decoration-color: transparent;
+    text-underline-offset: 3px;
+    cursor: pointer;
+    transition: text-decoration-color 0.2s, color 0.2s;
+
+    &:hover {
+        color: $forest;
+        text-decoration-color: currentColor;
+    }
+
+    &:focus-visible {
+        outline: 3px solid $bloom;
+        outline-offset: 2px;
+    }
+}
+
+/* ───────── Alerta de error ───────── */
+.alert {
+    margin-bottom: 1.25rem;
+    padding: 0.8rem 1rem;
+    border-radius: 8px;
+    font-size: 0.92rem;
+    line-height: 1.45;
+
+    &.alert-danger {
+        background: #fdecea;
+        border-left: 4px solid $error;
+        color: #7a1a14;
+    }
+}
+
+/* ───────── Botones ───────── */
+.btn-submit {
+    width: 100%;
+    padding: 0.8rem;
+    /* Antes 1rem */
+    background: $leaf;
+    color: #fff;
+    border: none;
+    border-radius: $leaf-radius;
+    font-family: inherit;
+    font-size: 0.95rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.1s;
+
+    &:hover {
+        background: $leaf-hover;
     }
 
     &:active {
-        transform: scale(0.98);
+        transform: scale(0.985);
+    }
+
+    &:focus-visible {
+        outline: 3px solid $bloom;
+        outline-offset: 3px;
     }
 
     &:disabled {
-        background-color: rgba(255, 255, 255, 0.3);
-        color: #ccc;
+        background: #9db8a6;
+        color: #fff;
         cursor: not-allowed;
+        transform: none;
     }
 }
 
-/* Adaptabilidad para móviles */
-@media (max-width: 768px) {
-    .login-content {
-        gap: 2rem;
-    }
-
-    .welcome-section {
-        text-align: center;
-        align-items: center;
-
-        h1 {
-            font-size: 2.5rem;
-        }
-    }
-
-    .form-section {
-        justify-content: center;
-    }
-}
-
-/* --- SECCIÓN DE VISITANTES (Botón a Formulario) --- */
-.guest-section {
+other-access {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    /* Antes 0.75rem */
     margin-top: 1.5rem;
-    text-align: center;
+    /* Antes 2rem */
+    padding-top: 1.25rem;
+    /* Antes 1.75rem */
+    border-top: 1px solid $line;
 
-    .divider {
-        display: flex;
-        align-items: center;
-        text-align: center;
-        margin-bottom: 1.5rem;
-        color: rgba(255, 255, 255, 0.5);
-
-        &::before,
-        &::after {
-            content: '';
-            flex: 1;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        &:not(:empty)::before {
-            margin-right: .5em;
-        }
-
-        &:not(:empty)::after {
-            margin-left: .5em;
-        }
-    }
-
-    p {
+    h3 {
+        margin: 0 0 0.25rem;
         font-size: 0.9rem;
-        color: #e8f5e9;
-        margin-bottom: 1rem;
+        font-weight: 600;
+        color: $muted;
     }
 }
 
 .btn-secondary {
     width: 100%;
-    padding: 0.9rem;
-    background-color: transparent;
-    color: white;
-    border: 2px solid $primary-green;
+    padding: 0.65rem 1rem;
+    /* Antes 0.8rem */
+    background: transparent;
+    color: $forest;
+    border: 1.5px solid $leaf;
     border-radius: 8px;
-    font-size: 1rem;
-    font-weight: 600;
+    font-family: inherit;
+    font-size: 0.9rem;
+    font-weight: 700;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: background-color 0.2s, border-color 0.2s, transform 0.1s;
 
     &:hover {
-        background-color: rgba(46, 125, 50, 0.2);
-        /* Fondo verde translúcido */
-        border-color: #a5d6a7;
+        background: rgba($leaf, 0.1);
+        border-color: $leaf-hover;
     }
 
     &:active {
-        transform: scale(0.98);
+        transform: scale(0.985);
+    }
+
+    &:focus-visible {
+        outline: 3px solid $bloom;
+        outline-offset: 2px;
     }
 }
 
-.style-title {
-    color: var(--secondary-green, #ffffffd2);
-}
-
-.btn-link-clean {
-    background: transparent;
-    border: none;
-    padding: 0;
-    color: #a5d6a7;
-    /* Verde más claro y brillante */
-    font-weight: 400;
-    font-size: 0.9rem;
-    cursor: pointer;
-    text-decoration: none;
-    transition: color 0.2s ease, text-decoration 0.2s ease;
-
-    &:hover {
-        color: #fafafa;
-        /* Verde intermedio al pasar el ratón */
-        text-decoration: underline;
+/* ───────── Tablet / móvil ───────── */
+@media (max-width: 900px) {
+    .login-wrapper {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+        min-height: 100dvh;
     }
 
-    &:focus {
-        outline: none;
+    .welcome-section {
+        flex: 0 0 auto;
+        padding: 2rem 1.5rem 3.5rem;
+        gap: 1.2rem;
+
+        .logos-container {
+            justify-content: center;
+        }
+
+        .welcome-text {
+            text-align: center;
+            margin: 0 auto;
+        }
+
+        .logo {
+            height: 3rem;
+        }
+
+        h1 {
+            font-size: 2.1rem;
+            margin-bottom: 0.5rem;
+            justify-content: center;
+            display: flex;
+        }
+
+        .welcome-text p {
+            font-size: 0.95rem;
+        }
+
+        .university {
+            display: none;
+        }
+    }
+
+    .form-section {
+        flex: 1 1 auto;
+        margin-top: -2rem;
+        /* Solapa el contenedor blanco sobre el fondo verde */
+        padding: 2.25rem 1.5rem 3rem;
+        align-items: flex-start;
+        border-radius: 2.5rem 2.5rem 0 0;
+        background: $panel;
+        box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15);
+        /* Sombra superior para separar del fondo */
+    }
+
+    .login-card {
+        max-width: 100%;
+        margin: 0 auto;
+
+        h2 {
+            font-size: 1.8rem;
+            margin-bottom: 1.25rem;
+            text-align: center;
+            justify-content: center;
+            display: flex;
+        }
+    }
+}
+
+@media (max-width: 480px) {
+    .welcome-section h1 {
+        font-size: 1.7rem;
+    }
+
+    .btn-submit,
+    .btn-secondary {
+        font-size: 0.9rem;
+        padding: 0.75rem 1rem;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .login-card {
+        animation: none;
+    }
+
+    * {
+        transition: none !important;
     }
 }
