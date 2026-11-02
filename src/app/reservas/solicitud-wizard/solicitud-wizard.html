@@ -69,8 +69,18 @@
                         <div class="input-group">
                             <span class="input-group-text"><i class="bi bi-bank"></i></span>
                             <input type="text" class="form-control" id="escuela" formControlName="escuela"
-                                placeholder="Ej. Preparatoria Benemérita">
+                                placeholder="Ejemplo: Escuela Secundaria Técnica No. 1"
+                                [class.is-invalid]="solicitudForm.controls.escuela.invalid && solicitudForm.controls.escuela.touched">
                         </div>
+                        @if (solicitudForm.controls.escuela.invalid && solicitudForm.controls.escuela.touched) {
+                        <div class="field-error">
+                            <i class="bi bi-exclamation-circle-fill me-1"></i>
+                            @if (solicitudForm.controls.escuela.errors?.['required']) { El nombre de la escuela es
+                            obligatorio. }
+                            @else if (solicitudForm.controls.escuela.errors?.['minlength']) { Mínimo 3 caracteres. }
+                            @else { Ingresa un nombre de escuela válido. }
+                        </div>
+                        }
                     </div>
 
                     <label class="form-label mb-3">
@@ -81,30 +91,63 @@
                             <div class="input-group">
                                 <span class="input-group-text"><i class="bi bi-signpost-split"></i></span>
                                 <input type="text" class="form-control" id="calle" formControlName="calle"
-                                    placeholder="Calle">
+                                    placeholder="Calle"
+                                    [class.is-invalid]="solicitudForm.controls.calle.invalid && solicitudForm.controls.calle.touched">
                             </div>
+                            @if (solicitudForm.controls.calle.invalid && solicitudForm.controls.calle.touched) {
+                            <div class="field-error">
+                                <i class="bi bi-exclamation-circle-fill me-1"></i>
+                                @if (solicitudForm.controls.calle.errors?.['required']) { La calle es obligatoria. }
+                                @else { Ingresa una calle válida. }
+                            </div>
+                            }
                         </div>
                         <div class="col-md-3">
                             <input type="text" class="form-control" id="num_ext" formControlName="num_ext"
-                                placeholder="N° Ext.">
+                                placeholder="N° Ext."
+                                [class.is-invalid]="solicitudForm.controls.num_ext.invalid && solicitudForm.controls.num_ext.touched">
+                            @if (solicitudForm.controls.num_ext.invalid && solicitudForm.controls.num_ext.touched) {
+                            <div class="field-error"><i class="bi bi-exclamation-circle-fill me-1"></i> N° exterior
+                                obligatorio.</div>
+                            }
                         </div>
                         <div class="col-md-3">
                             <input type="text" class="form-control" id="num_int" formControlName="num_int"
-                                placeholder="N° Int. (Opcional)">
+                                placeholder="N° Int. (Opcional)"
+                                [class.is-invalid]="solicitudForm.controls.num_int.invalid && solicitudForm.controls.num_int.touched">
+                            @if (solicitudForm.controls.num_int.invalid && solicitudForm.controls.num_int.touched) {
+                            <div class="field-error"><i class="bi bi-exclamation-circle-fill me-1"></i> N° interior
+                                obligatorio.</div>
+                            }
                         </div>
                         <div class="col-md-5">
                             <input type="text" class="form-control" id="colonia" formControlName="colonia"
-                                placeholder="Colonia">
+                                placeholder="Colonia"
+                                [class.is-invalid]="solicitudForm.controls.colonia.invalid && solicitudForm.controls.colonia.touched">
+                            @if (solicitudForm.controls.colonia.invalid && solicitudForm.controls.colonia.touched) {
+                            <div class="field-error"><i class="bi bi-exclamation-circle-fill me-1"></i> Colonia
+                                obligatoria.</div>
+                            }
                         </div>
                         <div class="col-md-3">
                             <div class="input-group">
                                 <span class="input-group-text"><i class="bi bi-mailbox"></i></span>
-                                <input type="text" class="form-control" id="cp" formControlName="cp" placeholder="C.P.">
+                                <input type="text" class="form-control" id="cp" formControlName="cp" placeholder="C.P."
+                                    [class.is-invalid]="solicitudForm.controls.cp.invalid && solicitudForm.controls.cp.touched">
+                                @if (solicitudForm.controls.cp.invalid && solicitudForm.controls.cp.touched) {
+                                <div class="field-error"><i class="bi bi-exclamation-circle-fill me-1"></i> Código
+                                    postal obligatorio.</div>
+                                }
                             </div>
                         </div>
                         <div class="col-md-4">
                             <input type="text" class="form-control" id="municipio" formControlName="municipio"
-                                placeholder="Municipio">
+                                placeholder="Municipio"
+                                [class.is-invalid]="solicitudForm.controls.municipio.invalid && solicitudForm.controls.municipio.touched">
+                            @if (solicitudForm.controls.municipio.invalid && solicitudForm.controls.municipio.touched) {
+                            <div class="field-error"><i class="bi bi-exclamation-circle-fill me-1"></i> Municipio
+                                obligatorio.</div>
+                            }
                         </div>
                     </div>
                 </div>
@@ -125,20 +168,30 @@
                             </label>
                             <div formArrayName="profesores">
                                 @for (prof of profesores.controls; track $index) {
-                                <div class="input-group mb-2 shadow-sm">
-                                    <span class="input-group-text"><i class="bi bi-person"></i></span>
-                                    <input type="text" class="form-control" [formControlName]="$index"
-                                        placeholder="Nombre completo">
-                                    @if ($first) {
-                                    <button type="button" class="btn btn-outline-success"
-                                        (click)="agregarCampo('profesor')">
-                                        <i class="bi bi-plus-lg"></i> Agregar
-                                    </button>
-                                    } @else {
-                                    <button type="button" class="btn btn-outline-danger px-3"
-                                        (click)="eliminarCampo('profesor', $index)">
-                                        <i class="bi bi-trash-fill"></i>
-                                    </button>
+                                <div class="mb-2">
+                                    <div class="input-group shadow-sm">
+                                        <span class="input-group-text"><i class="bi bi-person"></i></span>
+                                        <input type="text" class="form-control" [formControlName]="$index"
+                                            placeholder="Nombre completo"
+                                            [class.is-invalid]="prof.invalid && prof.touched">
+                                        @if ($first) {
+                                        <button type="button" class="btn btn-outline-success"
+                                            (click)="agregarCampo('profesor')">
+                                            <i class="bi bi-plus-lg"></i> Agregar
+                                        </button>
+                                        } @else {
+                                        <button type="button" class="btn btn-outline-danger px-3"
+                                            (click)="eliminarCampo('profesor', $index)">
+                                            <i class="bi bi-trash-fill"></i>
+                                        </button>
+                                        }
+                                    </div>
+                                    @if (prof.invalid && prof.touched) {
+                                    <div class="field-error">
+                                        <i class="bi bi-exclamation-circle-fill me-1"></i>
+                                        @if (prof.errors?.['required']) { El nombre del profesor es obligatorio. }
+                                        @else { Ingresa un nombre válido (solo letras, mínimo 3 caracteres). }
+                                    </div>
                                     }
                                 </div>
                                 }
@@ -151,20 +204,30 @@
                             </label>
                             <div formArrayName="telefonos">
                                 @for (tel of telefonos.controls; track $index) {
-                                <div class="input-group mb-2 shadow-sm">
-                                    <span class="input-group-text"><i class="bi bi-phone"></i></span>
-                                    <input type="tel" class="form-control" [formControlName]="$index"
-                                        placeholder="10 dígitos">
-                                    @if ($first) {
-                                    <button type="button" class="btn btn-outline-success px-3"
-                                        (click)="agregarCampo('telefono')">
-                                        <i class="bi bi-plus-lg"></i>
-                                    </button>
-                                    } @else {
-                                    <button type="button" class="btn btn-outline-danger px-3"
-                                        (click)="eliminarCampo('telefono', $index)">
-                                        <i class="bi bi-trash-fill"></i>
-                                    </button>
+                                <div class="mb-2">
+                                    <div class="input-group shadow-sm">
+                                        <span class="input-group-text"><i class="bi bi-phone"></i></span>
+                                        <input type="tel" class="form-control" [formControlName]="$index"
+                                            placeholder="10 dígitos" maxlength="10"
+                                            [class.is-invalid]="tel.invalid && tel.touched">
+                                        @if ($first) {
+                                        <button type="button" class="btn btn-outline-success px-3"
+                                            (click)="agregarCampo('telefono')">
+                                            <i class="bi bi-plus-lg"></i>
+                                        </button>
+                                        } @else {
+                                        <button type="button" class="btn btn-outline-danger px-3"
+                                            (click)="eliminarCampo('telefono', $index)">
+                                            <i class="bi bi-trash-fill"></i>
+                                        </button>
+                                        }
+                                    </div>
+                                    @if (tel.invalid && tel.touched) {
+                                    <div class="field-error">
+                                        <i class="bi bi-exclamation-circle-fill me-1"></i>
+                                        @if (tel.errors?.['required']) { El teléfono es obligatorio. }
+                                        @else { Ingresa un número válido de 10 dígitos. }
+                                    </div>
                                     }
                                 </div>
                                 }
@@ -179,20 +242,30 @@
                             </label>
                             <div formArrayName="correos">
                                 @for (correo of correos.controls; track $index) {
-                                <div class="input-group mb-2 shadow-sm">
-                                    <span class="input-group-text"><i class="bi bi-envelope"></i></span>
-                                    <input type="email" class="form-control" [formControlName]="$index"
-                                        placeholder="ejemplo@correo.com">
-                                    @if ($first) {
-                                    <button type="button" class="btn btn-outline-success px-3"
-                                        (click)="agregarCampo('correo')">
-                                        <i class="bi bi-plus-lg"></i>
-                                    </button>
-                                    } @else {
-                                    <button type="button" class="btn btn-outline-danger px-3"
-                                        (click)="eliminarCampo('correo', $index)">
-                                        <i class="bi bi-trash-fill"></i>
-                                    </button>
+                                <div class="mb-2">
+                                    <div class="input-group shadow-sm">
+                                        <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                                        <input type="email" class="form-control" [formControlName]="$index"
+                                            placeholder="ejemplo@correo.com"
+                                            [class.is-invalid]="correo.invalid && correo.touched">
+                                        @if ($first) {
+                                        <button type="button" class="btn btn-outline-success px-3"
+                                            (click)="agregarCampo('correo')">
+                                            <i class="bi bi-plus-lg"></i>
+                                        </button>
+                                        } @else {
+                                        <button type="button" class="btn btn-outline-danger px-3"
+                                            (click)="eliminarCampo('correo', $index)">
+                                            <i class="bi bi-trash-fill"></i>
+                                        </button>
+                                        }
+                                    </div>
+                                    @if (correo.invalid && correo.touched) {
+                                    <div class="field-error">
+                                        <i class="bi bi-exclamation-circle-fill me-1"></i>
+                                        @if (correo.errors?.['required']) { El correo es obligatorio. }
+                                        @else { Ingresa un correo electrónico válido. }
+                                    </div>
                                     }
                                 </div>
                                 }
@@ -212,6 +285,10 @@
                                 <option value="licenciatura">Licenciatura</option>
                                 <option value="otro">Otro</option>
                             </select>
+                            @if (solicitudForm.controls.nivel.invalid && solicitudForm.controls.nivel.touched) {
+                            <div class="field-error"><i class="bi bi-exclamation-circle-fill me-1"></i> Selecciona un
+                                nivel escolar.</div>
+                            }
                         </div>
 
                         <div class="col-md-4">
@@ -219,7 +296,12 @@
                                 <i class="bi bi-award me-1"></i> Grado o Carrera *
                             </label>
                             <input type="text" class="form-control shadow-sm" id="grado" formControlName="grado"
-                                placeholder="Ej. 3er Año / Biología">
+                                placeholder="Ej. 3er Año / Biología"
+                                [class.is-invalid]="solicitudForm.controls.grado.invalid && solicitudForm.controls.grado.touched">
+                            @if (solicitudForm.controls.grado.invalid && solicitudForm.controls.grado.touched) {
+                            <div class="field-error"><i class="bi bi-exclamation-circle-fill me-1"></i> El grado o
+                                carrera es obligatorio.</div>
+                            }
                         </div>
                     </div>
                 </div>
@@ -883,8 +965,13 @@
                                 <span class="input-group-text input-icon-white"><i class="bi bi-calendar3"></i></span>
                                 <input type="text" class="form-control input-white border-start-0" id="fecha"
                                     formControlName="fecha" #fechaInput placeholder="Seleccione una fecha..."
-                                    style="cursor: pointer;">
+                                    style="cursor: pointer;"
+                                    [class.is-invalid]="solicitudForm.controls.fecha.invalid && solicitudForm.controls.fecha.touched">
                             </div>
+                            @if (solicitudForm.controls.fecha.invalid && solicitudForm.controls.fecha.touched) {
+                            <div class="field-error"><i class="bi bi-exclamation-circle-fill me-1"></i> Selecciona una
+                                fecha para la visita.</div>
+                            }
                         </div>
                         <div class="col-md-6 mt-3 mt-md-0">
                             <label for="hora" class="form-label">
@@ -895,8 +982,13 @@
                                 <span class="input-group-text input-icon-white"><i
                                         class="bi bi-clock-history"></i></span>
                                 <input type="text" class="form-control input-white border-start-0" id="hora"
-                                    formControlName="hora" #horaInput placeholder="09:00" style="cursor: pointer;">
+                                    formControlName="hora" #horaInput placeholder="09:00" style="cursor: pointer;"
+                                    [class.is-invalid]="solicitudForm.controls.hora.invalid && solicitudForm.controls.hora.touched">
                             </div>
+                            @if (solicitudForm.controls.hora.invalid && solicitudForm.controls.hora.touched) {
+                            <div class="field-error"><i class="bi bi-exclamation-circle-fill me-1"></i> Selecciona un
+                                horario disponible.</div>
+                            }
                         </div>
                     </div>
 
@@ -906,28 +998,56 @@
                                 <i class="bi bi-collection me-1"></i> N° Grupos
                             </label>
                             <input type="number" class="form-control text-center" id="num_grupos"
-                                formControlName="num_grupos">
+                                formControlName="num_grupos" min="1" step="1" (keydown)="evitarNegativos($event)"
+                                (input)="sanitizarPositivo('num_grupos', 1)"
+                                [class.is-invalid]="solicitudForm.controls.num_grupos.invalid && solicitudForm.controls.num_grupos.touched">
+                            @if (solicitudForm.controls.num_grupos.invalid && solicitudForm.controls.num_grupos.touched)
+                            {
+                            <div class="field-error text-center"><i class="bi bi-exclamation-circle-fill me-1"></i>
+                                Mínimo 1 grupo.</div>
+                            }
                         </div>
                         <div class="col-6 col-md-3">
                             <label for="estudiantes_grupo" class="form-label form-label-secondary">
                                 <i class="bi bi-people me-1"></i> Alumnos/Grp
                             </label>
                             <input type="number" class="form-control text-center" id="estudiantes_grupo"
-                                formControlName="estudiantes_grupo">
+                                formControlName="estudiantes_grupo" min="1" step="1" (keydown)="evitarNegativos($event)"
+                                (input)="sanitizarPositivo('estudiantes_grupo', 1)"
+                                [class.is-invalid]="solicitudForm.controls.estudiantes_grupo.invalid && solicitudForm.controls.estudiantes_grupo.touched">
+                            @if (solicitudForm.controls.estudiantes_grupo.invalid &&
+                            solicitudForm.controls.estudiantes_grupo.touched) {
+                            <div class="field-error text-center"><i class="bi bi-exclamation-circle-fill me-1"></i>
+                                Mínimo 10 alumnos por grupo.</div>
+                            }
                         </div>
                         <div class="col-6 col-md-3">
                             <label for="num_maestros" class="form-label form-label-secondary">
                                 <i class="bi bi-person-video3 me-1"></i> Maestros
                             </label>
                             <input type="number" class="form-control text-center" id="num_maestros"
-                                formControlName="num_maestros">
+                                formControlName="num_maestros" min="0" step="1" (keydown)="evitarNegativos($event)"
+                                (input)="sanitizarPositivo('num_maestros', 0)"
+                                [class.is-invalid]="solicitudForm.controls.num_maestros.invalid && solicitudForm.controls.num_maestros.touched">
+                            @if (solicitudForm.controls.num_maestros.invalid &&
+                            solicitudForm.controls.num_maestros.touched) {
+                            <div class="field-error text-center"><i class="bi bi-exclamation-circle-fill me-1"></i>
+                                Mínimo 0 maestros.</div>
+                            }
                         </div>
                         <div class="col-6 col-md-3">
                             <label for="num_padres" class="form-label form-label-secondary">
                                 <i class="bi bi-person-hearts me-1"></i> Padres
                             </label>
                             <input type="number" class="form-control text-center" id="num_padres"
-                                formControlName="num_padres">
+                                formControlName="num_padres" min="0" step="1" (keydown)="evitarNegativos($event)"
+                                (input)="sanitizarPositivo('num_padres', 0)"
+                                [class.is-invalid]="solicitudForm.controls.num_padres.invalid && solicitudForm.controls.num_padres.touched">
+                            @if (solicitudForm.controls.num_padres.invalid && solicitudForm.controls.num_padres.touched)
+                            {
+                            <div class="field-error text-center"><i class="bi bi-exclamation-circle-fill me-1"></i>
+                                Mínimo 0 padres.</div>
+                            }
                         </div>
                     </div>
 
@@ -1196,22 +1316,21 @@
                     </div>
 
                     <div class="upload-box mb-4">
-                         <label for="comprobante" class="form-label fw-bold">
-                             <i class="bi bi-cloud-arrow-up-fill me-2" style="color: var(--color-primary-green);"></i>
-                             Adjuntar Ficha de Depósito (50% de anticipo) *
-                         </label>
-                         <input type="file" id="comprobante" class="form-control form-control-lg"
-                             accept=".pdf,.jpg,.jpeg,.png"
-                             (change)="capturarArchivo($event)">
-                         @if (nombreArchivo()) {
-                             <div class="text-success fw-semibold small mt-2">
-                                 <i class="bi bi-check-circle-fill me-1"></i> Archivo listo: {{ nombreArchivo() }}
-                             </div>
-                         }
-                         <small class="form-hint d-block mt-1">
-                             <i class="bi bi-info-circle me-1"></i>Formatos permitidos: PDF, JPG, PNG (máx. 15MB)
-                         </small>
-                     </div>
+                        <label for="comprobante" class="form-label fw-bold">
+                            <i class="bi bi-cloud-arrow-up-fill me-2" style="color: var(--color-primary-green);"></i>
+                            Adjuntar Ficha de Depósito (50% de anticipo) *
+                        </label>
+                        <input type="file" id="comprobante" class="form-control form-control-lg"
+                            accept=".pdf,.jpg,.jpeg,.png" (change)="capturarArchivo($event)">
+                        @if (nombreArchivo()) {
+                        <div class="text-success fw-semibold small mt-2">
+                            <i class="bi bi-check-circle-fill me-1"></i> Archivo listo: {{ nombreArchivo() }}
+                        </div>
+                        }
+                        <small class="form-hint d-block mt-1">
+                            <i class="bi bi-info-circle me-1"></i>Formatos permitidos: PDF, JPG, PNG (máx. 15MB)
+                        </small>
+                    </div>
 
                     <fieldset>
                         <legend class="legend-secondary">Información que debe incluir en su reporte de pago</legend>
@@ -1221,26 +1340,41 @@
                                 <label for="titular" class="form-label">
                                     <i class="bi bi-person-vcard me-1"></i>Nombre del titular/Institución *
                                 </label>
-                                <input type="text" class="form-control" id="titular" formControlName="titular"
-                                    placeholder="Nombre completo o institución">
+                                <input type="text" class="form-control bg-light" id="titular" formControlName="titular"
+                                    placeholder="Nombre completo o institución" readonly
+                                    [class.is-invalid]="solicitudForm.controls.titular.invalid && solicitudForm.controls.titular.touched">
+                                <small class="form-hint">Recuperado automáticamente del nombre de la escuela.</small>
+                                @if (solicitudForm.controls.titular.invalid && solicitudForm.controls.titular.touched) {
+                                <div class="field-error"><i class="bi bi-exclamation-circle-fill me-1"></i> El nombre de
+                                    la institución es obligatorio.
+                                </div>
+                                }
                             </div>
                             <div class="col-md-6">
                                 <label for="monto" class="form-label">
-                                    <i class="bi bi-currency-dollar me-1"></i>Monto a pagar *
+                                    <i class="bi bi-currency-dollar me-1"></i>Monto a pagar (Anticipo 50%) *
                                 </label>
                                 <div class="input-group">
                                     <span class="input-group-text">$</span>
-                                    <input type="text" class="form-control" id="monto" formControlName="monto_pagar"
-                                        placeholder="350.00 MXN">
+                                    <input type="text" class="form-control bg-light fw-bold text-success" id="monto"
+                                        [value]="montoAnticipo().toFixed(2) + ' MXN'" readonly disabled
+                                        style="pointer-events: none; user-select: none;">
                                 </div>
-                                <small class="form-hint">Incluir moneda (ej. $350.00 MXN)</small>
+                                <small class="form-hint"><i class="bi bi-lock-fill me-1"></i>Monto calculado
+                                    automáticamente (no editable).</small>
                             </div>
                             <div class="col-12">
                                 <label for="concepto" class="form-label">
                                     <i class="bi bi-tag me-1"></i>Concepto del pago *
                                 </label>
                                 <input type="text" class="form-control" id="concepto" formControlName="concepto_pago"
-                                    placeholder="Ejemplo: 30 visitas guiadas - Grupo 3° Primaria">
+                                    placeholder="Ejemplo: 30 visitas guiadas - Grupo 3° Primaria"
+                                    [class.is-invalid]="solicitudForm.controls.concepto_pago.invalid && solicitudForm.controls.concepto_pago.touched">
+                                @if (solicitudForm.controls.concepto_pago.invalid &&
+                                solicitudForm.controls.concepto_pago.touched) {
+                                <div class="field-error"><i class="bi bi-exclamation-circle-fill me-1"></i> El concepto
+                                    de pago es obligatorio.</div>
+                                }
                             </div>
                         </div>
                     </fieldset>
@@ -1525,22 +1659,25 @@
                         aprovechamiento de su visita.</p>
                 </div>
 
-               <div class="d-flex justify-content-between mt-4">
-                    <button type="button" class="btn btn-outline-secondary btn-lg px-4" [disabled]="enviandoSolicitud()" (click)="irAPaso(4)">
+                <div class="d-flex justify-content-between mt-4">
+                    <button type="button" class="btn btn-outline-secondary btn-lg px-4" [disabled]="enviandoSolicitud()"
+                        (click)="irAPaso(4)">
                         <i class="bi bi-arrow-left me-2"></i> Anterior
                     </button>
                     <div class="d-flex gap-2">
-                        <button type="button" class="btn btn-outline-success btn-lg px-4" [disabled]="enviandoSolicitud()" (click)="irAPaso(1)">
+                        <button type="button" class="btn btn-outline-success btn-lg px-4"
+                            [disabled]="enviandoSolicitud()" (click)="irAPaso(1)">
                             <i class="bi bi-search me-2"></i> Revisar Datos
                         </button>
-                        <button type="button" class="btn btn-success btn-lg px-5" [disabled]="enviandoSolicitud()" (click)="enviarSolicitud()">
+                        <button type="button" class="btn btn-success btn-lg px-5" [disabled]="enviandoSolicitud()"
+                            (click)="irAPaso(6)">
                             @if (!enviandoSolicitud()) {
-                                <span><i class="bi bi-send-check-fill me-2"></i> Finalizar y Enviar</span>
+                            <span><i class="bi bi-send-check-fill me-2"></i> Finalizar y Enviar</span>
                             } @else {
-                                <span>
-                                    <span class="spinner-border spinner-border-sm me-2"></span>
-                                    Enviando...
-                                </span>
+                            <span>
+                                <span class="spinner-border spinner-border-sm me-2"></span>
+                                Enviando...
+                            </span>
                             }
                         </button>
                     </div>
