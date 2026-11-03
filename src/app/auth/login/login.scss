@@ -7,7 +7,7 @@ $leaf: #2e7d4f;
 $leaf-hover: #1f6340;
 $moss: #8fb573;
 $bloom: #d9a441;
-$panel: #f2fbeb;
+$panel: #effbeb;
 $ink: #1c2b24;
 $muted: #55665c;
 $line: #c6d4c8;
@@ -109,15 +109,19 @@ $leaf-radius: 1.4rem 0.35rem 1.4rem 0.35rem;
 .form-section {
     grid-column: 2;
     grid-row: 1;
+    margin: 1rem;
+    padding: 2rem 1.5rem;
+    width: 100%;
+    max-width: 550px;
+    justify-self: center;
+    max-height: 95vh;
     position: relative;
     z-index: 2;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: clamp(1.5rem, 3vw, 2.5rem);
-    /* Reducido */
     background: $panel;
-    border-radius: 3.5rem 0 0 3.5rem;
+    border-radius: $leaf-radius;
     overflow: hidden;
 
     &::after {
@@ -166,7 +170,6 @@ $leaf-radius: 1.4rem 0.35rem 1.4rem 0.35rem;
 }
 
 /* ───────── Campos ───────── */
-/* Reemplaza la sección del input dentro de .form-group con esto: */
 .form-group {
     margin-bottom: 0.9rem;
 
@@ -330,7 +333,6 @@ $leaf-radius: 1.4rem 0.35rem 1.4rem 0.35rem;
 .btn-submit {
     width: 100%;
     padding: 0.8rem;
-    /* Antes 1rem */
     background: $leaf;
     color: #fff;
     border: none;
@@ -455,14 +457,18 @@ other-access {
 
     .form-section {
         flex: 1 1 auto;
-        margin-top: -2rem;
-        /* Solapa el contenedor blanco sobre el fondo verde */
+        margin: 2rem;
         padding: 2.25rem 1.5rem 3rem;
         align-items: flex-start;
-        border-radius: 2.5rem 2.5rem 0 0;
+        border-radius: $leaf-radius;
+
+        width: 90%;
+        max-width: 500px;
+        align-self: center;
+
+        min-height: 50dvh;
         background: $panel;
         box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15);
-        /* Sombra superior para separar del fondo */
     }
 
     .login-card {
