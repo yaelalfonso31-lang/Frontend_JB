@@ -1,4 +1,4 @@
-@import '../../styles/panel-sistema.scss';
+@import '../../../styles/panel-sistema.scss';
 
 .reglamento-container {
   max-width: 1200px;
@@ -13,8 +13,8 @@
   gap: 1rem;
   padding: 1rem 1.25rem;
   background-color: var(--info-bg);
-  border: 1px solid #bae6fd;
-  border-left: 4px solid #0284c7;
+  border: 1px solid #bafdd0;
+  border-left: 4px solid #0ea700e7;
   border-radius: var(--radius-md);
   color: var(--info-text);
 
@@ -28,7 +28,7 @@
     line-height: 1.5;
 
     strong {
-      color: #0369a1;
+      color: #04912e;
     }
   }
 }

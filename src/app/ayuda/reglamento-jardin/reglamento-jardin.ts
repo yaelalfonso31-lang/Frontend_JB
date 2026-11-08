@@ -29,10 +29,11 @@ export class ReglamentoJardinComponent {
       icono: 'fa-solid fa-door-open',
       descripcion: 'Lineamientos para el ingreso y permanencia de visitantes en las instalaciones.',
       reglas: [
-        'Respetar los horarios de apertura y cierre oficiales del Jardín Botánico.',
-        'Registrarse en la recepción o punto de control antes de ingresar.',
-        'Los menores de edad deben permanecer bajo la supervisión constante de un adulto responsable.',
-        'Conservar el boleto o comprobante de acceso durante toda la estancia.'
+        'No se permite ingresar con: mascotas, bicicletas, balones, radios / grabadoras y bebidas alcohólicas.',
+        'Respeta al guía y / o facilitador.',
+        'Estimado profesor: para un mejor aprovechamiento de la visita le pedimos que acompañe a su grupo durante todas las actividades. Recuerde, el responsable del comportamiento adecuado de su grupo es usted.',
+        'Queda prohibido llevarse las etiquetas de las plantas',
+        'Por su seguridad no ingresar al lago'
       ]
     },
     {
@@ -41,10 +42,13 @@ export class ReglamentoJardinComponent {
       icono: 'fa-solid fa-leaf',
       descripcion: 'Medidas obligatorias para proteger el patrimonio biológico e investigaciones.',
       reglas: [
-        'Queda estrictamente prohibido cortar, maltratar, colectar o sustraer plantas, semillas o flores.',
-        'Caminar exclusivamente por los senderos y andadores autorizados.',
-        'Evitar trepar árboles, esculturas o estructuras de exhibición.',
-        'No introducir especies vegetales ni animales ajenos al ecosistema del jardín.'
+        'Queda prohibido llevarse semillas y / o partes de plantas.',
+        'Camina únicamente por los senderos de adoquín y los senderos secundarios que el guía les indique.',
+        'No se permite dañar las plantas (pisar, rayonear, arrancar flores, frutos u hojas).',
+        'No introducir especies vegetales ni animales ajenos al ecosistema del jardín.',
+        'Pescar, ni arrojar objetos al lago',
+        'Dar comida a las aves y otros animales silvestres',
+        'Hacer fogatas'
       ]
     },
     {
@@ -53,22 +57,19 @@ export class ReglamentoJardinComponent {
       icono: 'fa-solid fa-trash-can',
       descripcion: 'Mantener un entorno limpio y respetuoso para toda la comunidad universitaria.',
       reglas: [
-        'Depositar los residuos de forma clasificada en los contenedores correspondientes.',
-        'Mantener un volumen de voz moderado; prohibido el uso de bocinas o amplificadores de sonido.',
-        'Prohibido fumar, vapear o consumir bebidas alcohólicas dentro de las instalaciones.',
-        'No alimentar a la fauna silvestre presente en las áreas verdes.'
+        'No se permite hacer picnics',
+        'Por favor llévate tu basura o deposítala en los contenedores.',
+        'Prohibido fumar o vapear.'
       ]
     },
     {
       id: 'fotografia',
-      titulo: 'Fotografía, Drones y Eventos',
+      titulo: 'Fotografía',
       icono: 'fa-solid fa-camera',
       descripcion: 'Regulaciones para sesiones fotográficas comerciales y uso de dispositivos.',
       reglas: [
-        'La fotografía recreativa no comercial con smartphones está permitida libremente.',
-        'Las sesiones fotográficas profesionales (bodas, graduaciones, catálogos) requieren permiso previo.',
-        'El uso de drones está estrictamente sujeto a autorización por escrito de la dirección.',
-        'No obstruir senderos ni colocar tripies o estructuras que impidan el libre tránsito.'
+        'Queda prohibido tomar fotografías con fines comerciales.',
+        'El uso de drones está estrictamente sujeto a autorización por escrito de la dirección.'
       ]
     }
   ];
