@@ -25,4 +25,8 @@ export class InicioComponent {
   irALogin(): void {
     this.router.navigate(['/login']);
   }
+
+  irAReglamentoJardin(): void {
+    this.router.navigate(['/reglamento-jardin']);
+  }
 }
