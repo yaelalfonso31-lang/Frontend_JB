@@ -370,7 +370,8 @@ export class SolicitudWizardComponent implements OnInit, AfterViewInit {
             folio: respuesta.folio,
             school: formVal.escuela,
             date: formVal.fecha,
-            services: formVal.servicios
+            services: formVal.servicios,
+            status: 'pendiente'
           });
           this.irAPaso(6);
         },

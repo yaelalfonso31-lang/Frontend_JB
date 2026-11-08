@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, OnInit, signal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { RouterLink } from '@angular/router';
 import { downloadChecklistPdf } from '../checklists/checklist-pdf';
 import { ChecklistRegistryService } from '../checklists/checklist-registry.service';
 
@@ -32,6 +33,7 @@ const STORAGE_KEY = 'jbuap-checklist-visita-guiada-taller';
 @Component({
   selector: 'app-checklist-visita-taller',
   standalone: true,
+  imports: [RouterLink],
   templateUrl: './checklist-visita-taller.html',
   styleUrl: '../checklist-visita/checklist-visita.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -40,6 +42,10 @@ export class ChecklistVisitaTallerComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private registry = inject(ChecklistRegistryService);
   readonly folioInput = input<string>();
+  readonly currentPerformer = this.registry.currentPerformerName();
+  readonly statusVerifying = signal(true);
+  readonly approvedByServer = signal(false);
+  readonly statusVerificationError = signal('');
 
   readonly phases: ProcedurePhase[] = [
     {
@@ -111,6 +117,7 @@ export class ChecklistVisitaTallerComponent implements OnInit {
   readonly totalSteps = this.phases.reduce((total, phase) => total + phase.steps.length, 0);
   readonly completedSteps = computed(() => Object.values(this.checklist().steps).filter(step => step.completed).length);
   readonly progressPercent = computed(() => Math.round((this.completedSteps() / this.totalSteps) * 100));
+  readonly isLocked = computed(() => this.statusVerifying() || !this.approvedByServer());
   readonly currentPhase = computed(() =>
     this.phases.find(phase => phase.steps.some(step => !this.checklist().steps[step.id]?.completed))?.title
       ?? 'Servicio concluido'
@@ -119,6 +126,22 @@ export class ChecklistVisitaTallerComponent implements OnInit {
   ngOnInit(): void {
     const folio = this.folioInput() ?? this.route.snapshot.queryParamMap.get('folio') ?? localStorage.getItem(`${STORAGE_KEY}:active`) ?? '';
     this.checklist.set(this.loadState(folio));
+    if (!folio) {
+      this.statusVerifying.set(false);
+      return;
+    }
+
+    this.registry.refreshRequestStatus(folio).subscribe({
+      next: approved => {
+        this.approvedByServer.set(approved);
+        this.statusVerifying.set(false);
+      },
+      error: error => {
+        console.error('Error al verificar la aprobación del checklist:', error);
+        this.statusVerificationError.set('No se pudo verificar la solicitud. El checklist permanecerá bloqueado.');
+        this.statusVerifying.set(false);
+      }
+    });
   }
 
   updateFolio(folio: string): void {
@@ -138,8 +161,37 @@ export class ChecklistVisitaTallerComponent implements OnInit {
   }
 
   updateStep(id: string, changes: Partial<StepProgress>): void {
+    if (this.isLocked()) return;
     const state = this.checklist();
+    if (typeof changes.completed === 'boolean') {
+      changes = {
+        ...changes,
+        date: changes.completed ? this.today() : ''
+      };
+    }
     this.updateState({ steps: { ...state.steps, [id]: { ...state.steps[id], ...changes } } });
+  }
+
+  performerChoice(performer: string): string {
+    if (!performer) return '';
+    return performer === this.registry.currentPerformerName() ? 'current' : 'other';
+  }
+
+  selectPerformer(id: string, choice: string): void {
+    const performer = choice === 'current' ? this.registry.currentPerformerName() : '';
+    this.updateStep(id, { performer });
+  }
+
+  hasServiceRequestLink(description: string): boolean {
+    return description.includes('formato de solicitud de servicio');
+  }
+
+  descriptionBeforeServiceLink(description: string): string {
+    return description.split('formato de solicitud de servicio')[0];
+  }
+
+  descriptionAfterServiceLink(description: string): string {
+    return description.split('formato de solicitud de servicio')[1];
   }
 
   phaseCompleted(phase: ProcedurePhase): number {
@@ -154,6 +206,7 @@ export class ChecklistVisitaTallerComponent implements OnInit {
   }
 
   downloadPdf(): void {
+    if (this.isLocked()) return;
     downloadChecklistPdf('Visita Guiada + Taller', 'checklist-visita-guiada-taller', this.phases, this.checklist());
   }
 
@@ -161,6 +214,12 @@ export class ChecklistVisitaTallerComponent implements OnInit {
     const next = { ...this.checklist(), ...changes };
     this.checklist.set(next);
     this.persistState(next);
+  }
+
+  private today(): string {
+    const now = new Date();
+    const offset = now.getTimezoneOffset() * 60000;
+    return new Date(now.getTime() - offset).toISOString().slice(0, 10);
   }
 
   private persistState(state: ChecklistState): void {

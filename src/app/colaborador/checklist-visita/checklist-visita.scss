@@ -1,1 +1,27 @@
 @use '../../../styles/panel-sistema';
+
+.approval-notice {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  margin: 1rem 0;
+  padding: 0.9rem 1rem;
+  border: 1px solid var(--warning-bg);
+  border-radius: var(--radius-md);
+  background: var(--warning-bg);
+  color: var(--warning-text);
+  font-weight: 700;
+}
+
+.document-actions button:disabled,
+.procedure-table input:disabled,
+.procedure-table select:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
+.procedure-copy a {
+  color: var(--accent-hover);
+  font-weight: 700;
+  text-decoration: underline;
+}

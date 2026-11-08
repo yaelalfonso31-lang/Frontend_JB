@@ -1,4 +1,6 @@
-import { Injectable, signal } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Injectable, inject, signal } from '@angular/core';
+import { Observable, map } from 'rxjs';
 
 export type ChecklistKind = 'visita-guiada' | 'visita-guiada-taller' | 'visita-tematica';
 export type ChecklistStatus = 'Pendiente de inicio' | 'En proceso' | 'Concluido';
@@ -8,6 +10,7 @@ export interface SubmittedRequestChecklist {
   school: string;
   date: string;
   services: string[];
+  status: 'pendiente' | 'aprobada' | 'rechazada' | 'correccion';
 }
 
 export interface ChecklistSummary {
@@ -22,6 +25,7 @@ export interface ChecklistSummary {
   progressPercent: number;
   currentPhase: string;
   status: ChecklistStatus;
+  requestStatus: SubmittedRequestChecklist['status'];
 }
 
 interface ProcedureProgress {
@@ -41,6 +45,7 @@ interface ChecklistRecord {
   school: string;
   date: string;
   registeredAt: string;
+  requestStatus: SubmittedRequestChecklist['status'];
 }
 
 interface ChecklistConfiguration {
@@ -87,6 +92,7 @@ const CONFIGURATIONS: Record<ChecklistKind, ChecklistConfiguration> = {
 
 @Injectable({ providedIn: 'root' })
 export class ChecklistRegistryService {
+  private http = inject(HttpClient);
   readonly progressRevision = signal(0);
 
   notifyProgressChange(): void {
@@ -118,7 +124,8 @@ export class ChecklistRegistryService {
           folio,
           school: request.school,
           date: request.date,
-          registeredAt: new Date().toISOString()
+          registeredAt: new Date().toISOString(),
+          requestStatus: request.status
         };
 
         if (existingIndex >= 0) records[existingIndex] = { ...records[existingIndex], ...record };
@@ -142,6 +149,62 @@ export class ChecklistRegistryService {
     }
   }
 
+  isApproved(folio: string): boolean {
+    if (!folio) return false;
+    try {
+      const records = this.readRegistry().filter(record => record.folio === folio);
+      return records.length > 0 && records.every(record => record.requestStatus === 'aprobada');
+    } catch {
+      return false;
+    }
+  }
+
+  currentPerformerName(): string {
+    try {
+      return localStorage.getItem('usuarioNombre')?.trim()
+        || localStorage.getItem('usuarioCorreo')?.trim()
+        || '';
+    } catch {
+      return '';
+    }
+  }
+
+  refreshRequestStatus(folio: string): Observable<boolean> {
+    return this.http.get<Array<{
+      folio?: string;
+      solicitante?: string;
+      escuela?: string;
+      fechaVisita?: string;
+      servicios?: string[] | string;
+      services?: string[] | string;
+      estado?: string;
+    }>>('/api/monitor/solicitudes').pipe(
+      map(requests => {
+        const request = requests.find(item => item.folio === folio);
+        const status = request?.estado?.toLowerCase();
+        if (!request || !this.isRequestStatus(status)) return false;
+
+        const rawServices = request.servicios ?? request.services ?? [];
+        const services = Array.isArray(rawServices)
+          ? rawServices
+          : this.parseServices(rawServices);
+        if (services.length) {
+          this.registerSubmittedRequest({
+            folio,
+            school: request.solicitante || request.escuela || '',
+            date: request.fechaVisita || '',
+            services,
+            status
+          });
+        } else {
+          this.updateExistingStatus(folio, status);
+        }
+
+        return this.isApproved(folio);
+      })
+    );
+  }
+
   private resolveChecklistKinds(services: string[]): ChecklistKind[] {
     const selected = new Set(services);
     const hasVisit = selected.has('visita_guiada') || selected.has('visita_tematica');
@@ -154,6 +217,33 @@ export class ChecklistRegistryService {
     }
 
     return kinds;
+  }
+
+  private parseServices(services: string): string[] {
+    try {
+      const parsed: unknown = JSON.parse(services);
+      if (Array.isArray(parsed)) return parsed.filter((item): item is string => typeof item === 'string');
+    } catch {
+      return services.split(',').map(service => service.trim()).filter(Boolean);
+    }
+    return [];
+  }
+
+  private isRequestStatus(status: string | undefined): status is SubmittedRequestChecklist['status'] {
+    return status === 'pendiente' || status === 'aprobada' || status === 'rechazada' || status === 'correccion';
+  }
+
+  private updateExistingStatus(folio: string, status: SubmittedRequestChecklist['status']): void {
+    try {
+      const records = this.readRegistry();
+      const updated = records.map(record =>
+        record.folio === folio ? { ...record, requestStatus: status } : record
+      );
+      localStorage.setItem(REGISTRY_KEY, JSON.stringify(updated));
+      this.notifyProgressChange();
+    } catch {
+      // Si falla el almacenamiento local, el checklist permanece bloqueado por seguridad.
+    }
   }
 
   private readRegistry(): ChecklistRecord[] {
@@ -206,7 +296,8 @@ export class ChecklistRegistryService {
       totalSteps,
       progressPercent: Math.round((completedSteps / totalSteps) * 100),
       currentPhase,
-      status
+      status,
+      requestStatus: record.requestStatus
     };
   }
 

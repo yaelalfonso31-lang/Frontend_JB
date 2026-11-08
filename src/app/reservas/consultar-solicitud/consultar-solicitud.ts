@@ -15,6 +15,9 @@ export interface SolicitudVisita {
   estado: 'Pendiente' | 'En Revisión' | 'Aprobada' | 'Rechazada' | 'Requiere Corrección';
   mensajeCorreccion?: string;
   mensajeRechazo?: string;
+  comentarioEstado?: string;
+  comentario?: string;
+  motivo?: string;
 }
 
 @Component({

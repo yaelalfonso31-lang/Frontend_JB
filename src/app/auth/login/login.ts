@@ -51,6 +51,8 @@ export class LoginComponent {
       if (credenciales.email === 'colab@local.com' && credenciales.password === 'colab123') {
         this.isLoading.set(false);
         localStorage.setItem('usuarioRol', 'colaborador');
+        localStorage.setItem('usuarioNombre', 'Colaborador de prueba');
+        localStorage.setItem('usuarioCorreo', credenciales.email);
         localStorage.setItem('token', 'token-mock-colab');
         this.router.navigate(['/colaborador/dashboard']);
         return;
@@ -67,6 +69,8 @@ export class LoginComponent {
 
           // Guardamos un pequeño rastro en localStorage (opcional pero útil)
           localStorage.setItem('usuarioRol', rol);
+          localStorage.setItem('usuarioNombre', respuesta.usuario?.nombre || credenciales.email);
+          localStorage.setItem('usuarioCorreo', respuesta.usuario?.email || credenciales.email);
           localStorage.setItem('token', respuesta.token);
 
           // Redirigimos según el rol
