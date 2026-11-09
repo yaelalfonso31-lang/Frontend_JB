@@ -1,1 +1,71 @@
-<p>centro-ayuda works!</p>
+<div class="centro-ayuda-container">
+
+  <!-- ENCABEZADO PRINCIPAL -->
+  <header class="header-section">
+    <div>
+      <p class="eyebrow">Soporte e Información Institucional</p>
+      <h1>
+        <i class="fa-solid fa-life-ring"></i>
+        Centro de Ayuda
+      </h1>
+      <p class="page-description">
+        ¿En qué podemos ayudarte hoy? Encuentra guías de acceso, atención a dudas y canales directos de contacto.
+      </p>
+    </div>
+  </header>
+
+  <!-- SECCIÓN 1: ACCESOS RÁPIDOS A SECCIONES PRINCIPALES -->
+  <section class="mb-5">
+    <div class="section-title-wrap mb-3">
+      <h2><i class="fa-solid fa-compass me-2"></i>Temas Destacados</h2>
+      <p class="text-muted small mb-0">Selecciona una categoría para obtener la información necesaria.</p>
+    </div>
+
+    <div class="actions-grid categories-grid">
+      @for (cat of categorias(); track cat.titulo) {
+        <a [routerLink]="cat.ruta" class="action-btn category-card">
+          <div class="category-icon">
+            <i [class]="cat.icono"></i>
+          </div>
+          <div class="category-info">
+            <h3>{{ cat.titulo }}</h3>
+            <p>{{ cat.descripcion }}</p>
+          </div>
+          <i class="fa-solid fa-chevron-right arrow-icon"></i>
+        </a>
+      }
+    </div>
+  </section>
+
+  <!-- SECCIÓN 2: CANALES DIRECTOS DE ATENCIÓN -->
+  <section class="quick-actions">
+    <div class="section-title-wrap mb-4">
+      <h2><i class="fa-solid fa-headset me-2"></i>Canales Directos de Atención</h2>
+      <p class="text-muted small mb-0">Si necesitas orientación adicional, nuestro equipo está a tu disposición.</p>
+    </div>
+
+    <div class="channels-grid">
+      @for (canal of canalesContacto(); track canal.titulo) {
+        <div class="channel-card">
+          <div class="channel-header">
+            <div class="channel-icon">
+              <i [class]="canal.icono"></i>
+            </div>
+            <div>
+              <h3>{{ canal.titulo }}</h3>
+              <strong>{{ canal.detalle }}</strong>
+            </div>
+          </div>
+          <p class="channel-schedule">
+            <i class="fa-regular fa-clock me-1"></i>
+            {{ canal.horario }}
+          </p>
+          <a [href]="canal.accionHref" class="btn btn-secondary w-100" target="_blank" rel="noopener">
+            {{ canal.accionText }}
+          </a>
+        </div>
+      }
+    </div>
+  </section>
+
+</div>

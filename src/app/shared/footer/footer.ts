@@ -1,17 +1,17 @@
 import { Component, computed, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router'; 
+import { Router, RouterLink } from '@angular/router'; 
 
 @Component({
   selector: 'app-footer',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './footer.html',
   styleUrls: ['./footer.scss']
 })
 export class FooterComponent {
-  private router = inject(Router); // 👈 Inyectar Router
+  private router = inject(Router); // Inyectar Router
 
   /* ---------- Navegación ---------- */
   irAReglamentoJardin(): void {

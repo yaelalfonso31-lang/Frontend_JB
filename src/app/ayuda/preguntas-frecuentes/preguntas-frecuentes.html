@@ -1,1 +1,116 @@
-<p>preguntas-frecuentes works!</p>
+<div class="faq-container">
+
+  <!-- ENCABEZADO DE PÁGINA -->
+  <header class="header-section">
+    <div>
+      <h1>
+        <i class="fa-solid fa-circle-question"></i>
+        Preguntas Frecuentes
+      </h1>
+      <p class="page-description">
+        Encuentra respuestas rápidas sobre recorridos, talleres, horarios, accesos y normativas del Jardín Botánico.
+      </p>
+    </div>
+  </header>
+
+  <!-- FILTROS Y BÚSQUEDA -->
+  <div class="controls mb-4">
+    <div class="search-box">
+      <i class="fa-solid fa-magnifying-glass search-icon"></i>
+      <input 
+        type="text" 
+        class="search-input" 
+        placeholder="¿Qué estás buscando? (ej. horarios, talleres, costos)..."
+        [ngModel]="searchTerm()" 
+        (ngModelChange)="searchTerm.set($event)"
+      />
+    </div>
+
+    <div class="filter-tabs">
+      <button 
+        type="button" 
+        [class.active]="selectedCategory() === 'todas'"
+        (click)="selectedCategory.set('todas')"
+      >
+        Todas
+      </button>
+      <button 
+        type="button" 
+        [class.active]="selectedCategory() === 'visitas'"
+        (click)="selectedCategory.set('visitas')"
+      >
+        Visitas
+      </button>
+      <button 
+        type="button" 
+        [class.active]="selectedCategory() === 'costos'"
+        (click)="selectedCategory.set('costos')"
+      >
+        Costos
+      </button>
+      <button 
+        type="button" 
+        [class.active]="selectedCategory() === 'talleres'"
+        (click)="selectedCategory.set('talleres')"
+      >
+        Talleres
+      </button>
+      <button 
+        type="button" 
+        [class.active]="selectedCategory() === 'instalaciones'"
+        (click)="selectedCategory.set('instalaciones')"
+      >
+        Instalaciones
+      </button>
+    </div>
+  </div>
+
+  <!-- LISTADO ACCORDION DE PREGUNTAS -->
+  <div class="faq-list">
+    @for (faq of faqsFiltradas(); track faq.id) {
+      <div 
+        class="faq-item" 
+        [class.is-open]="openedFaqId() === faq.id"
+      >
+        <button 
+          type="button" 
+          class="faq-header" 
+          (click)="toggleFaq(faq.id)"
+          [attr.aria-expanded]="openedFaqId() === faq.id"
+        >
+          <span class="faq-question">
+            <i class="fa-regular fa-comment-dots me-2"></i>
+            {{ faq.pregunta }}
+          </span>
+          <i class="fa-solid fa-chevron-down faq-chevron"></i>
+        </button>
+
+        @if (openedFaqId() === faq.id) {
+          <div class="faq-body">
+            <p>{{ faq.respuesta }}</p>
+          </div>
+        }
+      </div>
+    } @empty {
+      <div class="empty-state">
+        <i class="fa-solid fa-folder-open"></i>
+        <p>No encontramos preguntas que coincidan con "<strong>{{ searchTerm() }}</strong>".</p>
+      </div>
+    }
+  </div>
+
+  <!-- TARJETA DE CONTACTO ADICIONAL -->
+  <div class="quick-actions contact-card mt-5">
+    <div class="contact-info">
+      <i class="fa-solid fa-headset contact-icon"></i>
+      <div>
+        <h2>¿No encontraste lo que buscabas?</h2>
+        <p>Nuestro equipo del Área de Educación y Divulgación está disponible para atenderte.</p>
+      </div>
+    </div>
+    <a href="mailto:jardin.botanico@correo.buap.mx" class="btn btn-primary">
+      <i class="fa-solid fa-envelope me-1"></i> Contáctanos
+    </a>
+  </div>
+
+</div>
