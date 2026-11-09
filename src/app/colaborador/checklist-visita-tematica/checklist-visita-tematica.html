@@ -18,13 +18,20 @@
             (change)="updateFolio($any($event.target).value)"
           />
         </label>
-        <button class="pdf-button" type="button" (click)="downloadPdf()">
+        <button class="pdf-button" type="button" [disabled]="isLocked()" (click)="downloadPdf()">
           <i class="bi bi-filetype-pdf" aria-hidden="true"></i>
           Descargar PDF
         </button>
       </div>
     </div>
   </header>
+
+  @if (isLocked()) {
+    <div class="approval-notice" role="status">
+      <i class="bi bi-lock-fill" aria-hidden="true"></i>
+      {{ statusVerificationError() || (statusVerifying() ? 'Verificando aprobación de la solicitud...' : 'Este checklist se habilitará cuando la solicitud esté aprobada.') }}
+    </div>
+  }
 
   <section class="progress-panel" aria-label="Avance del servicio">
     <div class="progress-heading">
@@ -84,12 +91,19 @@
                       type="checkbox"
                       [name]="step.id + '-completed'"
                       [checked]="checklist().steps[step.id].completed"
+                      [disabled]="isLocked()"
                       [attr.aria-label]="'Marcar como completado: ' + step.description"
                       (change)="updateStep(step.id, { completed: $any($event.target).checked })"
                     />
                     <span class="step-number">{{ stepIndex + 1 }}.</span>
                     <div class="procedure-copy">
-                      {{ step.description }}
+                      @if (hasServiceRequestLink(step.description)) {
+                        {{ descriptionBeforeServiceLink(step.description) }}
+                        <a routerLink="/colaborador/instalaciones">formato de solicitud de servicio</a>
+                        {{ descriptionAfterServiceLink(step.description) }}
+                      } @else {
+                        {{ step.description }}
+                      }
                       @if (step.details?.length) {
                         <ul class="procedure-details">
                           @for (detail of step.details; track detail) {
@@ -105,17 +119,32 @@
                     type="date"
                     [name]="step.id + '-date'"
                     [value]="checklist().steps[step.id].date"
+                    [disabled]="isLocked()"
                     [attr.aria-label]="'Fecha de: ' + step.description"
                     (change)="updateStep(step.id, { date: $any($event.target).value })"
                   />
                 </td>
                 <td class="performer-cell">
+                  <select
+                    [name]="step.id + '-performer'"
+                    [value]="performerChoice(checklist().steps[step.id].performer)"
+                    [disabled]="isLocked()"
+                    [attr.aria-label]="'Nombre o firma de quien realizó: ' + step.description"
+                    (change)="selectPerformer(step.id, $any($event.target).value)"
+                  >
+                    <option value="">Selecciona quién realizó</option>
+                    @if (currentPerformer) {
+                      <option value="current">{{ currentPerformer }} (mi usuario)</option>
+                    }
+                    <option value="other">Otro nombre</option>
+                  </select>
                   <input
                     type="text"
-                    [name]="step.id + '-performer'"
-                    [value]="checklist().steps[step.id].performer"
-                    [attr.aria-label]="'Nombre o firma de quien realizó: ' + step.description"
-                    placeholder="Nombre o firma"
+                    [name]="step.id + '-performer-custom'"
+                    [value]="checklist().steps[step.id].performer === currentPerformer ? '' : checklist().steps[step.id].performer"
+                    [disabled]="isLocked()"
+                    [attr.aria-label]="'Nombre de quien realizó: ' + step.description"
+                    placeholder="Escribe otro nombre"
                     (input)="updateStep(step.id, { performer: $any($event.target).value })"
                   />
                 </td>

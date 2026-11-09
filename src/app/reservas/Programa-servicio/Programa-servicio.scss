@@ -76,7 +76,55 @@
     td {
       vertical-align: middle;
     }
+
+    tbody tr:nth-child(even) {
+      background-color: var(--bg-app);
+    }
+
+    tbody td:first-child {
+      width: 18%;
+      background-color: var(--accent-soft);
+      color: var(--success-text);
+      font-weight: 700;
+    }
+
+    tbody td:nth-child(2) {
+      border-left: 2px solid var(--border-light);
+    }
   }
+}
+
+.form-container {
+  overflow: hidden;
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  background: var(--bg-surface);
+  box-shadow: var(--shadow-md) !important;
+}
+
+.encabezado-institucional {
+  background: var(--bg-app);
+}
+
+.section-card {
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  background: var(--bg-surface);
+  box-shadow: var(--shadow-sm);
+}
+
+.section-title {
+  color: var(--text-main);
+  border-bottom: 2px solid var(--border-light);
+}
+
+.section-title .step-badge {
+  background: var(--accent-soft);
+  color: var(--success-text);
+}
+
+.section-card .form-label {
+  color: var(--text-secondary) !important;
 }
 
 @media (max-width: 768px) {

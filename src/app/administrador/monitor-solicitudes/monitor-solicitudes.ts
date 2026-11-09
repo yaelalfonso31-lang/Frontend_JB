@@ -15,6 +15,9 @@ interface Solicitud {
   fechaVisita: string;
   horaVisita?: string;
   estado: 'pendiente' | 'aprobada' | 'rechazada';
+  comentarioEstado?: string;
+  mensajeCorreccion?: string;
+  mensajeRechazo?: string;
   numeroVisitantes: number;
   proposito: string;
   folio?: string;
@@ -56,6 +59,8 @@ export class MonitorSolicitudesComponent implements OnInit {
   filterEstado = signal<'todos' | 'aprobada' | 'pendiente' | 'rechazada'>('todos');
   filterEscuela = signal<string>('todos');
   checklistSeleccionada = signal<Solicitud | null>(null);
+  comentarioEstado = signal('');
+  errorComentario = signal('');
 
   ngOnInit(): void {
     this.cargarSolicitudes();
@@ -67,12 +72,13 @@ export class MonitorSolicitudesComponent implements OnInit {
         this.solicitudes.set(data);
         for (const solicitud of data) {
           const servicios = this.getServices(solicitud);
-          if (solicitud.folio && servicios.length && solicitud.estado !== 'rechazada') {
+          if (solicitud.folio && servicios.length) {
             this.checklistRegistry.registerSubmittedRequest({
               folio: solicitud.folio,
               school: solicitud.escuela || solicitud.solicitante,
               date: solicitud.fechaVisita,
-              services: servicios
+              services: servicios,
+              status: solicitud.estado
             });
           }
         }
@@ -112,10 +118,12 @@ export class MonitorSolicitudesComponent implements OnInit {
 
   abrirChecklist(solicitud: Solicitud): void {
     this.checklistSeleccionada.set(solicitud);
+    this.comentarioEstado.set('');
+    this.errorComentario.set('');
   }
 
   checklistRoute(solicitud: Solicitud): string | null {
-    if (!solicitud.folio) return null;
+    if (!solicitud.folio || solicitud.estado !== 'aprobada') return null;
 
     const services = this.getServices(solicitud);
     if (services.includes('visita_tematica')) return '/administrador/checklist-visita-tematica';
@@ -168,22 +176,53 @@ export class MonitorSolicitudesComponent implements OnInit {
 
   cerrarChecklist(): void {
     this.checklistSeleccionada.set(null);
+    this.comentarioEstado.set('');
+    this.errorComentario.set('');
   }
 
   cambiarEstado(nuevoEstado: 'aprobada' | 'pendiente' | 'rechazada'): void {
     const solicitudActual = this.checklistSeleccionada();
     if (!solicitudActual) return;
 
-    this.http.put(`/api/solicitudes/${solicitudActual.id}/estado`, { estado: nuevoEstado }).subscribe({
+    const comentario = this.comentarioEstado().trim();
+    if (!comentario) {
+      this.errorComentario.set('Escribe un comentario para informar a la persona solicitante.');
+      return;
+    }
+
+    this.http.put(`/api/solicitudes/${solicitudActual.id}/estado`, {
+      estado: nuevoEstado,
+      motivo: comentario
+    }).subscribe({
       next: () => {
         this.solicitudes.set(
           this.solicitudes().map((solicitud) =>
-            solicitud.id === solicitudActual.id ? { ...solicitud, estado: nuevoEstado } : solicitud
+            solicitud.id === solicitudActual.id
+              ? {
+                  ...solicitud,
+                  estado: nuevoEstado,
+                  comentarioEstado: comentario,
+                  mensajeCorreccion: nuevoEstado === 'pendiente' ? comentario : solicitud.mensajeCorreccion,
+                  mensajeRechazo: nuevoEstado === 'rechazada' ? comentario : solicitud.mensajeRechazo
+                }
+              : solicitud
           )
         );
+        this.checklistRegistry.registerSubmittedRequest({
+          folio: solicitudActual.folio ?? '',
+          school: solicitudActual.escuela || solicitudActual.solicitante,
+          date: solicitudActual.fechaVisita,
+          services: this.getServices(solicitudActual),
+          status: nuevoEstado
+        });
+        this.comentarioEstado.set('');
+        this.errorComentario.set('');
         this.cerrarChecklist();
       },
-      error: (err) => console.error('Error al actualizar estado de solicitud:', err)
+      error: (err) => {
+        console.error('Error al actualizar estado de solicitud:', err);
+        this.errorComentario.set('No se pudo actualizar la solicitud. Intenta nuevamente.');
+      }
     });
   }
 

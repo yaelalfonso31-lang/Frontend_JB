@@ -148,22 +148,20 @@
         </p>
         }
 
-        @if (mostrarCampoCorreccion()) {
         <div class="form-card" style="margin-top: 1rem;">
           <div class="form-group">
-            <label><i class="bi bi-chat-left-dots me-1"></i> Indicar motivo a la escuela:</label>
-            <textarea rows="3" placeholder="Ej: Faltan datos del profesor responsable..." [ngModel]="motivoCorreccion()"
-              (ngModelChange)="motivoCorreccion.set($event)"></textarea>
+            <label><i class="bi bi-chat-left-dots me-1"></i> Comentario para la persona solicitante:</label>
+            <textarea rows="3" placeholder="Indica el motivo o los detalles de esta decisión..." [ngModel]="motivoCorreccion()"
+              (ngModelChange)="motivoCorreccion.set($event); errorComentario.set('')"></textarea>
+            @if (errorComentario()) {
+              <p class="comment-error" role="alert">{{ errorComentario() }}</p>
+            }
           </div>
-          <button class="btn-primary" style="width: 100%;" (click)="cambiarEstado('correccion')">
-            <i class="bi bi-send"></i> Enviar Corrección
-          </button>
         </div>
-        }
       </div>
 
       <div class="modal-actions">
-        <button class="btn-warning" (click)="toggleCorreccion()">
+        <button class="btn-warning" (click)="cambiarEstado('correccion')">
           <i class="bi bi-exclamation-circle"></i> Solicitar Corrección
         </button>
         <button class="btn-danger" (click)="cambiarEstado('rechazada')">

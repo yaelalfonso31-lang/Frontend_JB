@@ -27,9 +27,12 @@ export class AprobacionColaboradoresComponent implements OnInit {
   solicitudes = signal<SolicitudColaborador[]>([]);
   selectedSolicitud = signal<SolicitudColaborador | null>(null);
   tabActiva = signal<'pendiente' | 'aprobado' | 'rechazado'>('pendiente');
+  tableroVaciado = signal(false);
 
   solicitudesFiltradas = computed(() =>
-    this.solicitudes().filter(s => s.estado === this.tabActiva())
+    this.tableroVaciado()
+      ? []
+      : this.solicitudes().filter(s => s.estado === this.tabActiva())
   );
 
   ngOnInit(): void {
@@ -45,6 +48,10 @@ export class AprobacionColaboradoresComponent implements OnInit {
 
   cambiarTab(tab: 'pendiente' | 'aprobado' | 'rechazado') {
     this.tabActiva.set(tab);
+  }
+
+  vaciarTablero(): void {
+    this.tableroVaciado.set(true);
   }
 
   selectSolicitud(solicitud: SolicitudColaborador) {
