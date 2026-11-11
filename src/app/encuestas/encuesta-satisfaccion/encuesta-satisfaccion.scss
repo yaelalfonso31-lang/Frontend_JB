@@ -1,150 +1,177 @@
 :host {
   display: block;
+  min-height: 100vh;
 }
 
-.style-selector-box {
-  background-color: #e8f8f5;
-  border: 1px solid #a3e4d7;
-}
-
-/* Fondo grisáceo unificado con el resto de pantallas */
-.recovery-wrapper {
+/* ==========================================================================
+   WRAPPER PRINCIPAL CON FONDO DE FOTO Y SUPERPOSICIÓN VERDE
+   ========================================================================== */
+.registration-wrapper {
+  position: relative;
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
   min-height: 100vh;
   padding: 3rem 1.5rem;
-  background-color: #f4f6f6;
-}
+  background-color: transparent;
+  z-index: 1;
 
-.form-container {
-  background: white;
-  border-radius: var(--border-radius, 12px);
-  border: 1px solid var(--border-color, #e0e0e0);
-  width: 100%;
-  max-width: 850px;
-  overflow: hidden;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-}
-
-.form-content {
-  padding: 3rem 4rem;
-}
-
-@media (max-width: 768px) {
-  .form-content {
-    padding: 2rem 1.5rem;
+  &::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: -1;
+    background-image:
+      linear-gradient(135deg,
+        rgba(87, 160, 118, 0.367) 0%,
+        rgba(115, 201, 96, 0.201) 100%),
+      url('/assets/fondo3.jpg');
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
   }
 }
 
+.form-container {
+  background: #fff;
+  border-radius: 12px;
+  border: 1px solid var(--color-border, #D5DBDB);
+  width: 100%;
+  max-width: 950px;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+}
+
+/* ==========================================================================
+   ENCABEZADO INSTITUCIONAL
+   ========================================================================== */
 .encabezado-institucional {
-  background: #d1e7de;
-  padding: 1.5rem 2rem;
-  border-radius: var(--border-radius, 8px) var(--border-radius, 8px) 0 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  background: linear-gradient(135deg,
+      var(--color-primary-green, #408558) 0%,
+      var(--color-accent-green, #1e8445) 100%);
+  padding: 1.75rem 2rem;
 
   .header-brand {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    width: 100%;
     gap: 1rem;
+    width: 100%;
 
-    .header-titles {
-      text-align: center;
-      h1 {
-        color: #408558;
-        font-size: 1.5rem;
-        font-weight: 700;
-        margin: 0;
-      }
-      p {
-        color: #145A32;
-        font-weight: 600;
-      }
+    h1 {
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      color: #ffffff;
+      font-size: 1.4rem;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+    }
+
+    .subtitulo-header {
+      color: var(--color-cream, #fdf3d1);
+      font-size: 0.95rem;
+      font-weight: 600;
+      display: block;
     }
 
     .logo-institucional {
       width: auto !important;
       height: 60px !important;
       object-fit: contain;
+      border-radius: 6px;
     }
   }
-
-  .badge-servicio {
-    background-color: #145A32;
-    color: white;
-    padding: 0.4rem 1rem;
-    font-size: 0.85rem;
-    border-radius: 20px;
-    letter-spacing: 1px;
-  }
 }
 
-.subtitulo {
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: var(--secondary-green, #145A32);
-  margin-bottom: 0.75rem;
-  padding-bottom: 0.5rem;
-  border-bottom: 2px solid #eaeded;
+/* ==========================================================================
+   CONTENIDO Y SECCIONES
+   ========================================================================== */
+.form-content {
+  padding: 2.5rem 3rem;
 }
 
-/* Escala de Calificación 1 a 5 */
-.escala-container {
+.section-card {
+  border: none;
+  padding: 0;
+  margin: 0;
+}
+
+.section-title {
   display: flex;
-  gap: 0.75rem;
-  margin-top: 0.5rem;
+  align-items: center;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--color-dark-green, #183524);
+  margin: 0 0 1.25rem;
+  padding-bottom: 0.6rem;
+  border-bottom: 2px solid #eaeded;
+  letter-spacing: 0.3px;
 
-  .escala-item {
-    cursor: pointer;
-    
-    input {
-      display: none; // Oculta el radio genérico
-    }
-
-    span {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 40px;
-      height: 40px;
-      border: 2px solid #dcdde1;
-      border-radius: 8px;
-      font-weight: 700;
-      color: #2f3640;
-      transition: all 0.2s ease;
-    }
-
-    input:checked + span {
-      background-color: #27ae60;
-      border-color: #27ae60;
-      color: white;
-      transform: scale(1.05);
-    }
-
-    &:hover span {
-      border-color: #27ae60;
-    }
+  i {
+    color: var(--color-primary-green, #408558);
   }
 }
 
-/* Botón Verde Institucional */
-.btn-siguiente {
-  background-color: #27ae60 !important;
-  border-color: #27ae60 !important;
-  color: #ffffff !important;
+.style-selector-box {
+  background-color: #f4f9f6;
+  border: 1px solid var(--color-pale-green, #d1e7de);
+}
+
+/* ==========================================================================
+   FORMULARIOS E INPUTS
+   ========================================================================== */
+.form-label {
   font-weight: 600;
+  color: var(--color-text-dark, #2C3E50);
+  font-size: 0.9rem;
+  margin-bottom: 0.4rem;
 
-  &:hover {
-    background-color: #1e8449 !important;
-    border-color: #1e8449 !important;
+  i {
+    color: var(--color-primary-green, #408558);
+  }
+
+  .req {
+    color: #dc3545;
+    font-weight: 700;
   }
 }
 
-/* Contenedor centrado y compacto */
+.form-control,
+.form-select,
+.input-group-text {
+  border: 1px solid var(--color-border, #D5DBDB);
+  border-radius: 4px;
+  padding: 0.65rem 1rem;
+  font-size: 0.95rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.input-group-text {
+  background-color: #f4f6f6;
+  color: var(--color-primary-green, #408558);
+  border-right: none;
+}
+
+.form-control,
+.form-select {
+  &:focus {
+    border-color: var(--color-primary-green, #408558);
+    box-shadow: 0 0 0 3px rgba(64, 133, 88, 0.15);
+    outline: none;
+  }
+}
+
+.form-check-input:checked {
+  background-color: var(--color-primary-green, #408558);
+  border-color: var(--color-primary-green, #408558);
+}
+
+/* ==========================================================================
+   ESCALA DE CARITAS DE SATISFACCIÓN
+   ========================================================================== */
 .escala-caritas-compacta {
   display: flex;
   justify-content: flex-start;
@@ -157,21 +184,18 @@
   position: relative;
   display: inline-flex;
 
-  /* Ocultar el radio nativo */
   .radio-oculto {
     position: absolute;
     opacity: 0;
     width: 0;
     height: 0;
 
-    /* ESTADO SELECCIONADO */
     &:checked + .carita-img {
-      filter: grayscale(0%) drop-shadow(0 4px 8px rgba(64, 133, 88, 0.35)); /* Cobra color completo + sombra sutil */
-      transform: scale(1.22); /* Se agranda ligeramente */
+      filter: grayscale(0%) drop-shadow(0 4px 8px rgba(64, 133, 88, 0.35));
+      transform: scale(1.22);
       opacity: 1;
     }
 
-    /* Accesibilidad con teclado */
     &:focus-visible + .carita-img {
       outline: 2px dashed var(--color-primary-green, #408558);
       outline-offset: 4px;
@@ -179,26 +203,23 @@
     }
   }
 
-  /* ESTADO INICIAL / NO SELECCIONADO */
   .carita-img {
     width: 30px;
     height: 30px;
     object-fit: contain;
     transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
-    filter: grayscale(100%); /* Descolorida / escala de grises */
-    opacity: 0.55; /* Ligeramente opaca */
+    filter: grayscale(100%);
+    opacity: 0.55;
 
     &:hover {
-      filter: grayscale(30%); /* Recupera un poco de color al pasar el mouse */
+      filter: grayscale(30%);
       opacity: 0.85;
       transform: scale(1.1);
     }
   }
 }
 
-/* ==========================================================================
-   LEYENDA EXPLICATIVA DE CARITAS
-   ========================================================================== */
+/* LEYENDA EXPLICATIVA DE CARITAS */
 .leyenda-escala {
   display: flex;
   align-items: center;
@@ -247,7 +268,54 @@
   }
 }
 
-/* Responsivo para pantallas pequeñas */
+/* ==========================================================================
+   BOTONES DE ACCIÓN (Unificados)
+   ========================================================================== */
+.btn-siguiente {
+  background-color: var(--color-primary-green, #408558) !important;
+  border-color: var(--color-primary-green, #408558) !important;
+  color: #ffffff !important;
+  font-weight: 600;
+  transition: all 0.2s ease-in-out;
+
+  &:hover, &:focus {
+    background-color: var(--color-dark-green, #183524) !important;
+    border-color: var(--color-dark-green, #183524) !important;
+    color: #ffffff !important;
+  }
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding-top: 1.25rem;
+  border-top: 1px solid #eaeded;
+  margin-top: 1rem;
+}
+
+/* ==========================================================================
+   RESPONSIVO
+   ========================================================================== */
+@media (max-width: 768px) {
+  .registration-wrapper {
+    padding: 1rem 0.75rem;
+  }
+
+  .form-content {
+    padding: 1.75rem 1.5rem;
+  }
+
+  .encabezado-institucional {
+    padding: 1.25rem 1.5rem;
+
+    .header-brand {
+      h1 { font-size: 1.1rem; }
+      .subtitulo-header { font-size: 0.85rem; }
+    }
+  }
+}
+
 @media (max-width: 576px) {
   .leyenda-escala {
     flex-direction: column;
@@ -261,14 +329,8 @@
     }
 
     .leyenda-item {
-      span {
-        font-size: 0.78rem;
-      }
-
-      .leyenda-img {
-        width: 22px;
-        height: 22px;
-      }
+      span { font-size: 0.78rem; }
+      .leyenda-img { width: 22px; height: 22px; }
     }
   }
 }
