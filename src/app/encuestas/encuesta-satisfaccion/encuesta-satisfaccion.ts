@@ -54,33 +54,55 @@ export class EncuestaSatisfaccionComponent {
 
   enviando = false;
 
+  readonly opcionesAtencion = [
+    { valor: 1, img: '/assets/caritas/mala.png', label: 'Mala' },
+    { valor: 2, img: '/assets/caritas/regular.png', label: 'Regular' },
+    { valor: 3, img: '/assets/caritas/buena.png', label: 'Buena' }
+  ];
+
   enviarEncuesta(): void {
     if (this.enviando) return;
 
-    if (this.encuestaForm.valid) {
-      this.enviando = true;
-      this.http.post('/api/encuestas', this.encuestaForm.getRawValue()).subscribe({
-        next: () => {
-          this.enviando = false;
-          alert('¡Muchas gracias! Tu encuesta ha sido registrada exitosamente.');
-          this.encuestaForm.reset({ tipoServicio: 'visita_guiada' });
-          this.router.navigate(['/inicio']);
-        },
-        error: (err) => {
-          this.enviando = false;
-          console.error('Error al guardar encuesta:', err);
-          alert('No se pudo enviar la encuesta. Por favor intenta de nuevo.');
-        }
-      });
-    } else {
+    if (this.encuestaForm.invalid) {
       this.encuestaForm.markAllAsTouched();
       alert('Por favor responde las preguntas obligatorias antes de enviar.');
+      return;
     }
-  }
 
-  readonly opcionesAtencion = [
-  { valor: 1, img: '/assets/caritas/mala.png', label: 'Mala' },
-  { valor: 2, img: '/assets/caritas/regular.png', label: 'Regular' },
-  { valor: 3, img: '/assets/caritas/buena.png', label: 'Buena' }
-];
+    this.enviando = true;
+    const formValues = this.encuestaForm.getRawValue();
+
+    // Mapeo adaptado para empatar con la estructura de la BD y FastAPI
+    const payload = {
+      tipo_servicio: formValues.tipoServicio,
+      nombre_taller: formValues.nombreTaller || null,
+      conocia_jardin: formValues.conociaJardin,
+      gusto_visita: formValues.gustoVisita,
+      porque_no_gusto: formValues.porqueNoGusto || null,
+      como_contacto: formValues.comoContacto,
+      atencion_recibida: formValues.atencionRecibida,
+      calificacion_general: formValues.calificacionGeneral,
+      cumplio_expectativas: formValues.cumplioExpectativas,
+      porque_no_expectativas: formValues.porqueNoExpectativas || null,
+      pidio_propina: formValues.pidioPropina,
+      comentarios: formValues.comentarios || null,
+      respuestas_detalle: formValues // Guarda el objeto JSON completo en Mariadb
+    };
+
+    // Petición HTTP a la ruta relativa enviada en el proxy /api/encuestas
+    this.http.post('/api/encuestas', payload).subscribe({
+      next: () => {
+        this.enviando = false;
+        alert('¡Muchas gracias! Tu encuesta ha sido registrada exitosamente.');
+        this.encuestaForm.reset({ tipoServicio: 'visita_guiada' });
+        this.router.navigate(['/inicio']);
+      },
+      error: (err) => {
+        this.enviando = false;
+        console.error('Error al guardar encuesta:', err);
+        const mensajeError = err?.error?.detail || 'No se pudo enviar la encuesta. Por favor intenta de nuevo.';
+        alert(mensajeError);
+      }
+    });
+  }
 }

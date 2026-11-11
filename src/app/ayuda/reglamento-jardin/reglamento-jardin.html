@@ -1,0 +1,118 @@
+<div class="reglamento-container">
+  
+  <!-- ENCABEZADO PRINCIPAL -->
+  <header class="header-section">
+    <div class="header-title-group">
+      <img src="assets/logo.jpg" alt="Logo Jardín Botánico" class="logo-jardin" priority />
+      <div>
+        <h1>
+          <i class="fa-solid fa-book-bookmark me-2"></i>
+          Código de Comportamiento del Jardín Botánico
+        </h1>
+        <p class="page-description">
+          Lineamientos obligatorios para la protección de las colecciones biológicas y la seguridad de los visitantes.
+        </p>
+      </div>
+    </div>
+    <div class="document-actions">
+      <button type="button" class="btn btn-secondary" (click)="imprimirReglamento()">
+        <i class="fa-solid fa-print me-1"></i> Imprimir / PDF
+      </button>
+    </div>
+  </header>
+
+  <!-- BANNER INFORMATIVO (VERDE BOTÁNICO) -->
+  <div class="banner-aviso mb-4">
+    <div class="banner-icon">
+      <i class="fa-solid fa-shield-halved"></i>
+    </div>
+    <div class="banner-text">
+      <strong>Estimado visitante,</strong>
+      El Jardín Botánico intenta ser un espacio de conexión entre la naturaleza y el ser humano, por favor ayúdanos a lograrlo, tomando en cuenta las indicaciones siguientes:
+    </div>
+  </div>
+
+  <!-- FILTROS Y BÚSQUEDA -->
+  <div class="controls mb-4">
+    <div class="search-box">
+      <i class="fa-solid fa-magnifying-glass search-icon"></i>
+      <input 
+        type="text" 
+        class="search-input" 
+        placeholder="Buscar norma o palabra clave (ej. fotografía, basura, plantas)..."
+        [ngModel]="searchTerm()" 
+        (ngModelChange)="searchTerm.set($event)"
+      />
+    </div>
+
+    <div class="filter-tabs">
+      <button 
+        type="button" 
+        [class.active]="selectedCategory() === 'todos'"
+        (click)="selectedCategory.set('todos')"
+      >
+        Todos
+      </button>
+      <button 
+        type="button" 
+        [class.active]="selectedCategory() === 'general'"
+        (click)="selectedCategory.set('general')"
+      >
+        Acceso
+      </button>
+      <button 
+        type="button" 
+        [class.active]="selectedCategory() === 'conservacion'"
+        (click)="selectedCategory.set('conservacion')"
+      >
+        Flora
+      </button>
+      <button 
+        type="button" 
+        [class.active]="selectedCategory() === 'limpieza'"
+        (click)="selectedCategory.set('limpieza')"
+      >
+        Convivencia
+      </button>
+      <button 
+        type="button" 
+        [class.active]="selectedCategory() === 'fotografia'"
+        (click)="selectedCategory.set('fotografia')"
+      >
+        Fotografía
+      </button>
+    </div>
+  </div>
+
+  <!-- LISTADO DE REGLAS -->
+  <div class="reglas-grid">
+    @for (cat of categoriasFiltradas(); track cat.id) {
+      <section class="quick-actions rule-card">
+        <div class="rule-card-header">
+          <div class="icon-wrap">
+            <i [class]="cat.icono"></i>
+          </div>
+          <div>
+            <h2>{{ cat.titulo }}</h2>
+            <p class="rule-subtitle">{{ cat.descripcion }}</p>
+          </div>
+        </div>
+
+        <ul class="rule-list">
+          @for (regla of cat.reglas; track $index) {
+            <li class="rule-item">
+              <i class="fa-solid fa-circle rule-dot"></i>
+              <span>{{ regla }}</span>
+            </li>
+          }
+        </ul>
+      </section>
+    } @empty {
+      <div class="empty-state">
+        <i class="fa-solid fa-file-circle-xmark"></i>
+        <p>No se encontraron normas que coincidan con "<strong>{{ searchTerm() }}</strong>".</p>
+      </div>
+    }
+  </div>
+
+</div>
