@@ -46,7 +46,7 @@ export class PreguntasFrecuentesComponent {
       id: 'faq-4',
       categoria: 'talleres',
       pregunta: '¿Qué tipo de talleres imparte el Jardín Botánico?',
-      respuesta: 'Impartimos los talleres de: Crea tu herbario, De fposiles y pkantas, Horticultura, entre otros.'
+      respuesta: 'Impartimos los talleres de: Crea tu herbario, De fósiles y plantas, Horticultura, entre otros.'
     },
     {
       id: 'faq-5',
