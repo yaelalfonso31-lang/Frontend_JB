@@ -1669,8 +1669,8 @@
                             [disabled]="enviandoSolicitud()" (click)="irAPaso(1)">
                             <i class="bi bi-search me-2"></i> Revisar Datos
                         </button>
-                        <button type="button" class="btn btn-success btn-lg px-5"
-                            [disabled]="enviandoSolicitud() || !politicasAceptadas()" (click)="enviarSolicitud()">
+                        <button type="button" class="btn btn-success btn-lg px-5" [disabled]="enviandoSolicitud()"
+                            (click)="enviarSolicitud()">
                             @if (!enviandoSolicitud()) {
                             <span><i class="bi bi-send-check-fill me-2"></i> Finalizar y Enviar</span>
                             } @else {
