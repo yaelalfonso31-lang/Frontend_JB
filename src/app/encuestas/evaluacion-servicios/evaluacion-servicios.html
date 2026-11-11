@@ -1,157 +1,245 @@
 <div class="evaluacion-interno-container">
-  
-  <!-- ENCABEZADO DE LA PÁGINA -->
-  <header class="header-section">
-    <div>
-      <p class="eyebrow">Área de Educación y Divulgación</p>
-      <h1>
-        <i class="fa-solid fa-clipboard-check"></i>
-        Evaluación Interna de Servicios
-      </h1>
-      <p class="page-description">Registro operativo, revisión de procedimientos e indicadores de asistencia.</p>
+  <div class="form-container shadow-sm">
+
+    <!-- ENCABEZADO INSTITUCIONAL -->
+    <header class="encabezado-institucional">
+      <div class="header-brand">
+        <div class="d-flex align-items-center gap-3">
+          <img src="assets/logo-BUAP.jpg" alt="Logo BUAP" class="logo-institucional" priority />
+          <div>
+            <h1>Jardín Botánico Universitario</h1>
+            <span class="subtitulo-header">Área de Educación y Divulgación — Evaluación de Servicios</span>
+          </div>
+        </div>
+        <img src="assets/logo.jpg" alt="Logo Jardín Botánico" class="logo-institucional" priority />
+      </div>
+    </header>
+
+    <div class="form-content">
+      <form [formGroup]="form">
+
+        <!-- SELECCIÓN DEL TIPO DE SERVICIO Y FOLIO -->
+        <section class="section-card mb-4">
+          <div class="row align-items-center g-3">
+            <div class="col-md-8">
+              <label for="tipoServicio" class="form-label font-medium mb-2">
+                <i class="fa-solid fa-layer-group me-1"></i> Tipo de Servicio a Evaluar <span class="req">*</span>
+              </label>
+              <select id="tipoServicio" class="form-select form-select-lg fw-bold" formControlName="tipoServicio">
+                <option value="visita_guiada">Visita Guiada</option>
+                <option value="taller">Taller</option>
+                <option value="combinado">Visita Guiada + Taller</option>
+              </select>
+            </div>
+            <div class="col-md-4 text-md-end">
+              <div class="folio-box">
+                <label for="folioInput" class="folio-label mb-1">FOLIO OPERATIVO</label>
+                <div class="input-group input-group-sm">
+                  <input id="folioInput" type="text" class="form-control fw-bold text-success" formControlName="folio" placeholder="Ej. BUAP-EVAL-001" />
+                  <button type="button" class="btn btn-outline-success" (click)="buscarPorFolio()" title="Cargar registro guardado">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- SECCIÓN 1: DATOS GENERALES -->
+        <section class="section-card mb-4">
+          <h2 class="section-title">
+            <i class="fa-solid fa-circle-info me-2"></i> Datos del Servicio
+          </h2>
+
+          <div class="row g-3">
+            <div class="col-md-4">
+              <label for="fecha" class="form-label">Fecha del Servicio <span class="req">*</span></label>
+              <input id="fecha" type="date" class="form-control" formControlName="fecha" />
+            </div>
+
+            <div class="col-md-8">
+              <label for="nombreEscuela" class="form-label">Nombre de la Escuela / Institución <span class="req">*</span></label>
+              <input id="nombreEscuela" type="text" class="form-control" formControlName="nombreEscuela" placeholder="Ej. Escuela Primaria Benito Juárez" />
+            </div>
+
+            <!-- CAMPO DINÁMICO DE INSTRUCTORES -->
+            @if (tipoServicioSeleccionado === 'visita_guiada') {
+              <div class="col-12">
+                <label for="instructorVisita" class="form-label">Instructor del Recorrido <span class="req">*</span></label>
+                <input id="instructorVisita" type="text" class="form-control" formControlName="instructorVisita" placeholder="Nombre completo del instructor" />
+              </div>
+            } @else if (tipoServicioSeleccionado === 'taller') {
+              <div class="col-12">
+                <label for="instructorTaller" class="form-label">Instructor del Taller <span class="optional">(si aplica)</span></label>
+                <input id="instructorTaller" type="text" class="form-control" formControlName="instructorTaller" placeholder="Nombre completo del instructor responsable" />
+              </div>
+            } @else {
+              <!-- COMBINADO: VISITA + TALLER -->
+              <div class="col-md-6">
+                <label for="instructorVisita" class="form-label">Instructor de la Visita Guiada <span class="req">*</span></label>
+                <input id="instructorVisita" type="text" class="form-control" formControlName="instructorVisita" placeholder="Instructor de recorrido" />
+              </div>
+              <div class="col-md-6">
+                <label for="instructorTaller" class="form-label">Instructor del Taller <span class="optional">(Opcional)</span></label>
+                <input id="instructorTaller" type="text" class="form-control" formControlName="instructorTaller" placeholder="Instructor de taller" />
+              </div>
+            }
+          </div>
+        </section>
+
+        <!-- SECCIÓN 2: REVISIÓN DE PROCEDIMIENTOS -->
+        <section class="section-card mb-4">
+          <div class="d-flex align-items-center justify-content-between mb-2">
+            <h2 class="section-title mb-0 border-0">
+              <i class="fa-solid fa-list-check me-2"></i> Revisión de Procedimientos
+            </h2>
+            <span class="badge bg-warning text-dark font-medium">(1 día antes del Servicio)</span>
+          </div>
+          <hr class="mt-1 mb-3">
+
+          <div class="row g-3 mb-3">
+            <div class="col-md-4">
+              <label for="fechaRevision" class="form-label">Fecha de Revisión</label>
+              <input id="fechaRevision" type="date" class="form-control" formControlName="fechaRevision" />
+            </div>
+
+            <div class="col-md-8">
+              <label for="instructorRevision" class="form-label">Nombre del Instructor Responsable</label>
+              <input id="instructorRevision" type="text" class="form-control" formControlName="instructorRevision" placeholder="Quien verificó los procedimientos" />
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="observaciones" class="form-label">Observaciones</label>
+            <textarea id="observaciones" rows="3" class="form-control" formControlName="observaciones" placeholder="Escriba las eventualidades o notas previas al servicio..."></textarea>
+          </div>
+        </section>
+
+        <!-- SECCIÓN 3: INDICADORES DE ASISTENCIA Y TIEMPOS -->
+        <section class="section-card mb-4">
+          <h2 class="section-title">
+            <i class="fa-solid fa-chart-pie me-2"></i> Indicadores del Servicio
+          </h2>
+
+          <div class="row g-3 mb-4">
+            <!-- Asistencia Reservada -->
+            <div class="col-md-6">
+              <div class="card-indicador reservado p-3">
+                <h3 class="sub-title"><i class="fa-solid fa-bookmark me-2"></i>Asistencia Reservada</h3>
+                <div class="mb-2">
+                  <label for="estudiantesReservados" class="form-label small">Estudiantes Reservados</label>
+                  <input id="estudiantesReservados" type="number" min="0" class="form-control" formControlName="estudiantesReservados" />
+                </div>
+                <div class="mb-2">
+                  <label for="maestrosReservados" class="form-label small">Maestros / Docentes</label>
+                  <input id="maestrosReservados" type="number" min="0" class="form-control" formControlName="maestrosReservados" />
+                </div>
+                
+                <!-- OCULTAR PADRES DE FAMILIA SI ES SOLO TALLER -->
+                @if (tipoServicioSeleccionado !== 'taller') {
+                  <div>
+                    <label for="padresReservados" class="form-label small">Padres de Familia</label>
+                    <input id="padresReservados" type="number" min="0" class="form-control" formControlName="padresReservados" />
+                  </div>
+                }
+              </div>
+            </div>
+
+            <!-- Asistencia Recibida -->
+            <div class="col-md-6">
+              <div class="card-indicador recibido p-3">
+                <h3 class="sub-title"><i class="fa-solid fa-users-between-lines me-2"></i>Asistencia Recibida</h3>
+                <div class="mb-2">
+                  <label for="estudiantesRecibidos" class="form-label small">Estudiantes Recibidos</label>
+                  <input id="estudiantesRecibidos" type="number" min="0" class="form-control" formControlName="estudiantesRecibidos" />
+                </div>
+                <div class="mb-2">
+                  <label for="maestrosRecibidos" class="form-label small">Maestros / Docentes</label>
+                  <input id="maestrosRecibidos" type="number" min="0" class="form-control" formControlName="maestrosRecibidos" />
+                </div>
+
+                <!-- OCULTAR PADRES DE FAMILIA SI ES SOLO TALLER -->
+                @if (tipoServicioSeleccionado !== 'taller') {
+                  <div>
+                    <label for="padresRecibidos" class="form-label small">Padres de Familia</label>
+                    <input id="padresRecibidos" type="number" min="0" class="form-control" formControlName="padresRecibidos" />
+                  </div>
+                }
+              </div>
+            </div>
+          </div>
+
+          <!-- TIEMPOS -->
+          <div class="row g-3">
+            <div class="col-md-6">
+              <div class="tiempo-box p-3">
+                <h3 class="sub-title"><i class="fa-regular fa-clock me-2"></i>Tiempo de Inicio</h3>
+                <div class="mb-2">
+                  <label for="horaInicio" class="form-label small">Hora de Inicio</label>
+                  <input id="horaInicio" type="time" class="form-control" formControlName="horaInicio" />
+                </div>
+                <div class="mb-2">
+                  <label for="retrasoInicio" class="form-label small">Retraso (minutos)</label>
+                  <input id="retrasoInicio" type="number" min="0" class="form-control" formControlName="retrasoInicio" />
+                </div>
+                <div>
+                  <label for="causaInicio" class="form-label small">Causa del Retraso</label>
+                  <input id="causaInicio" type="text" class="form-control" formControlName="causaInicio" placeholder="Ej. Tráfico del autobús" />
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <div class="tiempo-box p-3">
+                <h3 class="sub-title"><i class="fa-solid fa-flag-checkered me-2"></i>Tiempo de Término</h3>
+                <div class="mb-2">
+                  <label for="horaTermino" class="form-label small">Hora de Término</label>
+                  <input id="horaTermino" type="time" class="form-control" formControlName="horaTermino" />
+                </div>
+                <div class="mb-2">
+                  <label for="retrasoTermino" class="form-label small">Retraso (minutos)</label>
+                  <input id="retrasoTermino" type="number" min="0" class="form-control" formControlName="retrasoTermino" />
+                </div>
+                <div>
+                  <label for="causaTermino" class="form-label small">Causa del Retraso</label>
+                  <input id="causaTermino" type="text" class="form-control" formControlName="causaTermino" placeholder="Ej. Sesión de preguntas extendida" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- SECCIÓN 4: FIRMA DIGITAL CON VALIDEZ LEGAL -->
+        <section class="section-card mb-4">
+          <h2 class="section-title">
+            <i class="fa-solid fa-signature me-2"></i> Firma Electrónica del Instructor
+          </h2>
+          <p class="section-text small">
+            Firme dentro del recuadro usando su mouse, lápiz óptico o pantalla táctil. Esta firma quedará vinculada legalmente a la marca de tiempo de este registro.
+          </p>
+
+          <div class="signature-container">
+            <canvas #signatureCanvas class="signature-canvas" (mousedown)="startDrawing($event)" (mousemove)="draw($event)" (mouseup)="stopDrawing()" (mouseleave)="stopDrawing()" (touchstart)="startDrawingTouch($event)" (touchmove)="drawTouch($event)" (touchend)="stopDrawing()"></canvas>
+            
+            <div class="signature-actions mt-2">
+              <button type="button" class="btn btn-sm btn-outline-danger" (click)="clearSignature()">
+                <i class="fa-solid fa-eraser me-1"></i> Limpiar Firma
+              </button>
+              <span class="badge bg-light text-muted border">
+                <i class="fa-solid fa-shield-halved me-1"></i> Firma Electrónica Simple (NOM-151)
+              </span>
+            </div>
+          </div>
+        </section>
+
+        <!-- ACCIONES FINALES -->
+        <div class="form-actions">
+          <button type="button" class="btn btn-siguiente px-4 py-2" (click)="guardarEvaluacion()">
+            <i class="fa-solid fa-floppy-disk me-2"></i> Guardar Evaluación Interna
+          </button>
+        </div>
+
+      </form>
     </div>
-    <div class="document-actions">
-      <div class="folio-field">
-        <label for="folioInput">FOLIO</label>
-        <input id="folioInput" type="text" [formControl]="form.controls.folio" placeholder="Ej. F-2026-001" readonly />
-      </div>
-      <button type="button" class="btn btn-primary" (click)="guardarEvaluacion()">
-        <i class="fa-solid fa-floppy-disk"></i> Guardar Registro
-      </button>
-    </div>
-  </header>
-
-  <form [formGroup]="form">
-    
-    <!-- SECCIÓN 1: DATOS GENERALES DEL SERVICIO -->
-    <section class="quick-actions mb-4">
-      <h2><i class="fa-solid fa-circle-info"></i> Datos del Servicio</h2>
-      <div class="form-grid">
-        <div class="form-group">
-          <label for="fecha">Fecha <span>*</span></label>
-          <input id="fecha" type="date" formControlName="fecha" />
-        </div>
-
-        <div class="form-group">
-          <label for="nombreEscuela">Nombre de la Escuela / Institución <span>*</span></label>
-          <input id="nombreEscuela" type="text" formControlName="nombreEscuela" placeholder="Ej. Escuela Primaria Benito Juárez" />
-        </div>
-
-        <div class="form-group form-group-wide">
-          <label for="instructorRecorrido">Instructor(es) del Recorrido / Taller <span>*</span></label>
-          <input id="instructorRecorrido" type="text" formControlName="instructorRecorrido" placeholder="Nombre completo del instructor responsable" />
-        </div>
-      </div>
-    </section>
-
-    <!-- SECCIÓN 2: REVISIÓN DE LISTA DE PROCEDIMIENTOS -->
-    <section class="quick-actions mb-4">
-      <div class="section-header">
-        <h2><i class="fa-solid fa-list-check"></i> Revisión de Lista de Procedimientos</h2>
-        <span class="status-badge status-pendiente">(1 día antes del Servicio)</span>
-      </div>
-
-      <div class="form-grid mb-3">
-        <div class="form-group">
-          <label for="fechaRevision">Fecha de Revisión</label>
-          <input id="fechaRevision" type="date" formControlName="fechaRevision" />
-        </div>
-
-        <div class="form-group">
-          <label for="instructorRevision">Nombre y Firma del Instructor Responsable</label>
-          <input id="instructorRevision" type="text" formControlName="instructorRevision" placeholder="Nombre del instructor que verificó" />
-        </div>
-      </div>
-
-      <div class="form-group form-group-wide">
-        <label for="observaciones">Observaciones</label>
-        <textarea id="observaciones" rows="3" formControlName="observaciones" placeholder="Escriba las observaciones o eventualidades previas al servicio..."></textarea>
-      </div>
-    </section>
-
-    <!-- SECCIÓN 3: INDICADORES DE ASISTENCIA Y TIEMPOS -->
-    <section class="quick-actions">
-      <h2><i class="fa-solid fa-chart-column"></i> Indicadores del Servicio</h2>
-      
-      <!-- Comparativa de Asistencia -->
-      <div class="indicador-comparativa-grid mb-4">
-        
-        <!-- Reservados -->
-        <div class="card-indicador reservado">
-          <h3 class="sub-title"><i class="fa-solid fa-bookmark"></i> Estudiantes / Asistentes Reservados</h3>
-          <div class="form-group">
-            <label for="estudiantesReservados">Estudiantes Reservados</label>
-            <input id="estudiantesReservados" type="number" min="0" formControlName="estudiantesReservados" />
-          </div>
-          <div class="form-group">
-            <label for="maestrosReservados">Maestros / Docentes</label>
-            <input id="maestrosReservados" type="number" min="0" formControlName="maestrosReservados" />
-          </div>
-          <div class="form-group">
-            <label for="padresReservados">Padres de Familia</label>
-            <input id="padresReservados" type="number" min="0" formControlName="padresReservados" />
-          </div>
-        </div>
-
-        <!-- Recibidos -->
-        <div class="card-indicador recibido">
-          <h3 class="sub-title"><i class="fa-solid fa-users-check"></i> Estudiantes / Asistentes Recibidos</h3>
-          <div class="form-group">
-            <label for="estudiantesRecibidos">Estudiantes Recibidos</label>
-            <input id="estudiantesRecibidos" type="number" min="0" formControlName="estudiantesRecibidos" />
-          </div>
-          <div class="form-group">
-            <label for="maestrosRecibidos">Maestros / Docentes</label>
-            <input id="maestrosRecibidos" type="number" min="0" formControlName="maestrosRecibidos" />
-          </div>
-          <div class="form-group">
-            <label for="padresRecibidos">Padres de Familia</label>
-            <input id="padresRecibidos" type="number" min="0" formControlName="padresRecibidos" />
-          </div>
-        </div>
-
-      </div>
-
-      <!-- Tiempos de Inicio y Término -->
-      <div class="tiempos-grid">
-        
-        <!-- Inicio -->
-        <div class="tiempo-box">
-          <h3 class="sub-title"><i class="fa-regular fa-clock"></i> TIEMPO DE INICIO</h3>
-          <div class="form-group">
-            <label for="horaInicio">Hora de Inicio</label>
-            <input id="horaInicio" type="time" formControlName="horaInicio" />
-          </div>
-          <div class="form-group">
-            <label for="retrasoInicio">Retraso (en minutos)</label>
-            <input id="retrasoInicio" type="number" min="0" formControlName="retrasoInicio" placeholder="0" />
-          </div>
-          <div class="form-group">
-            <label for="causaInicio">Causa del Retraso</label>
-            <input id="causaInicio" type="text" formControlName="causaInicio" placeholder="Tráfico, llegada tardía del autobús, etc." />
-          </div>
-        </div>
-
-        <!-- Término -->
-        <div class="tiempo-box">
-          <h3 class="sub-title"><i class="fa-solid fa-flag-checkered"></i> TIEMPO DE TÉRMINO</h3>
-          <div class="form-group">
-            <label for="horaTermino">Hora de Término</label>
-            <input id="horaTermino" type="time" formControlName="horaTermino" />
-          </div>
-          <div class="form-group">
-            <label for="retrasoTermino">Retraso (en minutos)</label>
-            <input id="retrasoTermino" type="number" min="0" formControlName="retrasoTermino" placeholder="0" />
-          </div>
-          <div class="form-group">
-            <label for="causaTermino">Causa del Retraso</label>
-            <input id="causaTermino" type="text" formControlName="causaTermino" placeholder="Preguntas extra, condiciones climáticas, etc." />
-          </div>
-        </div>
-
-      </div>
-
-    </section>
-
-  </form>
+  </div>
 </div>
