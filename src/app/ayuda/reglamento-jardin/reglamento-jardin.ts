@@ -42,13 +42,13 @@ export class ReglamentoJardinComponent {
       icono: 'fa-solid fa-leaf',
       descripcion: 'Medidas obligatorias para proteger el patrimonio biológico e investigaciones.',
       reglas: [
-        'Queda prohibido llevarse semillas y / o partes de plantas.',
-        'Camina únicamente por los senderos de adoquín y los senderos secundarios que el guía les indique.',
-        'No se permite dañar las plantas (pisar, rayonear, arrancar flores, frutos u hojas).',
-        'No introducir especies vegetales ni animales ajenos al ecosistema del jardín.',
-        'Pescar, ni arrojar objetos al lago',
-        'Dar comida a las aves y otros animales silvestres',
-        'Hacer fogatas'
+        'Transitar únicamente por los senderos de adoquín y caminos autorizados por el guía.',
+        'Prohibido sustraer o llevarse semillas, frutos, flores o partes de plantas.',
+        'Prohibido dañar la vegetación (pisar, rayar, maltratar o arrancar hojas y ramas).',
+        'Prohibido introducir plantas, semillas o animales ajenos al ecosistema del jardín.',
+        'Prohibido pescar o arrojar objetos y contaminantes al lago.',
+        'Prohibido alimentar a las aves y fauna silvestre de las instalaciones.',
+        'Prohibido encender fogatas o utilizar material inflamable.'
       ]
     },
     {

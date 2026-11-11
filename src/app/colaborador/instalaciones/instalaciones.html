@@ -9,6 +9,10 @@
     </button>
   </div>
 
+  @if (errorMensaje() && !mostrarModal()) {
+    <div class="instalaciones-alert" role="alert">{{ errorMensaje() }}</div>
+  }
+
   <div class="stats-grid">
     <div class="stat-card stat-success">
       <div class="stat-label"><i class="bi bi-check-circle-fill me-1"></i> Zonas Operativas</div>
@@ -33,6 +37,7 @@
           <th>Descripción / Detalle</th>
           <th>Fecha</th>
           <th>Reportado Por</th>
+          <th>Documento</th>
         </tr>
       </thead>
       <tbody>
@@ -40,17 +45,30 @@
         <tr>
           <td><strong><i class="bi bi-geo-alt me-1"></i> {{ rep.zona }}</strong></td>
           <td>
-            <span [class]="'status-badge status-' + rep.estado">
-              {{ rep.estado | titlecase }}
-            </span>
+            <select
+              class="estado-select"
+              [value]="rep.estado"
+              [disabled]="estadoActualizando() !== null"
+              [attr.aria-label]="'Estado actual de ' + rep.zona"
+              (change)="actualizarEstado(rep, $any($event.target).value)"
+            >
+              <option value="operativo">Operativo</option>
+              <option value="mantenimiento">Mantenimiento</option>
+              <option value="cerrado">Cerrado</option>
+            </select>
           </td>
           <td>{{ rep.descripcion }}</td>
           <td>{{ rep.fechaReporte }}</td>
           <td><i class="bi bi-person-badge me-1"></i> {{ rep.reportadoPor }}</td>
+          <td>
+            <button type="button" class="pdf-request-button" (click)="descargarSolicitudServicio(rep)">
+              <i class="bi bi-file-earmark-pdf"></i> Solicitud de Servicio
+            </button>
+          </td>
         </tr>
         } @empty {
         <tr>
-          <td colspan="5" class="no-results">
+          <td colspan="6" class="no-results">
             <i class="bi bi-clipboard-x"></i>
             <p>No hay reportes registrados en la bitácora.</p>
           </td>
@@ -64,37 +82,52 @@
   <div class="modal-backdrop" (click)="cerrarModal()">
     <div class="modal-card" (click)="$event.stopPropagation()">
       <div class="modal-header">
-        <h3><i class="bi bi-clipboard2-plus"></i> Nuevo Reporte de Estado</h3>
+        <div>
+          <p class="form-kicker">Jardín Botánico Universitario BUAP</p>
+          <h3><i class="bi bi-clipboard2-plus"></i> Solicitud de Servicio</h3>
+          <span>Nuevo reporte de estado de instalaciones</span>
+        </div>
         <button class="close-btn" (click)="cerrarModal()"><i class="bi bi-x-lg"></i></button>
       </div>
 
       <div class="modal-body">
-        <div class="form-group">
-          <label>Zona o Instalación:</label>
-          <input type="text" placeholder="Ej: Invernadero Principal, Sendero Sur..." [ngModel]="nuevaZona()"
-            (ngModelChange)="nuevaZona.set($event)" />
+        <div class="form-reference">FORMATO DE SOLICITUD · INSTALACIONES</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="zonaSolicitud">Zona o instalación solicitada</label>
+            <input id="zonaSolicitud" type="text" placeholder="Ej. Invernadero principal, sendero sur..." [ngModel]="nuevaZona()"
+              (ngModelChange)="nuevaZona.set($event)" />
+          </div>
+          <div class="form-group">
+            <label for="estadoSolicitud">Estado actual</label>
+            <select id="estadoSolicitud" [ngModel]="nuevoEstado()" (ngModelChange)="nuevoEstado.set($event)">
+              <option value="operativo">Operativo</option>
+              <option value="mantenimiento">Mantenimiento</option>
+              <option value="cerrado">Cerrado al público</option>
+            </select>
+          </div>
         </div>
-
         <div class="form-group">
-          <label>Estado:</label>
-          <select [ngModel]="nuevoEstado()" (ngModelChange)="nuevoEstado.set($event)">
-            <option value="operativo">Operativo</option>
-            <option value="mantenimiento">Mantenimiento</option>
-            <option value="cerrado">Cerrado</option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label>Descripción / Novedad:</label>
-          <textarea rows="3" placeholder="Describe el estado de la zona..." [ngModel]="nuevaDescripcion()"
+          <label for="descripcionSolicitud">Descripción de la solicitud / trabajo requerido</label>
+          <textarea id="descripcionSolicitud" rows="5" placeholder="Describe el estado actual, el servicio o trabajo requerido..." [ngModel]="nuevaDescripcion()"
             (ngModelChange)="nuevaDescripcion.set($event)"></textarea>
         </div>
+        <div class="signature-row">
+          <span>Solicitante</span>
+          <span>Vo. Bo. / Autorización</span>
+        </div>
+        @if (errorMensaje()) {
+          <p class="instalaciones-alert modal-error" role="alert">{{ errorMensaje() }}</p>
+        }
       </div>
 
       <div class="modal-actions">
         <button class="btn-secondary" (click)="cerrarModal()">Cancelar</button>
-        <button class="btn-primary" (click)="guardarReporte()">
-          <i class="bi bi-check2-circle"></i> Guardar Reporte
+        <button class="btn-secondary" type="button" (click)="descargarSolicitudActual()">
+          <i class="bi bi-file-earmark-pdf"></i> Descargar formato
+        </button>
+        <button class="btn-primary" [disabled]="guardando()" (click)="guardarReporte()">
+          <i class="bi bi-check2-circle"></i> {{ guardando() ? 'Guardando...' : 'Guardar Solicitud' }}
         </button>
       </div>
     </div>

@@ -5,9 +5,9 @@
       <h1>Control de checklists</h1>
       <p class="page-description">Seguimiento de procedimientos por servicio y folio.</p>
     </div>
-    <button class="refresh-button" type="button" (click)="refresh()" aria-label="Actualizar listado" title="Actualizar listado">
-      <i class="bi bi-arrow-clockwise" aria-hidden="true"></i>
-      Actualizar
+    <button class="refresh-button" type="button" [disabled]="actualizando()" (click)="refresh()" aria-label="Actualizar listado" title="Actualizar listado">
+      <i class="bi bi-arrow-clockwise" [class.spin]="actualizando()" aria-hidden="true"></i>
+      {{ actualizando() ? 'Actualizando...' : 'Actualizar' }}
     </button>
   </header>
 
@@ -25,6 +25,10 @@
       <strong>{{ concludedCount() }}</strong>
     </div>
   </section>
+
+  @if (errorActualizacion()) {
+    <p class="refresh-error" role="alert">{{ errorActualizacion() }}</p>
+  }
 
   <section class="list-section" aria-labelledby="list-heading">
     <div class="list-heading-row">
@@ -73,12 +77,17 @@
               </thead>
               <tbody>
                 <tr>
-                  <td class="service-cell">{{ item.service }}</td>
+                  <td class="service-cell">
+                    {{ item.service }}
+                    <span class="approval-state" [class.approval-state-approved]="item.requestStatus === 'aprobada'">
+                      Solicitud {{ item.requestStatus | titlecase }}
+                    </span>
+                  </td>
                   <td class="folio-cell">{{ item.folio }}</td>
                   <td>{{ item.school || 'Sin institución' }}</td>
                   <td>{{ item.date ? (item.date | date: 'dd/MM/yyyy') : 'Sin fecha' }}</td>
                   <td class="phase-cell">{{ item.currentPhase }}</td>
-                  <td class="progress-cell">
+                  <td class="progress-cell" [class.progress-complete]="item.status === 'Concluido'">
                   <div class="progress-label">
                     <span>{{ item.completedSteps }} / {{ item.totalSteps }}</span>
                     <strong>{{ item.progressPercent }}%</strong>
@@ -95,12 +104,13 @@
                   <td class="action-cell">
                     <button
                       class="open-checklist"
+                      [class.open-locked]="item.requestStatus !== 'aprobada'"
                       type="button"
                       [attr.aria-expanded]="isExpanded(item)"
                       [attr.aria-controls]="detailsId(item)"
                       (click)="toggleExpanded(item)"
                     >
-                      {{ isExpanded(item) ? 'Ocultar' : 'Desglosar' }}
+                      {{ isExpanded(item) ? 'Ocultar' : item.requestStatus === 'aprobada' ? 'Desglosar' : 'Bloqueado' }}
                       <i class="bi" [class.bi-chevron-down]="!isExpanded(item)" [class.bi-chevron-up]="isExpanded(item)" aria-hidden="true"></i>
                     </button>
                   </td>

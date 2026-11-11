@@ -13,6 +13,9 @@ interface Solicitud {
   fechaVisita: string;
   horaVisita?: string;
   estado: 'pendiente' | 'aprobada' | 'rechazada' | 'correccion';
+  comentarioEstado?: string;
+  mensajeCorreccion?: string;
+  mensajeRechazo?: string;
   numeroVisitantes: number;
   proposito: string;
   folio?: string;
@@ -44,8 +47,8 @@ export class MonitorSolicitudes implements OnInit {
   filterEscuela = signal<string>('todos');
 
   solicitudSeleccionada = signal<Solicitud | null>(null);
-  mostrarCampoCorreccion = signal(false);
   motivoCorreccion = signal('');
+  errorComentario = signal('');
 
   ngOnInit(): void {
     this.cargarSolicitudes();
@@ -63,12 +66,13 @@ export class MonitorSolicitudes implements OnInit {
             ? rawServices
             : String(rawServices).split(',').map(s => s.trim()).filter(Boolean);
 
-          if (sol.folio && servicios.length && sol.estado !== 'rechazada') {
+          if (sol.folio && servicios.length) {
             this.checklistRegistry.registerSubmittedRequest({
               folio: sol.folio,
               school: sol.solicitante || sol.escuela,
               date: sol.fechaVisita,
-              services: servicios
+              services: servicios,
+              status: sol.estado
             });
           }
         }
@@ -154,37 +158,69 @@ export class MonitorSolicitudes implements OnInit {
 
   abrirDetalle(solicitud: Solicitud) {
     this.solicitudSeleccionada.set(solicitud);
-    this.mostrarCampoCorreccion.set(false);
     this.motivoCorreccion.set('');
+    this.errorComentario.set('');
   }
 
   cerrarDetalle() {
     this.solicitudSeleccionada.set(null);
-  }
-
-  toggleCorreccion() {
-    this.mostrarCampoCorreccion.set(!this.mostrarCampoCorreccion());
+    this.motivoCorreccion.set('');
+    this.errorComentario.set('');
   }
 
   cambiarEstado(nuevoEstado: 'aprobada' | 'rechazada' | 'correccion') {
     const solicitud = this.solicitudSeleccionada();
     if (!solicitud) return;
 
+    const comentario = this.motivoCorreccion().trim();
+    if (!comentario) {
+      this.errorComentario.set('Escribe un comentario para informar a la persona solicitante.');
+      return;
+    }
+
     const payload = {
       estado: nuevoEstado,
-      motivo: nuevoEstado === 'correccion' ? this.motivoCorreccion() : null
+      motivo: comentario
     };
 
     this.http.put(`/api/solicitudes/${solicitud.id}/estado-colaborador`, payload).subscribe({
       next: () => {
         const currentList = this.solicitudes();
         const updated: Solicitud[] = currentList.map(sol =>
-          sol.id === solicitud.id ? { ...sol, estado: nuevoEstado } : sol
+          sol.id === solicitud.id
+            ? {
+                ...sol,
+                estado: nuevoEstado,
+                comentarioEstado: comentario,
+                mensajeCorreccion: nuevoEstado === 'correccion' ? comentario : sol.mensajeCorreccion,
+                mensajeRechazo: nuevoEstado === 'rechazada' ? comentario : sol.mensajeRechazo
+              }
+            : sol
         );
         this.solicitudes.set(updated);
+        const services = this.servicesFor(solicitud);
+        if (solicitud.folio && services.length) {
+          this.checklistRegistry.registerSubmittedRequest({
+            folio: solicitud.folio,
+            school: solicitud.solicitante || solicitud.escuela,
+            date: solicitud.fechaVisita,
+            services,
+            status: nuevoEstado
+          });
+        }
         this.cerrarDetalle();
       },
-      error: (err) => console.error('Error al actualizar estado:', err)
+      error: (err) => {
+        console.error('Error al actualizar estado:', err);
+        this.errorComentario.set('No se pudo actualizar la solicitud. Intenta nuevamente.');
+      }
     });
+  }
+
+  private servicesFor(solicitud: Solicitud): string[] {
+    const rawServices = solicitud.servicios ?? solicitud.services ?? [];
+    return Array.isArray(rawServices)
+      ? rawServices
+      : String(rawServices).split(',').map(service => service.trim()).filter(Boolean);
   }
 }

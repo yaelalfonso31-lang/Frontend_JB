@@ -95,6 +95,8 @@
             <td>
               @if (checklistRoute(solicitud); as route) {
                 <a class="btn-checklist" [routerLink]="route" [queryParams]="{ folio: solicitud.folio }">Abrir checklist</a>
+              } @else if (solicitud.estado !== 'aprobada' && solicitud.folio) {
+                <span class="checklist-unavailable">Disponible al aprobar</span>
               } @else {
                 <span class="checklist-unavailable" title="El API debe devolver el folio y los servicios seleccionados">Sin tipo de servicio</span>
               }
@@ -102,6 +104,7 @@
             <td>
               @if (solicitud.estado === 'aprobada') {
                 <button class="btn-programa" type="button" (click)="abrirPrograma(solicitud)">
+                  <i class="bi bi-calendar2-check" aria-hidden="true"></i>
                   {{ programaButtonLabel(solicitud) }}
                 </button>
               } @else {
@@ -154,6 +157,19 @@
             </a>
           </p>
         }
+        <div class="form-group status-comment">
+          <label for="comentarioEstado">Comentario para la persona solicitante:</label>
+          <textarea
+            id="comentarioEstado"
+            rows="3"
+            [value]="comentarioEstado()"
+            (input)="comentarioEstado.set($any($event.target).value); errorComentario.set('')"
+            placeholder="Indica el motivo o los detalles de esta decisión..."
+          ></textarea>
+          @if (errorComentario()) {
+            <p class="comment-error" role="alert">{{ errorComentario() }}</p>
+          }
+        </div>
       </div>
       <div class="modal-actions compact">
         <button type="button" class="btn-success" (click)="cambiarEstado('aprobada')">Aprobar</button>

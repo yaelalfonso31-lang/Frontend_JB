@@ -1,7 +1,8 @@
 <div class="aprobacion-container">
   <h1>Aprobación de Nuevos Colaboradores</h1>
 
-  <div class="tabs">
+  <div class="board-controls">
+    <div class="tabs">
     <button class="tab-btn" [class.active]="tabActiva() === 'pendiente'" (click)="cambiarTab('pendiente')">
       Pendientes ({{ solicitudesPendientes.length }})
     </button>
@@ -10,6 +11,10 @@
     </button>
     <button class="tab-btn" [class.active]="tabActiva() === 'rechazado'" (click)="cambiarTab('rechazado')">
       Rechazados ({{ solicitudesRechazadas.length }})
+    </button>
+    </div>
+    <button class="btn btn-outline-danger clear-board" type="button" (click)="vaciarTablero()">
+      <i class="bi bi-trash3" aria-hidden="true"></i> Vaciar Tablero
     </button>
   </div>
 
@@ -52,7 +57,7 @@
 
     @if (solicitudesFiltradas().length === 0) {
       <div class="empty-state">
-        <p>No hay solicitudes en esta sección</p>
+        <p>{{ tableroVaciado() ? 'Tablero vacío. Las solicitudes siguen guardadas y reaparecerán al recargar la vista.' : 'No hay solicitudes en esta sección' }}</p>
       </div>
     }
   </div>

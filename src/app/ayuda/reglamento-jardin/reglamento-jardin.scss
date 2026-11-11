@@ -6,29 +6,47 @@
   padding: 2rem clamp(1.25rem, 2.5vw, 2.5rem);
 }
 
-/* Banner informativo */
+/* Alineación del logo con el título */
+.header-title-group {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+
+  .logo-jardin {
+    width: 60px;
+    height: 60px;
+    object-fit: contain;
+    border-radius: var(--radius-sm);
+    flex-shrink: 0;
+  }
+}
+
+/* Banner informativo en verde suave botánico */
 .banner-aviso {
   display: flex;
   align-items: center;
   gap: 1rem;
-  padding: 1rem 1.25rem;
-  background-color: var(--info-bg);
-  border: 1px solid #bafdd0;
-  border-left: 4px solid #0ea700e7;
+  padding: 1.1rem 1.35rem;
+  background-color: var(--success-bg, #dcfce7);
+  border: 1px solid var(--border-light, #e2f0e3);
+  border-left: 5px solid var(--accent-primary, #40a316);
   border-radius: var(--radius-md);
-  color: var(--info-text);
+  color: var(--success-text, #166534);
 
   .banner-icon {
-    font-size: 1.5rem;
+    font-size: 1.65rem;
+    color: var(--accent-primary, #40a316);
     flex-shrink: 0;
   }
 
   .banner-text {
-    font-size: 0.88rem;
+    font-size: 0.91rem;
     line-height: 1.5;
 
     strong {
-      color: #04912e;
+      color: var(--success-text, #166534);
+      display: block;
+      margin-bottom: 0.15rem;
     }
   }
 }
@@ -124,4 +142,11 @@
     border: 1px solid #ddd;
     break-inside: avoid;
   }
+}
+
+.rule-dot {
+  color: var(--accent-primary);
+  font-size: 0.45rem; // Tamaño reducido para que parezca una viñeta discreta
+  margin-top: 0.55rem;
+  flex-shrink: 0;
 }

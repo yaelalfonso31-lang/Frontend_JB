@@ -6,6 +6,21 @@
   padding: 2rem clamp(1.25rem, 2.5vw, 2.5rem);
 }
 
+/* Alineación del logo con el título */
+.header-title-group {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+
+  .logo-jardin {
+    width: 60px;
+    height: 60px;
+    object-fit: contain;
+    border-radius: var(--radius-sm);
+    flex-shrink: 0;
+  }
+}
+
 .section-title-wrap {
   h2 {
     font-size: 1.2rem;

@@ -2,14 +2,17 @@
   
   <!-- ENCABEZADO PRINCIPAL -->
   <header class="header-section">
-    <div>
-      <h1>
-        <i class="fa-solid fa-book-bookmark"></i>
-        Código de Comportamiento del Jardín Botánico
-      </h1>
-      <p class="page-description">
-        Lineamientos obligatorios para la protección de las colecciones biológicas y la seguridad de los visitantes.
-      </p>
+    <div class="header-title-group">
+      <img src="assets/logo.jpg" alt="Logo Jardín Botánico" class="logo-jardin" priority />
+      <div>
+        <h1>
+          <i class="fa-solid fa-book-bookmark me-2"></i>
+          Código de Comportamiento del Jardín Botánico
+        </h1>
+        <p class="page-description">
+          Lineamientos obligatorios para la protección de las colecciones biológicas y la seguridad de los visitantes.
+        </p>
+      </div>
     </div>
     <div class="document-actions">
       <button type="button" class="btn btn-secondary" (click)="imprimirReglamento()">
@@ -18,7 +21,7 @@
     </div>
   </header>
 
-  <!-- BANNER INFORMATIVO -->
+  <!-- BANNER INFORMATIVO (VERDE BOTÁNICO) -->
   <div class="banner-aviso mb-4">
     <div class="banner-icon">
       <i class="fa-solid fa-shield-halved"></i>
@@ -98,7 +101,7 @@
         <ul class="rule-list">
           @for (regla of cat.reglas; track $index) {
             <li class="rule-item">
-              <i class="fa-solid fa-circle-check rule-check"></i>
+              <i class="fa-solid fa-circle rule-dot"></i>
               <span>{{ regla }}</span>
             </li>
           }

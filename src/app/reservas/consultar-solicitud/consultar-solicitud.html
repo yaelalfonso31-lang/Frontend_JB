@@ -68,7 +68,7 @@
                 @if (solicitudEncontrada.estado === 'Requiere Corrección') {
                 <div class="alert-glass warning">
                     <strong><i class="bi bi-exclamation-triangle-fill"></i> Atención requerida</strong>
-                    <p>{{ solicitudEncontrada.mensajeCorreccion }}</p>
+                    <p>{{ solicitudEncontrada.mensajeCorreccion || solicitudEncontrada.comentarioEstado || solicitudEncontrada.comentario || solicitudEncontrada.motivo }}</p>
                     <button class="btn-corregir" (click)="abrirModalCorreccion()">
                         <i class="bi bi-pencil-square"></i> Actualizar Datos
                     </button>
@@ -78,7 +78,19 @@
                 @if (solicitudEncontrada.estado === 'Rechazada') {
                 <div class="alert-glass danger">
                     <strong><i class="bi bi-x-octagon-fill"></i> Solicitud declinada</strong>
-                    <p>{{ solicitudEncontrada.mensajeRechazo }}</p>
+                    <p>{{ solicitudEncontrada.mensajeRechazo || solicitudEncontrada.comentarioEstado || solicitudEncontrada.comentario || solicitudEncontrada.motivo || 'La solicitud fue rechazada.' }}</p>
+                </div>
+                }
+                @if (solicitudEncontrada.estado === 'Aprobada' && (solicitudEncontrada.comentarioEstado || solicitudEncontrada.comentario || solicitudEncontrada.motivo || solicitudEncontrada.mensajeCorreccion)) {
+                <div class="alert-glass success">
+                    <strong><i class="bi bi-chat-left-text-fill"></i> Comentario del equipo</strong>
+                    <p>{{ solicitudEncontrada.comentarioEstado || solicitudEncontrada.comentario || solicitudEncontrada.motivo || solicitudEncontrada.mensajeCorreccion }}</p>
+                </div>
+                }
+                @if (solicitudEncontrada.estado !== 'Aprobada' && solicitudEncontrada.estado !== 'Rechazada' && (solicitudEncontrada.comentarioEstado || solicitudEncontrada.comentario || solicitudEncontrada.motivo)) {
+                <div class="alert-glass warning">
+                    <strong><i class="bi bi-chat-left-text-fill"></i> Comentario del equipo</strong>
+                    <p>{{ solicitudEncontrada.comentarioEstado || solicitudEncontrada.comentario || solicitudEncontrada.motivo }}</p>
                 </div>
                 }
             </div>

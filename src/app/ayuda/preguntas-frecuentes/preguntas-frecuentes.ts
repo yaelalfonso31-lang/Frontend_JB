@@ -46,7 +46,7 @@ export class PreguntasFrecuentesComponent {
       id: 'faq-4',
       categoria: 'talleres',
       pregunta: '¿Qué tipo de talleres imparte el Jardín Botánico?',
-      respuesta: 'Impartimos talleres de propagación de plantas, elaboración de compostaje, botánica ilustrada, conservación de cactáceas y cultivo de huertos urbanos.'
+      respuesta: 'Impartimos los talleres de: Crea tu herbario, De fposiles y pkantas, Horticultura, entre otros.'
     },
     {
       id: 'faq-5',
@@ -54,12 +54,6 @@ export class PreguntasFrecuentesComponent {
       pregunta: '¿Se permite la entrada con alimentos o mascotas?',
       respuesta: 'Se permite el ingreso de agua y snacks ligeros para consumo en las áreas destinadas. Por razones de conservación de las colecciones biológicas, no se permite el ingreso de mascotas.'
     },
-    {
-      id: 'faq-6',
-      categoria: 'instalaciones',
-      pregunta: '¿Tienen acceso o facilidades para personas con movilidad reducida?',
-      respuesta: 'Sí, la mayor parte de nuestros andadores principales son accesibles para sillas de ruedas y contamos con rampas y sanitarios adaptados.'
-    }
   ]);
 
   readonly faqsFiltradas = computed(() => {

@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, inject, signal, computed, AfterViewInit, OnInit, ElementRef, viewChild } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, signal, computed, AfterViewInit, OnInit, ElementRef, viewChild, effect } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators, FormArray, AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { NgOptimizedImage } from '@angular/common';
@@ -65,6 +65,19 @@ export class SolicitudWizardComponent implements OnInit, AfterViewInit {
   private regexAlfanumerico = /^[a-zA-Z0-9\s\/-]+$/;
   // Permite números con o sin "$", comas y "MXN" (ej. 350, 350.00, $350.00 MXN)
   private regexMonto = /^\$?\s*\d+(,\d{3})*(\.\d{1,2})?(\s*MXN)?$/i;
+
+  constructor() {
+    // 1. Sincronizar automáticamente el nombre de la escuela con el campo titular del pago
+    this.solicitudForm.controls.escuela.valueChanges.subscribe((nombreEscuela) => {
+      this.solicitudForm.controls.titular.setValue(nombreEscuela ?? '', { emitEvent: false });
+    });
+
+    // 2. Actualizar automáticamente el monto_pagar con el 50% de anticipo (o montoTotal) y mantenerlo bloqueado
+    effect(() => {
+      const anticipo = this.montoAnticipo();
+      this.solicitudForm.controls.monto_pagar.setValue(anticipo.toFixed(2), { emitEvent: false });
+    });
+  }
 
   solicitudForm = this.fb.group({
     escuela: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(120), Validators.pattern(this.regexDireccion)]],
@@ -357,7 +370,8 @@ export class SolicitudWizardComponent implements OnInit, AfterViewInit {
             folio: respuesta.folio,
             school: formVal.escuela,
             date: formVal.fecha,
-            services: formVal.servicios
+            services: formVal.servicios,
+            status: 'pendiente'
           });
           this.irAPaso(6);
         },
@@ -375,41 +389,248 @@ export class SolicitudWizardComponent implements OnInit, AfterViewInit {
 
   descargarResumenPDF(): void {
     const doc = new jsPDF();
-    const vals = this.solicitudForm.getRawValue();
-    const folio = this.folioAsignado();
+    const raw = this.solicitudForm.getRawValue();
+    const folio = this.folioAsignado() || 'SIN-FOLIO';
 
-    doc.setFillColor(143, 186, 66);
-    doc.rect(0, 0, 210, 25, 'F');
+    // Encabezado Institucional
+    doc.setFillColor(24, 53, 36); // Verde oscuro institucional
+    doc.rect(0, 0, 210, 32, 'F');
+    doc.setFillColor(143, 186, 66); // Franja verde claro
+    doc.rect(0, 32, 210, 3, 'F');
+
     doc.setTextColor(255, 255, 255);
-    doc.setFontSize(16);
-    doc.text('RESUMEN DE SOLICITUD - JARDÍN BOTÁNICO', 14, 16);
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(15);
+    doc.text('JARDÍN BOTÁNICO UNIVERSITARIO BUAP', 14, 14);
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'normal');
+    doc.text('ÁREA DE EDUCACIÓN Y DIVULGACIÓN · ACUSE DE SOLICITUD DE VISITA', 14, 22);
 
-    doc.setTextColor(44, 62, 80);
+    // Caja de Folio a la derecha
+    doc.setFillColor(255, 255, 255);
+    doc.roundedRect(145, 7, 51, 18, 2, 2, 'F');
+    doc.setTextColor(24, 53, 36);
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(8);
+    doc.text('FOLIO DE SEGUIMIENTO', 170.5, 13, { align: 'center' });
     doc.setFontSize(12);
-    doc.text(`Folio Asignado: ${folio}`, 14, 40);
-    doc.text(`Fecha de Emisión: ${this.fechaGeneracion().toLocaleDateString()}`, 14, 48);
+    doc.setTextColor(30, 132, 69);
+    doc.text(folio, 170.5, 21, { align: 'center' });
 
+    // Fecha de emisión
+    doc.setTextColor(90, 90, 90);
+    doc.setFontSize(8.5);
+    doc.setFont('helvetica', 'normal');
+    doc.text(`Fecha de emisión: ${new Date().toLocaleDateString('es-MX', { day: '2-digit', month: 'long', year: 'numeric' })}`, 14, 42);
+
+    // Tabla 1: Datos de la Institución y Contacto
+    const direccionCompleta = `${raw.calle} #${raw.num_ext}${raw.num_int ? ' Int. ' + raw.num_int : ''}, Col. ${raw.colonia}, C.P. ${raw.cp}, ${raw.municipio}`;
     autoTable(doc, {
-      startY: 55,
-      headStyles: { fillColor: [27, 55, 31] },
+      startY: 46,
+      theme: 'grid',
+      headStyles: { fillColor: [24, 53, 36], textColor: 255, fontStyle: 'bold', fontSize: 10 },
+      bodyStyles: { fontSize: 9, textColor: [44, 62, 80], cellPadding: 3 },
+      columnStyles: { 0: { cellWidth: 55, fontStyle: 'bold', fillColor: [244, 246, 246] } },
+      head: [['1. DATOS DE LA INSTITUCIÓN Y CONTACTO', '']],
       body: [
-        ['Institución / Escuela', vals.escuela],
-        ['Nivel y Grado', `${vals.nivel} - ${vals.grado}`],
-        ['Fecha de Visita', vals.fecha],
-        ['Horario', vals.hora],
-        ['Total de Alumnos', this.totalAlumnos().toString()],
-        ['Monto Total Estimado', `$${this.montoTotal().toFixed(2)} MXN`],
-        ['Anticipo a Pagar (50%)', `$${this.montoAnticipo().toFixed(2)} MXN`]
-      ],
+        ['Institución / Escuela', raw.escuela || '—'],
+        ['Nivel y Grado / Carrera', `${(raw.nivel || '').toUpperCase()} - ${raw.grado || ''}`],
+        ['Dirección', direccionCompleta],
+        ['Profesor(es) Responsable(s)', (raw.profesores || []).filter(Boolean).join(', ')],
+        ['Teléfono(s) de Contacto', (raw.telefonos || []).filter(Boolean).join(', ')],
+        ['Correo(s) Electrónico(s)', (raw.correos || []).filter(Boolean).join(', ')]
+      ]
     });
 
-    doc.save(`Solicitud_${folio}.pdf`);
+    let currentY = (doc as any).lastAutoTable.finalY + 8;
+
+    // Tabla 2: Detalles de la Visita y Asistentes
+    const nombresServicios: Record<string, string> = {
+      visita_guiada: 'Visita Guiada ($30.00 MXN)',
+      visita_tematica: 'Visita Temática ($99.00 MXN)',
+      conociendo_medio_ambiente: 'Taller: Conociendo y conservando el medio ambiente ($125.00 MXN)',
+      crea_herbario: 'Taller: Crea tu herbario ($125.00 MXN)',
+      fosiles_plantas: 'Taller: De fósiles y plantas ($99.00 MXN)',
+      detective_botanico: 'Taller: El detective botánico ($99.00 MXN)',
+      horticultura: 'Taller: Horticultura ($125.00 MXN)',
+      insectos: 'Taller: Insectos ($99.00 MXN)',
+      lombricomposta: 'Taller: Lombricomposta ($125.00 MXN)',
+      terrarios: 'Taller: Terrarios ($145.00 MXN)',
+      colecta_plantas: 'Taller Especial: Colecta de plantas ($190.00 MXN)',
+      plantas_medicinales: 'Taller Especial: Plantas medicinales ($190.00 MXN)'
+    };
+
+    const listaServicios = (raw.servicios || []).map((s: string) => `• ${nombresServicios[s] || s}`).join('\n') || 'Ninguno seleccionado';
+
+    autoTable(doc, {
+      startY: currentY,
+      theme: 'grid',
+      headStyles: { fillColor: [64, 133, 88], textColor: 255, fontStyle: 'bold', fontSize: 10 },
+      bodyStyles: { fontSize: 9, textColor: [44, 62, 80], cellPadding: 3 },
+      columnStyles: { 0: { cellWidth: 55, fontStyle: 'bold', fillColor: [244, 246, 246] } },
+      head: [['2. DETALLES DEL SERVICIO Y ASISTENCIA', '']],
+      body: [
+        ['Fecha y Hora Solicitada', `${raw.fecha} a las ${raw.hora} hrs`],
+        ['Servicios Seleccionados', listaServicios],
+        ['Distribución de Grupos', `${raw.num_grupos} grupo(s) × ${raw.estudiantes_grupo} alumnos por grupo`],
+        ['Total de Alumnos', `${this.totalAlumnos()} alumnos`],
+        ['Acompañantes', `${raw.num_maestros} maestro(s) (sin costo) y ${raw.num_padres} padre(s) de familia`],
+        ['¿Tomarán lunch en el jardín?', raw.lunch === 'si' ? 'Sí' : 'No'],
+        ['Notas Adicionales', raw.notas || 'Sin comentarios adicionales']
+      ]
+    });
+
+    currentY = (doc as any).lastAutoTable.finalY + 8;
+
+    // Tabla 3: Resumen Financiero y Pago
+    const formatoMoneda = (val: number) => val.toLocaleString('es-MX', { style: 'currency', currency: 'MXN' });
+
+    autoTable(doc, {
+      startY: currentY,
+      theme: 'grid',
+      headStyles: { fillColor: [24, 53, 36], textColor: 255, fontStyle: 'bold', fontSize: 10 },
+      bodyStyles: { fontSize: 9, textColor: [44, 62, 80], cellPadding: 3 },
+      columnStyles: { 0: { cellWidth: 55, fontStyle: 'bold', fillColor: [244, 246, 246] } },
+      head: [['3. RESUMEN DE PAGO Y DATOS BANCARIOS', '']],
+      body: [
+        ['Titular / Institución', raw.titular || raw.escuela || '—'],
+        ['Concepto de Pago', raw.concepto_pago || '—'],
+        ['Monto Total Estimado', formatoMoneda(this.montoTotal())],
+        ['Anticipo Requerido (50%)', formatoMoneda(this.montoAnticipo())],
+        ['Datos Bancarios HSBC', 'Herbario y Jardín Botánico BUAP | Cuenta: 4016001638 | CLABE: 021650040160016381'],
+        ['Envío de Comprobantes', 'jardinbotanico.cfdi@correo.buap.mx']
+      ]
+    });
+
+    currentY = (doc as any).lastAutoTable.finalY + 10;
+
+    // Aviso importante al pie
+    doc.setFillColor(209, 231, 222);
+    doc.roundedRect(14, currentY, 182, 20, 2, 2, 'F');
+    doc.setTextColor(24, 53, 36);
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(8.5);
+    doc.text('IMPORTANTE:', 18, currentY + 7);
+    doc.setFont('helvetica', 'normal');
+    doc.text(
+      'Conserve este documento y su número de folio para consultar el estado de su solicitud en la plataforma.\nDudas o cancelaciones: Tel. 222 229 5500 ext. 7033, 7032, 7034 | WhatsApp: +52 222 529 7312.',
+      18,
+      currentY + 12
+    );
+
+    doc.save(`Acuse_Solicitud_${folio}.pdf`);
   }
 
   descargarPoliticas(): void {
-    const link = document.createElement('a');
-    link.href = '/Reglamento_JardinBotanico.pdf';
-    link.download = 'Politicas_y_Reglamento.pdf';
-    link.click();
+    const doc = new jsPDF();
+    const folio = this.folioAsignado() || 'PRE-REGISTRO';
+
+    // Encabezado Institucional
+    doc.setFillColor(24, 53, 36);
+    doc.rect(0, 0, 210, 28, 'F');
+    doc.setFillColor(143, 186, 66);
+    doc.rect(0, 28, 210, 3, 'F');
+
+    doc.setTextColor(255, 255, 255);
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(14);
+    doc.text('JARDÍN BOTÁNICO UNIVERSITARIO BUAP', 14, 13);
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'normal');
+    doc.text('POLÍTICAS DE SERVICIO, CÓDIGO DE COMPORTAMIENTO Y RECOMENDACIONES', 14, 21);
+
+    // 1. Políticas de Servicio y Pagos
+    autoTable(doc, {
+      startY: 36,
+      theme: 'grid',
+      headStyles: { fillColor: [24, 53, 36], textColor: 255, fontStyle: 'bold', fontSize: 10 },
+      bodyStyles: { fontSize: 8.5, textColor: [44, 62, 80], cellPadding: 2.5 },
+      columnStyles: { 0: { cellWidth: 48, fontStyle: 'bold', fillColor: [244, 246, 246] } },
+      head: [['1. POLÍTICAS DE SERVICIO E INFORMACIÓN DE PAGO', '']],
+      body: [
+        ['Confirmación Previa', 'No realice ningún pago hasta recibir la confirmación de disponibilidad y horario por parte del área correspondiente.'],
+        ['Cambios en Reservación', 'Si realiza cambios, envíe nuevamente el formato actualizado al mismo correo y asegúrese de recibir autorización.'],
+        ['Puntualidad', 'Llegar a tiempo a su visita. Los minutos de retraso se descontarán del tiempo total de su servicio.'],
+        ['Política Antisoborno BUAP', 'Queda estrictamente prohibido ofrecer propinas, regalos u obsequios de cualquier tipo al personal del Jardín Botánico.'],
+        ['Plazos de Pago', '• Anticipo del 50%: mínimo una semana antes de su visita.\n• Pago del 50% restante: mínimo dos días hábiles antes de su visita.'],
+        ['Cuenta Bancaria HSBC', 'A nombre de: Herbario y Jardín Botánico BUAP\nNo. de cuenta: 4016001638 | CLABE Interbancaria (CI): 021650040160016381'],
+        ['Facturación y Comprobantes', 'Enviar comprobante a: jardinbotanico.cfdi@correo.buap.mx. Si requiere factura, adjunte Constancia de Situación Fiscal y uso de CFDI.']
+      ]
+    });
+
+    let currentY = (doc as any).lastAutoTable.finalY + 6;
+
+    // 2. Código de Comportamiento
+    autoTable(doc, {
+      startY: currentY,
+      theme: 'grid',
+      headStyles: { fillColor: [220, 53, 69], textColor: 255, fontStyle: 'bold', fontSize: 10 },
+      bodyStyles: { fontSize: 8.5, textColor: [44, 62, 80], cellPadding: 2.5 },
+      head: [['2. CÓDIGO DE COMPORTAMIENTO — NO ESTÁ PERMITIDO', 'OBLIGACIONES DEL VISITANTE']],
+      body: [
+        [
+          '• Llevarse semillas, etiquetas y/o partes de plantas.\n' +
+          '• Dañar las plantas (pisar, rayonear, arrancar flores, frutos u hojas).\n' +
+          '• Entrar con mascotas, bicicletas o balones.\n' +
+          '• Pescar o arrojar objetos al lago.\n' +
+          '• Hacer fogatas, picnics, fumar o ingresar con bebidas alcohólicas.\n' +
+          '• Ingresar con radios/grabadoras o tomar fotos con fines comerciales.\n' +
+          '• Alimentar a las aves y otros animales silvestres.',
+          '• Depositar la basura en los contenedores o llevarla consigo.\n\n' +
+          '• Caminar únicamente por los senderos de adoquín y senderos secundarios que indique el guía.\n\n' +
+          '• Respetar en todo momento al guía y/o facilitador.\n\n' +
+          '• Profesor responsable: Deberá acompañar a su grupo durante todas las actividades y es responsable del comportamiento del mismo.\n\n' +
+          '• SEGURIDAD: Prohibido ingresar al lago bajo ninguna circunstancia.'
+        ]
+      ]
+    });
+
+    currentY = (doc as any).lastAutoTable.finalY + 6;
+
+    // 3. Recomendaciones
+    autoTable(doc, {
+      startY: currentY,
+      theme: 'grid',
+      headStyles: { fillColor: [64, 133, 88], textColor: 255, fontStyle: 'bold', fontSize: 10 },
+      bodyStyles: { fontSize: 8.5, textColor: [44, 62, 80], cellPadding: 2.5 },
+      columnStyles: { 0: { cellWidth: 48, fontStyle: 'bold', fillColor: [244, 246, 246] } },
+      head: [['3. RECOMENDACIONES PARA SU VISITA', '']],
+      body: [
+        ['Preparación e Identificación', 'Comparta el programa y código de comportamiento con el grupo. Cada visitante deberá portar gafete o etiqueta visible con su nombre.'],
+        ['Comodidad y Clima', 'Usar ropa cómoda, calzado adecuado para senderos, bloqueador solar y repelente. Prever impermeable/sombrilla o gorra según el clima.'],
+        ['Sustentabilidad', 'Traer lunches nutritivos evitando ultraprocesados. Cada integrante es responsable del manejo de sus residuos.'],
+        ['Acceso y Estacionamiento', 'Autobuses y camionetas: ingresar por Puerta 1 (24 Sur y Av. San Claudio, junto a gasolinera). Estacionamiento asignado en el Estadio Universitario.'],
+        ['Inclusión', 'Informar con antelación si algún integrante tiene necesidades específicas de movilidad o comunicación.']
+      ]
+    });
+
+    currentY = (doc as any).lastAutoTable.finalY + 8;
+
+    doc.setFontSize(8);
+    doc.setTextColor(100, 100, 100);
+    doc.text(
+      `Documento informativo oficial del Jardín Botánico Universitario BUAP · Folio asociado: ${folio} · Tel: 222 229 5500 ext. 7033`,
+      105,
+      currentY,
+      { align: 'center' }
+    );
+
+    doc.save(`Politicas_y_Reglamento_JBUAP_${folio}.pdf`);
+  }
+
+  evitarNegativos(event: KeyboardEvent): void {
+    if (['-', '+', 'e', 'E', '.'].includes(event.key)) {
+      event.preventDefault();
+    }
+  }
+
+  sanitizarPositivo(campo: 'num_grupos' | 'estudiantes_grupo' | 'num_maestros' | 'num_padres', minimo: number): void {
+    const control = this.solicitudForm.controls[campo];
+    const valor = Number(control.value);
+    if (isNaN(valor) || valor < minimo) {
+      control.setValue(minimo);
+    } else if (!Number.isInteger(valor)) {
+      control.setValue(Math.floor(valor));
+    }
   }
 }
