@@ -9,6 +9,8 @@ interface DiaFestivo {
   nombre: string;
 }
 
+const STORAGE_CONFIG_KEY = 'jbuap_config_mock';
+
 @Component({
   selector: 'app-configuracion-sistema',
   standalone: true,
@@ -21,9 +23,11 @@ export class ConfiguracionSistemaComponent implements OnInit {
   private fb = inject(FormBuilder);
   private http = inject(HttpClient);
 
+  readonly fechaActual = new Date();
   limiteVisitantes = signal(100);
   diasFestivos = signal<DiaFestivo[]>([]);
   mostrarFormularioDia = signal(false);
+  mensajeGuardado = signal('');
 
   configForm = this.fb.nonNullable.group({
     limiteVisitantes: [100, [Validators.required, Validators.min(1)]]
@@ -46,7 +50,21 @@ export class ConfiguracionSistemaComponent implements OnInit {
           this.configForm.patchValue({ limiteVisitantes: data.limiteVisitantes || 100 });
           this.diasFestivos.set(data.diasFestivos || []);
         },
-        error: (err) => console.error('Error al cargar configuración:', err)
+        error: () => {
+          // Respaldo local cuando el backend está apagado
+          const local = localStorage.getItem(STORAGE_CONFIG_KEY);
+          if (local) {
+            const parsed = JSON.parse(local);
+            this.limiteVisitantes.set(parsed.limiteVisitantes || 100);
+            this.configForm.patchValue({ limiteVisitantes: parsed.limiteVisitantes || 100 });
+            this.diasFestivos.set(parsed.diasFestivos || []);
+          } else {
+            this.diasFestivos.set([
+              { id: 1, fecha: '2026-11-16', nombre: 'Aniversario de la Revolución Mexicana (Puente)' },
+              { id: 2, fecha: '2026-12-25', nombre: 'Suspensión de labores - Navidad' }
+            ]);
+          }
+        }
       });
   }
 
@@ -57,9 +75,13 @@ export class ConfiguracionSistemaComponent implements OnInit {
         this.http.put('/api/configuracion', { limiteVisitantes: valor }).subscribe({
           next: () => {
             this.limiteVisitantes.set(valor);
-            alert('Configuración guardada exitosamente en la base de datos.');
+            this.mostrarToast('Límite de visitantes actualizado correctamente.');
           },
-          error: (err) => console.error('Error al guardar configuración:', err)
+          error: () => {
+            this.limiteVisitantes.set(valor);
+            this.guardarRespaldoLocal();
+            this.mostrarToast('Configuración guardada localmente (modo sin conexión).');
+          }
         });
       }
     }
@@ -78,15 +100,26 @@ export class ConfiguracionSistemaComponent implements OnInit {
     if (this.diaFestivoForm.valid) {
       const payload = {
         fecha: this.diaFestivoForm.get('fecha')?.value || '',
-        nombre: this.diaFestivoForm.get('nombre')?.value || ''
+        nombre: this.diaFestivoForm.get('nombre')?.value.trim() || ''
       };
 
       this.http.post<DiaFestivo>('/api/configuracion/dias-festivos', payload).subscribe({
         next: () => {
           this.cargarConfiguracion();
           this.cerrarFormularioDia();
+          this.mostrarToast('Fecha bloqueada agregada exitosamente.');
         },
-        error: (err) => console.error('Error al agregar día festivo:', err)
+        error: () => {
+          const nuevoDia: DiaFestivo = {
+            id: Date.now(),
+            fecha: payload.fecha,
+            nombre: payload.nombre
+          };
+          this.diasFestivos.update(dias => [...dias, nuevoDia].sort((a, b) => a.fecha.localeCompare(b.fecha)));
+          this.guardarRespaldoLocal();
+          this.cerrarFormularioDia();
+          this.mostrarToast('Fecha bloqueada registrada localmente.');
+        }
       });
     }
   }
@@ -95,8 +128,28 @@ export class ConfiguracionSistemaComponent implements OnInit {
     this.http.delete(`/api/configuracion/dias-festivos/${id}`).subscribe({
       next: () => {
         this.diasFestivos.update(dias => dias.filter(d => d.id !== id));
+        this.mostrarToast('Fecha desbloqueada correctamente.');
       },
-      error: (err) => console.error('Error al eliminar día festivo:', err)
+      error: () => {
+        this.diasFestivos.update(dias => dias.filter(d => d.id !== id));
+        this.guardarRespaldoLocal();
+        this.mostrarToast('Fecha eliminada localmente.');
+      }
     });
+  }
+
+  private guardarRespaldoLocal(): void {
+    localStorage.setItem(
+      STORAGE_CONFIG_KEY,
+      JSON.stringify({
+        limiteVisitantes: this.limiteVisitantes(),
+        diasFestivos: this.diasFestivos()
+      })
+    );
+  }
+
+  private mostrarToast(mensaje: string): void {
+    this.mensajeGuardado.set(mensaje);
+    setTimeout(() => this.mensajeGuardado.set(''), 3500);
   }
 }

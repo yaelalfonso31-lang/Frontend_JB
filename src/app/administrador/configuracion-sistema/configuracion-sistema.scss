@@ -1,1 +1,610 @@
 @use '../../../styles/panel-sistema';
+
+$jb-bosque: #183524;
+$jb-primario: #2e7d32;
+$jb-medio: #408558;
+$jb-suave: #e8f5e9;
+$jb-dorado: #f4b63f;
+$jb-peligro: #dc3545;
+$texto-oscuro: #1c2b24;
+$texto-gris: #55665c;
+
+.configuracion-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1.5rem clamp(1rem, 2.5vw, 2rem) 3rem;
+}
+
+/* --- ENCABEZADO SUPERIOR --- */
+.config-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1.25rem;
+    padding: 1.5rem 1.75rem;
+    margin-bottom: 1.75rem;
+    background: $jb-bosque;
+    color: #000000;
+    border-radius: 16px;
+
+    .header-title {
+        display: flex;
+        align-items: center;
+        gap: 1.1rem;
+
+        .header-icon {
+            width: 54px;
+            height: 54px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.6rem;
+            color: $jb-dorado;
+            flex-shrink: 0;
+        }
+
+        .eyebrow {
+            display: block;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: #c8e6c9;
+            margin-bottom: 0.2rem;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: clamp(1.4rem, 2.5vw, 1.85rem);
+            font-weight: 800;
+            color: #ffffff;
+        }
+
+        p {
+            margin: 0.3rem 0 0;
+            font-size: 0.92rem;
+            color: rgba(255, 255, 255, 0.88);
+        }
+    }
+
+    .capacity-pill {
+        display: flex;
+        align-items: center;
+        gap: 0.85rem;
+        padding: 0.75rem 1.25rem;
+        background: rgba(0, 0, 0, 0.25);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 12px;
+        backdrop-filter: blur(4px);
+
+        i {
+            font-size: 1.6rem;
+            color: $jb-dorado;
+        }
+
+        small {
+            display: block;
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #c8e6c9;
+        }
+
+        strong {
+            font-size: 1.05rem;
+            color: #ffffff;
+        }
+    }
+}
+
+/* --- NOTIFICACIÓN FLOTANTE --- */
+.alert-toast {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    padding: 0.9rem 1.25rem;
+    margin-bottom: 1.5rem;
+    background: $jb-suave;
+    border: 1px solid #a5d6a7;
+    border-left: 5px solid $jb-primario;
+    border-radius: 10px;
+    color: $jb-bosque;
+    font-weight: 700;
+    box-shadow: 0 4px 12px rgba(46, 125, 50, 0.12);
+
+    i {
+        font-size: 1.2rem;
+        color: $jb-primario;
+    }
+}
+
+/* --- GRID DE SECCIONES --- */
+.config-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.config-section {
+    background: #ffffff;
+    border: 1px solid #dce8de;
+    border-radius: 14px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    &.section-full {
+        width: 100%;
+    }
+
+    .section-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 1rem;
+        padding-bottom: 1rem;
+        margin-bottom: 1.25rem;
+        border-bottom: 1px solid #e9f0eb;
+
+        .section-title-group {
+            display: flex;
+            align-items: center;
+            gap: 0.85rem;
+        }
+
+        .section-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 10px;
+            background: $jb-suave;
+            color: $jb-primario;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            flex-shrink: 0;
+
+            &.icon-calendar {
+                background: #fff8e6;
+                color: #d99a1f;
+            }
+        }
+
+        h2 {
+            margin: 0;
+            font-size: 1.18rem;
+            font-weight: 700;
+            color: $jb-bosque;
+        }
+
+        .section-subtitle {
+            margin: 0.15rem 0 0;
+            font-size: 0.85rem;
+            color: $texto-gris;
+        }
+    }
+}
+
+/* --- CONTROLES DE FORMULARIO --- */
+.form-field {
+    margin-bottom: 1.25rem;
+
+    label {
+        display: flex;
+        align-items: center;
+        gap: 0.45rem;
+        font-weight: 700;
+        font-size: 0.9rem;
+        color: $jb-bosque;
+        margin-bottom: 0.5rem;
+
+        i {
+            color: $jb-primario;
+        }
+    }
+
+    .input-group-botanico {
+        display: flex;
+        align-items: stretch;
+        border: 1.5px solid #cbd5ce;
+        border-radius: 10px;
+        overflow: hidden;
+        background: #ffffff;
+        transition: all 0.2s ease;
+
+        &:focus-within {
+            border-color: $jb-primario;
+            box-shadow: 0 0 0 3px rgba($jb-primario, 0.15);
+        }
+
+        .input-prefix {
+            display: flex;
+            align-items: center;
+            padding: 0 0.9rem;
+            background: #f4f8f5;
+            color: $jb-primario;
+            border-right: 1px solid #dce6de;
+        }
+
+        .form-input {
+            flex: 1;
+            border: none;
+            padding: 0.75rem 1rem;
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: $texto-oscuro;
+            min-width: 0;
+
+            &:focus {
+                outline: none;
+            }
+        }
+
+        .input-suffix {
+            display: flex;
+            align-items: center;
+            padding: 0 1rem;
+            background: $jb-suave;
+            color: $jb-bosque;
+            font-size: 0.85rem;
+            font-weight: 700;
+            border-left: 1px solid #c8e6c9;
+        }
+    }
+
+    .form-input {
+        width: 100%;
+        padding: 0.72rem 0.95rem;
+        border: 1.5px solid #cbd5ce;
+        border-radius: 8px;
+        font-size: 0.95rem;
+        color: $texto-oscuro;
+        box-sizing: border-box;
+        transition: all 0.2s ease;
+
+        &:focus {
+            outline: none;
+            border-color: $jb-primario;
+            box-shadow: 0 0 0 3px rgba($jb-primario, 0.15);
+        }
+    }
+
+    .form-description {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.4rem;
+        margin: 0.55rem 0 0;
+        font-size: 0.82rem;
+        color: $texto-gris;
+        line-height: 1.4;
+
+        i {
+            color: $jb-medio;
+            margin-top: 1px;
+        }
+    }
+}
+
+/* --- BOTONES --- */
+.btn-botanico {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.72rem 1.35rem;
+    border-radius: 9px;
+    font-size: 0.92rem;
+    font-weight: 700;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s ease;
+
+    &.btn-primary-jb {
+        background: linear-gradient(135deg, $jb-primario 0%, #1e8445 100%);
+        color: #ffffff;
+        box-shadow: 0 4px 12px rgba($jb-primario, 0.22);
+
+        &:hover:not(:disabled) {
+            background: linear-gradient(135deg, $jb-bosque 0%, $jb-primario 100%);
+            transform: translateY(-1px);
+        }
+
+        &:disabled {
+            background: #9db8a6;
+            box-shadow: none;
+            cursor: not-allowed;
+        }
+    }
+
+    &.btn-secondary-jb {
+        background: $jb-suave;
+        color: $jb-bosque;
+        border: 1.5px solid #a5d6a7;
+
+        &:hover {
+            background: #d3ecd5;
+            border-color: $jb-primario;
+        }
+    }
+
+    &.btn-outline-jb {
+        background: #ffffff;
+        color: $texto-gris;
+        border: 1.5px solid #c6d4c8;
+
+        &:hover {
+            background: #f1f5f2;
+            color: $texto-oscuro;
+        }
+    }
+}
+
+/* --- TARJETA DE FORMULARIO DE DÍA FESTIVO --- */
+.form-card-botanico {
+    background: #f6fbf7;
+    border: 1.5px solid #b7dfb9;
+    border-radius: 12px;
+    padding: 1.25rem;
+    margin-bottom: 1.5rem;
+
+    .form-card-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 1rem;
+
+        h3 {
+            margin: 0;
+            font-size: 1rem;
+            font-weight: 700;
+            color: $jb-bosque;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+
+            i {
+                color: $jb-primario;
+            }
+        }
+
+        .close-inline {
+            background: transparent;
+            border: none;
+            color: $texto-gris;
+            cursor: pointer;
+            font-size: 1rem;
+
+            &:hover {
+                color: $jb-peligro;
+            }
+        }
+    }
+
+    .form-inline-grid {
+        display: grid;
+        grid-template-columns: minmax(170px, 0.8fr) minmax(240px, 1.5fr) auto;
+        gap: 1rem;
+        align-items: end;
+
+        .form-field {
+            margin-bottom: 0;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 0.6rem;
+        }
+
+        @media (max-width: 820px) {
+            grid-template-columns: 1fr;
+        }
+    }
+}
+
+/* --- TABLA DE DÍAS BLOQUEADOS --- */
+.dias-festivos-list {
+    .list-subheader {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 0.85rem;
+
+        h3 {
+            margin: 0;
+            font-size: 1rem;
+            font-weight: 700;
+            color: $jb-bosque;
+            display: flex;
+            align-items: center;
+            gap: 0.45rem;
+
+            i {
+                color: $jb-primario;
+            }
+        }
+
+        .badge-count {
+            background: #eef5f0;
+            color: $jb-bosque;
+            border: 1px solid #cfe0d2;
+            font-size: 0.78rem;
+            font-weight: 700;
+            padding: 0.2rem 0.65rem;
+            border-radius: 50px;
+        }
+    }
+
+    .dias-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        border: 1px solid #dce8de;
+        border-radius: 10px;
+        overflow: hidden;
+
+        thead th {
+            background: #f3f8f4;
+            color: $jb-bosque;
+            font-size: 0.82rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            padding: 0.85rem 1rem;
+            border-bottom: 1px solid #dce8de;
+        }
+
+        tbody td {
+            padding: 0.85rem 1rem;
+            border-bottom: 1px solid #edf3ee;
+            vertical-align: middle;
+            color: $texto-oscuro;
+            font-size: 0.92rem;
+        }
+
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        tbody tr:hover {
+            background: #fafdfb;
+        }
+    }
+
+    .date-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.3rem 0.7rem;
+        background: #fff8e6;
+        border: 1px solid #ffe082;
+        color: #664d03;
+        border-radius: 6px;
+        font-weight: 700;
+        font-size: 0.85rem;
+
+        i {
+            color: #d99a1f;
+        }
+    }
+
+    .btn-delete-small {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        padding: 0.4rem 0.8rem;
+        background: #fff5f5;
+        color: $jb-peligro;
+        border: 1px solid #f5c2c7;
+        border-radius: 7px;
+        font-size: 0.82rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.18s ease;
+
+        &:hover {
+            background: $jb-peligro;
+            color: #ffffff;
+            border-color: $jb-peligro;
+        }
+    }
+
+    .empty-message {
+        text-align: center;
+        padding: 2.25rem 1rem;
+        background: #f9fbf9;
+        border: 1.5px dashed #cfe0d2;
+        border-radius: 12px;
+
+        .empty-icon {
+            font-size: 2.2rem;
+            color: $jb-medio;
+            margin-bottom: 0.5rem;
+        }
+
+        h4 {
+            margin: 0 0 0.25rem;
+            font-size: 1rem;
+            font-weight: 700;
+            color: $jb-bosque;
+        }
+
+        p {
+            margin: 0;
+            font-size: 0.88rem;
+            color: $texto-gris;
+        }
+    }
+}
+
+/* --- TARJETAS DE INFORMACIÓN DEL SISTEMA --- */
+.info-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+
+    .info-card {
+        display: flex;
+        align-items: center;
+        gap: 0.9rem;
+        padding: 0.85rem 1rem;
+        background: #f8fbf9;
+        border: 1px solid #e1ede3;
+        border-radius: 10px;
+
+        .info-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 9px;
+            background: #ffffff;
+            border: 1px solid #dce8de;
+            color: $jb-primario;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.15rem;
+            flex-shrink: 0;
+
+            &.icon-active {
+                background: $jb-suave;
+                border-color: #a5d6a7;
+            }
+        }
+
+        .info-label {
+            font-size: 0.76rem;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            color: $texto-gris;
+            font-weight: 600;
+        }
+
+        .info-value {
+            font-size: 1rem;
+            font-weight: 800;
+            color: $jb-bosque;
+
+            &.status-active {
+                display: inline-flex;
+                align-items: center;
+                gap: 0.4rem;
+                color: $jb-primario;
+            }
+        }
+
+        .status-dot {
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            background: $jb-primario;
+            box-shadow: 0 0 0 3px rgba($jb-primario, 0.2);
+        }
+    }
+}
