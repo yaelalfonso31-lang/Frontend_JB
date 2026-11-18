@@ -1,10 +1,10 @@
 import { Component, ChangeDetectionStrategy, signal, inject, OnInit } from '@angular/core';
-import { ChecklistRegistryService } from '../checklists/checklist-registry.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
+import { ChecklistRegistryService } from '../checklists/checklist-registry.service';
 
 interface Solicitud {
   id: number;
@@ -40,6 +40,7 @@ interface Solicitud {
 })
 export class MonitorSolicitudes implements OnInit {
   private http = inject(HttpClient);
+  private checklistRegistry = inject(ChecklistRegistryService);
 
   solicitudes = signal<Solicitud[]>([]);
 
@@ -50,7 +51,6 @@ export class MonitorSolicitudes implements OnInit {
   solicitudSeleccionada = signal<Solicitud | null>(null);
   motivoCorreccion = signal('');
   errorComentario = signal('');
-
   camposSeleccionados = signal<string[]>([]);
 
   readonly camposDisponibles = [
@@ -68,83 +68,11 @@ export class MonitorSolicitudes implements OnInit {
     { key: 'comprobante', label: 'Comprobante de pago' }
   ];
 
-  toggleCampoCorregir(key: string, checked: boolean): void {
-    this.camposSeleccionados.update(actuales =>
-      checked ? [...actuales, key] : actuales.filter(k => k !== key)
-    );
-    this.errorComentario.set('');
-  }
-
-  abrirDetalle(solicitud: Solicitud) {
-    this.solicitudSeleccionada.set(solicitud);
-    this.motivoCorreccion.set(solicitud.mensajeCorreccion || solicitud.comentarioEstado || '');
-    this.camposSeleccionados.set(solicitud.camposCorregir ?? []);
-    this.errorComentario.set('');
-  }
-
-  cerrarDetalle() {
-    this.solicitudSeleccionada.set(null);
-    this.motivoCorreccion.set('');
-    this.camposSeleccionados.set([]);
-    this.errorComentario.set('');
-  }
-
-  cambiarEstado(nuevoEstado: 'aprobada' | 'rechazada' | 'correccion') {
-    const solicitud = this.solicitudSeleccionada();
-    if (!solicitud) return;
-
-    const comentario = this.motivoCorreccion().trim();
-
-    if (nuevoEstado === 'correccion' && this.camposSeleccionados().length === 0) {
-      this.errorComentario.set('Selecciona al menos un campo específico que el usuario deba corregir.');
-      return;
-    }
-
-    if ((nuevoEstado === 'correccion' || nuevoEstado === 'rechazada') && !comentario) {
-      this.errorComentario.set('Escribe las instrucciones o el motivo para informar a la persona solicitante.');
-      return;
-    }
-
-    const campos = nuevoEstado === 'correccion' ? this.camposSeleccionados() : [];
-
-    const payload = {
-      estado: nuevoEstado,
-      motivo: comentario || null,
-      campos_corregir: campos
-    };
-
-    this.http.put(`/api/solicitudes/${solicitud.id}/estado-colaborador`, payload).subscribe({
-      next: () => {
-        this.solicitudes.update(lista =>
-          lista.map(sol =>
-            sol.id === solicitud.id
-              ? {
-                ...sol,
-                estado: nuevoEstado,
-                comentarioEstado: comentario,
-                mensajeCorreccion: nuevoEstado === 'correccion' ? comentario : '',
-                mensajeRechazo: nuevoEstado === 'rechazada' ? comentario : '',
-                camposCorregir: campos
-              }
-              : sol
-          )
-        );
-        this.cerrarDetalle();
-      },
-      error: (err) => {
-        console.error('Error al actualizar estado:', err);
-        this.errorComentario.set('No se pudo actualizar el estado. Intenta nuevamente.');
-      }
-    });
-  }
-
   ngOnInit(): void {
     this.cargarSolicitudes();
   }
 
-  private checklistRegistry = inject(ChecklistRegistryService);
-
-  cargarSolicitudes() {
+  cargarSolicitudes(): void {
     this.http.get<Solicitud[]>('/api/monitor/solicitudes').subscribe({
       next: (data) => {
         this.solicitudes.set(data);
@@ -169,7 +97,7 @@ export class MonitorSolicitudes implements OnInit {
     });
   }
 
-  get filteredSolicitudes() {
+  get filteredSolicitudes(): Solicitud[] {
     return this.solicitudes().filter(s => {
       const matchFecha = !this.filterFecha() || s.fechaVisita === this.filterFecha();
       const matchEstado = this.filterEstado() === 'todos' || s.estado === this.filterEstado();
@@ -181,9 +109,17 @@ export class MonitorSolicitudes implements OnInit {
     });
   }
 
-  onFilterFecha(value: string) { this.filterFecha.set(value); }
-  onFilterEstado(value: 'todos' | 'aprobada' | 'pendiente' | 'rechazada' | 'correccion') { this.filterEstado.set(value); }
-  onFilterEscuela(value: string) { this.filterEscuela.set(value); }
+  onFilterFecha(value: string): void {
+    this.filterFecha.set(value);
+  }
+
+  onFilterEstado(value: 'todos' | 'aprobada' | 'pendiente' | 'rechazada' | 'correccion'): void {
+    this.filterEstado.set(value);
+  }
+
+  onFilterEscuela(value: string): void {
+    this.filterEscuela.set(value);
+  }
 
   exportarPDF(): void {
     const rows = this.filteredSolicitudes.map((s) => [
@@ -251,32 +187,33 @@ export class MonitorSolicitudes implements OnInit {
     this.errorComentario.set('');
   }
 
-  abrirDetalle(solicitud: Solicitud) {
+  abrirDetalle(solicitud: Solicitud): void {
     this.solicitudSeleccionada.set(solicitud);
     this.motivoCorreccion.set(solicitud.mensajeCorreccion || solicitud.comentarioEstado || '');
-    this.camposSeleccionados.set(solicitud.camposCorregir || []);
+    this.camposSeleccionados.set(solicitud.camposCorregir ?? []);
     this.errorComentario.set('');
   }
 
-  cerrarDetalle() {
+  cerrarDetalle(): void {
     this.solicitudSeleccionada.set(null);
     this.motivoCorreccion.set('');
     this.camposSeleccionados.set([]);
     this.errorComentario.set('');
   }
 
-  cambiarEstado(nuevoEstado: 'aprobada' | 'rechazada' | 'correccion') {
+  cambiarEstado(nuevoEstado: 'aprobada' | 'rechazada' | 'correccion'): void {
     const solicitud = this.solicitudSeleccionada();
     if (!solicitud) return;
 
     const comentario = this.motivoCorreccion().trim();
-    if (!comentario) {
-      this.errorComentario.set('Escribe un comentario para informar a la persona solicitante.');
-      return;
-    }
 
     if (nuevoEstado === 'correccion' && this.camposSeleccionados().length === 0) {
       this.errorComentario.set('Selecciona al menos un campo específico que el usuario deba corregir.');
+      return;
+    }
+
+    if ((nuevoEstado === 'correccion' || nuevoEstado === 'rechazada') && !comentario) {
+      this.errorComentario.set('Escribe las instrucciones o el motivo para informar a la persona solicitante.');
       return;
     }
 
@@ -284,21 +221,21 @@ export class MonitorSolicitudes implements OnInit {
 
     const payload = {
       estado: nuevoEstado,
-      motivo: comentario,
+      motivo: comentario || null,
       campos_corregir: campos
     };
 
     this.http.put(`/api/solicitudes/${solicitud.id}/estado-colaborador`, payload).subscribe({
       next: () => {
-        this.solicitudes.update(currentList =>
-          currentList.map(sol =>
+        this.solicitudes.update(lista =>
+          lista.map(sol =>
             sol.id === solicitud.id
               ? {
                 ...sol,
                 estado: nuevoEstado,
                 comentarioEstado: comentario,
-                mensajeCorreccion: nuevoEstado === 'correccion' ? comentario : sol.mensajeCorreccion,
-                mensajeRechazo: nuevoEstado === 'rechazada' ? comentario : sol.mensajeRechazo,
+                mensajeCorreccion: nuevoEstado === 'correccion' ? comentario : '',
+                mensajeRechazo: nuevoEstado === 'rechazada' ? comentario : '',
                 camposCorregir: campos
               }
               : sol
@@ -308,15 +245,8 @@ export class MonitorSolicitudes implements OnInit {
       },
       error: (err) => {
         console.error('Error al actualizar estado:', err);
-        this.errorComentario.set('No se pudo actualizar la solicitud. Intenta nuevamente.');
+        this.errorComentario.set('No se pudo actualizar el estado. Intenta nuevamente.');
       }
     });
-  }
-
-  private servicesFor(solicitud: Solicitud): string[] {
-    const rawServices = solicitud.servicios ?? solicitud.services ?? [];
-    return Array.isArray(rawServices)
-      ? rawServices
-      : String(rawServices).split(',').map(service => service.trim()).filter(Boolean);
   }
 }
