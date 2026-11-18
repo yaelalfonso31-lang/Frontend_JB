@@ -15,6 +15,7 @@ interface Solicitud {
   estado: 'pendiente' | 'aprobada' | 'rechazada' | 'correccion';
   comentarioEstado?: string;
   mensajeCorreccion?: string;
+  camposCorregir?: string[];
   mensajeRechazo?: string;
   numeroVisitantes: number;
   proposito: string;
@@ -49,6 +50,93 @@ export class MonitorSolicitudes implements OnInit {
   solicitudSeleccionada = signal<Solicitud | null>(null);
   motivoCorreccion = signal('');
   errorComentario = signal('');
+
+  camposSeleccionados = signal<string[]>([]);
+
+  readonly camposDisponibles = [
+    { key: 'nombre_escuela', label: 'Nombre de la escuela' },
+    { key: 'nivel_educativo', label: 'Nivel educativo' },
+    { key: 'fecha', label: 'Fecha de visita' },
+    { key: 'hora_visita', label: 'Hora de visita' },
+    { key: 'asistentes', label: 'Número de visitantes' },
+    { key: 'proposito', label: 'Propósito / Servicios' },
+    { key: 'profesores', label: 'Profesor(es) responsable(s)' },
+    { key: 'telefonos', label: 'Teléfono(s) de contacto' },
+    { key: 'correos', label: 'Correo(s) electrónico(s)' },
+    { key: 'titular_pago', label: 'Titular del pago' },
+    { key: 'monto_pagado', label: 'Monto pagado (MXN)' },
+    { key: 'comprobante', label: 'Comprobante de pago' }
+  ];
+
+  toggleCampoCorregir(key: string, checked: boolean): void {
+    this.camposSeleccionados.update(actuales =>
+      checked ? [...actuales, key] : actuales.filter(k => k !== key)
+    );
+    this.errorComentario.set('');
+  }
+
+  abrirDetalle(solicitud: Solicitud) {
+    this.solicitudSeleccionada.set(solicitud);
+    this.motivoCorreccion.set(solicitud.mensajeCorreccion || solicitud.comentarioEstado || '');
+    this.camposSeleccionados.set(solicitud.camposCorregir ?? []);
+    this.errorComentario.set('');
+  }
+
+  cerrarDetalle() {
+    this.solicitudSeleccionada.set(null);
+    this.motivoCorreccion.set('');
+    this.camposSeleccionados.set([]);
+    this.errorComentario.set('');
+  }
+
+  cambiarEstado(nuevoEstado: 'aprobada' | 'rechazada' | 'correccion') {
+    const solicitud = this.solicitudSeleccionada();
+    if (!solicitud) return;
+
+    const comentario = this.motivoCorreccion().trim();
+
+    if (nuevoEstado === 'correccion' && this.camposSeleccionados().length === 0) {
+      this.errorComentario.set('Selecciona al menos un campo específico que el usuario deba corregir.');
+      return;
+    }
+
+    if ((nuevoEstado === 'correccion' || nuevoEstado === 'rechazada') && !comentario) {
+      this.errorComentario.set('Escribe las instrucciones o el motivo para informar a la persona solicitante.');
+      return;
+    }
+
+    const campos = nuevoEstado === 'correccion' ? this.camposSeleccionados() : [];
+
+    const payload = {
+      estado: nuevoEstado,
+      motivo: comentario || null,
+      campos_corregir: campos
+    };
+
+    this.http.put(`/api/solicitudes/${solicitud.id}/estado-colaborador`, payload).subscribe({
+      next: () => {
+        this.solicitudes.update(lista =>
+          lista.map(sol =>
+            sol.id === solicitud.id
+              ? {
+                ...sol,
+                estado: nuevoEstado,
+                comentarioEstado: comentario,
+                mensajeCorreccion: nuevoEstado === 'correccion' ? comentario : '',
+                mensajeRechazo: nuevoEstado === 'rechazada' ? comentario : '',
+                camposCorregir: campos
+              }
+              : sol
+          )
+        );
+        this.cerrarDetalle();
+      },
+      error: (err) => {
+        console.error('Error al actualizar estado:', err);
+        this.errorComentario.set('No se pudo actualizar el estado. Intenta nuevamente.');
+      }
+    });
+  }
 
   ngOnInit(): void {
     this.cargarSolicitudes();
@@ -156,15 +244,24 @@ export class MonitorSolicitudes implements OnInit {
     };
   }
 
+  toggleCampoCorregir(key: string, checked: boolean): void {
+    this.camposSeleccionados.update(actuales =>
+      checked ? [...actuales, key] : actuales.filter(k => k !== key)
+    );
+    this.errorComentario.set('');
+  }
+
   abrirDetalle(solicitud: Solicitud) {
     this.solicitudSeleccionada.set(solicitud);
-    this.motivoCorreccion.set('');
+    this.motivoCorreccion.set(solicitud.mensajeCorreccion || solicitud.comentarioEstado || '');
+    this.camposSeleccionados.set(solicitud.camposCorregir || []);
     this.errorComentario.set('');
   }
 
   cerrarDetalle() {
     this.solicitudSeleccionada.set(null);
     this.motivoCorreccion.set('');
+    this.camposSeleccionados.set([]);
     this.errorComentario.set('');
   }
 
@@ -178,36 +275,35 @@ export class MonitorSolicitudes implements OnInit {
       return;
     }
 
+    if (nuevoEstado === 'correccion' && this.camposSeleccionados().length === 0) {
+      this.errorComentario.set('Selecciona al menos un campo específico que el usuario deba corregir.');
+      return;
+    }
+
+    const campos = nuevoEstado === 'correccion' ? this.camposSeleccionados() : [];
+
     const payload = {
       estado: nuevoEstado,
-      motivo: comentario
+      motivo: comentario,
+      campos_corregir: campos
     };
 
     this.http.put(`/api/solicitudes/${solicitud.id}/estado-colaborador`, payload).subscribe({
       next: () => {
-        const currentList = this.solicitudes();
-        const updated: Solicitud[] = currentList.map(sol =>
-          sol.id === solicitud.id
-            ? {
+        this.solicitudes.update(currentList =>
+          currentList.map(sol =>
+            sol.id === solicitud.id
+              ? {
                 ...sol,
                 estado: nuevoEstado,
                 comentarioEstado: comentario,
                 mensajeCorreccion: nuevoEstado === 'correccion' ? comentario : sol.mensajeCorreccion,
-                mensajeRechazo: nuevoEstado === 'rechazada' ? comentario : sol.mensajeRechazo
+                mensajeRechazo: nuevoEstado === 'rechazada' ? comentario : sol.mensajeRechazo,
+                camposCorregir: campos
               }
-            : sol
+              : sol
+          )
         );
-        this.solicitudes.set(updated);
-        const services = this.servicesFor(solicitud);
-        if (solicitud.folio && services.length) {
-          this.checklistRegistry.registerSubmittedRequest({
-            folio: solicitud.folio,
-            school: solicitud.solicitante || solicitud.escuela,
-            date: solicitud.fechaVisita,
-            services,
-            status: nuevoEstado
-          });
-        }
         this.cerrarDetalle();
       },
       error: (err) => {

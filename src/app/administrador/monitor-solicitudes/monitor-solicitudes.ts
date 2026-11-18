@@ -14,7 +14,8 @@ interface Solicitud {
   escuela: string;
   fechaVisita: string;
   horaVisita?: string;
-  estado: 'pendiente' | 'aprobada' | 'rechazada';
+  estado: 'pendiente' | 'aprobada' | 'rechazada' | 'correccion';
+  camposCorregir?: string[];
   comentarioEstado?: string;
   mensajeCorreccion?: string;
   mensajeRechazo?: string;
@@ -56,11 +57,27 @@ export class MonitorSolicitudesComponent implements OnInit {
 
   solicitudes = signal<Solicitud[]>([]);
   filterFecha = signal('');
-  filterEstado = signal<'todos' | 'aprobada' | 'pendiente' | 'rechazada'>('todos');
+  filterEstado = signal<'todos' | 'aprobada' | 'pendiente' | 'rechazada' | 'correccion'>('todos');
   filterEscuela = signal<string>('todos');
   checklistSeleccionada = signal<Solicitud | null>(null);
   comentarioEstado = signal('');
   errorComentario = signal('');
+  camposSeleccionados = signal<string[]>([]);
+
+  readonly camposDisponibles = [
+    { key: 'nombre_escuela', label: 'Nombre de la escuela', icon: 'bi-building-fill' },
+    { key: 'nivel_educativo', label: 'Nivel educativo', icon: 'bi-mortarboard-fill' },
+    { key: 'fecha', label: 'Fecha de visita', icon: 'bi-calendar-event-fill' },
+    { key: 'hora_visita', label: 'Hora de visita', icon: 'bi-clock-fill' },
+    { key: 'asistentes', label: 'Número de visitantes', icon: 'bi-people-fill' },
+    { key: 'proposito', label: 'Propósito / Servicios', icon: 'bi-tree-fill' },
+    { key: 'profesores', label: 'Profesor(es) responsable(s)', icon: 'bi-person-badge-fill' },
+    { key: 'telefonos', label: 'Teléfono(s) de contacto', icon: 'bi-telephone-fill' },
+    { key: 'correos', label: 'Correo(s) electrónico(s)', icon: 'bi-envelope-at-fill' },
+    { key: 'titular_pago', label: 'Titular del pago', icon: 'bi-person-vcard-fill' },
+    { key: 'monto_pagado', label: 'Monto pagado (MXN)', icon: 'bi-cash-coin' },
+    { key: 'comprobante', label: 'Comprobante de pago', icon: 'bi-file-earmark-medical-fill' }
+  ];
 
   ngOnInit(): void {
     this.cargarSolicitudes();
@@ -102,7 +119,7 @@ export class MonitorSolicitudesComponent implements OnInit {
     this.filterFecha.set(value);
   }
 
-  onFilterEstado(value: 'todos' | 'aprobada' | 'pendiente' | 'rechazada'): void {
+  onFilterEstado(value: 'todos' | 'aprobada' | 'pendiente' | 'rechazada' | 'correccion'): void {
     this.filterEstado.set(value);
   }
 
@@ -116,9 +133,17 @@ export class MonitorSolicitudesComponent implements OnInit {
     this.filterEscuela.set('todos');
   }
 
+  toggleCampoCorregir(key: string, checked: boolean): void {
+    this.camposSeleccionados.update(actuales =>
+      checked ? [...actuales, key] : actuales.filter(k => k !== key)
+    );
+    this.errorComentario.set('');
+  }
+
   abrirChecklist(solicitud: Solicitud): void {
     this.checklistSeleccionada.set(solicitud);
-    this.comentarioEstado.set('');
+    this.comentarioEstado.set(solicitud.mensajeCorreccion || solicitud.comentarioEstado || '');
+    this.camposSeleccionados.set(solicitud.camposCorregir ?? []);
     this.errorComentario.set('');
   }
 
@@ -177,34 +202,45 @@ export class MonitorSolicitudesComponent implements OnInit {
   cerrarChecklist(): void {
     this.checklistSeleccionada.set(null);
     this.comentarioEstado.set('');
+    this.camposSeleccionados.set([]);
     this.errorComentario.set('');
   }
 
-  cambiarEstado(nuevoEstado: 'aprobada' | 'pendiente' | 'rechazada'): void {
+  cambiarEstado(nuevoEstado: 'aprobada' | 'correccion' | 'rechazada'): void {
     const solicitudActual = this.checklistSeleccionada();
     if (!solicitudActual) return;
 
     const comentario = this.comentarioEstado().trim();
-    if (!comentario) {
-      this.errorComentario.set('Escribe un comentario para informar a la persona solicitante.');
+
+    if (nuevoEstado === 'correccion' && this.camposSeleccionados().length === 0) {
+      this.errorComentario.set('Selecciona al menos un campo específico que el usuario deba corregir.');
       return;
     }
 
+    if ((nuevoEstado === 'correccion' || nuevoEstado === 'rechazada') && !comentario) {
+      this.errorComentario.set('Escribe las instrucciones o el motivo para informar a la persona solicitante.');
+      return;
+    }
+
+    const campos = nuevoEstado === 'correccion' ? this.camposSeleccionados() : [];
+
     this.http.put(`/api/solicitudes/${solicitudActual.id}/estado`, {
       estado: nuevoEstado,
-      motivo: comentario
+      motivo: comentario || null,
+      campos_corregir: campos
     }).subscribe({
       next: () => {
         this.solicitudes.set(
           this.solicitudes().map((solicitud) =>
             solicitud.id === solicitudActual.id
               ? {
-                  ...solicitud,
-                  estado: nuevoEstado,
-                  comentarioEstado: comentario,
-                  mensajeCorreccion: nuevoEstado === 'pendiente' ? comentario : solicitud.mensajeCorreccion,
-                  mensajeRechazo: nuevoEstado === 'rechazada' ? comentario : solicitud.mensajeRechazo
-                }
+                ...solicitud,
+                estado: nuevoEstado,
+                comentarioEstado: comentario,
+                mensajeCorreccion: nuevoEstado === 'correccion' ? comentario : '',
+                mensajeRechazo: nuevoEstado === 'rechazada' ? comentario : '',
+                camposCorregir: campos
+              }
               : solicitud
           )
         );
@@ -215,8 +251,6 @@ export class MonitorSolicitudesComponent implements OnInit {
           services: this.getServices(solicitudActual),
           status: nuevoEstado
         });
-        this.comentarioEstado.set('');
-        this.errorComentario.set('');
         this.cerrarChecklist();
       },
       error: (err) => {
@@ -293,10 +327,10 @@ export class MonitorSolicitudesComponent implements OnInit {
   get estadisticas() {
     return {
       total: this.filteredSolicitudes.length,
-      aprobadas: this.filteredSolicitudes.filter((solicitud) => solicitud.estado === 'aprobada').length,
-      pendientes: this.filteredSolicitudes.filter((solicitud) => solicitud.estado === 'pendiente').length,
-      rechazadas: this.filteredSolicitudes.filter((solicitud) => solicitud.estado === 'rechazada').length,
-      totalVisitantes: this.filteredSolicitudes.reduce((total, solicitud) => total + solicitud.numeroVisitantes, 0)
+      aprobadas: this.filteredSolicitudes.filter((s) => s.estado === 'aprobada').length,
+      pendientes: this.filteredSolicitudes.filter((s) => s.estado === 'pendiente' || s.estado === 'correccion').length,
+      rechazadas: this.filteredSolicitudes.filter((s) => s.estado === 'rechazada').length,
+      totalVisitantes: this.filteredSolicitudes.reduce((total, s) => total + s.numeroVisitantes, 0)
     };
   }
 }
