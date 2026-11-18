@@ -41,7 +41,7 @@
                 <div class="status-header">
                     <h3><i class="bi bi-card-checklist icon-contrast"></i> Detalles de la Visita</h3>
                     <span class="status-badge" [ngClass]="obtenerClaseEstado(solicitudEncontrada.estado)">
-                        <i class="bi bi-info-circle-fill"></i> {{ solicitudEncontrada.estado }}
+                        <i class="bi bi-info-circle-fill"></i> {{ obtenerEtiquetaEstado(solicitudEncontrada.estado) }}
                     </span>
                 </div>
 
@@ -65,32 +65,49 @@
                     </div>
                 </div>
 
-                @if (solicitudEncontrada.estado === 'Requiere Corrección') {
+                @if (esEstadoCorreccion(solicitudEncontrada.estado)) {
                 <div class="alert-glass warning">
-                    <strong><i class="bi bi-exclamation-triangle-fill"></i> Atención requerida</strong>
-                    <p>{{ solicitudEncontrada.mensajeCorreccion || solicitudEncontrada.comentarioEstado || solicitudEncontrada.comentario || solicitudEncontrada.motivo }}</p>
-                    <button class="btn-corregir" (click)="abrirModalCorreccion()">
+                    <strong><i class="bi bi-exclamation-triangle-fill"></i> Atención requerida: Solicitaron
+                        correcciones</strong>
+                    <p>{{ obtenerMensajeRevision() }}</p>
+
+                    @if (obtenerCamposSolicitados().length > 0) {
+                    <div class="campos-solicitados">
+                        <span>Campos a corregir:</span>
+                        <ul>
+                            @for (campoKey of obtenerCamposSolicitados(); track campoKey) {
+                            <li>{{ etiquetasCampos[campoKey] || campoKey }}</li>
+                            }
+                        </ul>
+                    </div>
+                    }
+
+                    <button type="button" class="btn-corregir" (click)="abrirModalCorreccion()">
                         <i class="bi bi-pencil-square"></i> Actualizar Datos
                     </button>
                 </div>
                 }
 
-                @if (solicitudEncontrada.estado === 'Rechazada') {
+                @if (esEstadoRechazada(solicitudEncontrada.estado)) {
                 <div class="alert-glass danger">
                     <strong><i class="bi bi-x-octagon-fill"></i> Solicitud declinada</strong>
-                    <p>{{ solicitudEncontrada.mensajeRechazo || solicitudEncontrada.comentarioEstado || solicitudEncontrada.comentario || solicitudEncontrada.motivo || 'La solicitud fue rechazada.' }}</p>
+                    <p>{{ solicitudEncontrada.mensajeRechazo || obtenerMensajeRevision() || 'La solicitud fue
+                        rechazada.' }}</p>
                 </div>
                 }
-                @if (solicitudEncontrada.estado === 'Aprobada' && (solicitudEncontrada.comentarioEstado || solicitudEncontrada.comentario || solicitudEncontrada.motivo || solicitudEncontrada.mensajeCorreccion)) {
+
+                @if (esEstadoAprobada(solicitudEncontrada.estado) && obtenerMensajeRevision()) {
                 <div class="alert-glass success">
                     <strong><i class="bi bi-chat-left-text-fill"></i> Comentario del equipo</strong>
-                    <p>{{ solicitudEncontrada.comentarioEstado || solicitudEncontrada.comentario || solicitudEncontrada.motivo || solicitudEncontrada.mensajeCorreccion }}</p>
+                    <p>{{ obtenerMensajeRevision() }}</p>
                 </div>
                 }
-                @if (solicitudEncontrada.estado !== 'Aprobada' && solicitudEncontrada.estado !== 'Rechazada' && (solicitudEncontrada.comentarioEstado || solicitudEncontrada.comentario || solicitudEncontrada.motivo)) {
+
+                @if (!esEstadoAprobada(solicitudEncontrada.estado) && !esEstadoRechazada(solicitudEncontrada.estado) &&
+                !esEstadoCorreccion(solicitudEncontrada.estado) && obtenerMensajeRevision()) {
                 <div class="alert-glass warning">
                     <strong><i class="bi bi-chat-left-text-fill"></i> Comentario del equipo</strong>
-                    <p>{{ solicitudEncontrada.comentarioEstado || solicitudEncontrada.comentario || solicitudEncontrada.motivo }}</p>
+                    <p>{{ obtenerMensajeRevision() }}</p>
                 </div>
                 }
             </div>
@@ -115,15 +132,15 @@
             }
 
             <div style="text-align: center; margin-top: 2.5rem;">
-                <button class="btn-secondary" (click)="regresarInicio()">
+                <button type="button" class="btn-secondary" (click)="regresarInicio()">
                     <i class="bi bi-arrow-left-circle"></i> Volver al inicio
                 </button>
             </div>
         </div>
     </div>
 
-    @if (mostrarModalCorreccion) {
-    <app-modal-correccion [folio]="solicitudEncontrada!.folio" [campos]="camposACorregir"
+    @if (mostrarModalCorreccion && solicitudEncontrada) {
+    <app-modal-correccion [folio]="solicitudEncontrada.folio" [campos]="camposACorregir"
         (cerrar)="mostrarModalCorreccion = false" (guardar)="procesarCorreccion($event)">
     </app-modal-correccion>
     }

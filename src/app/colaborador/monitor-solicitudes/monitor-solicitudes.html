@@ -33,7 +33,8 @@
     <div class="filters">
       <div class="filter-group">
         <label>Fecha de Visita:</label>
-        <input type="date" [value]="filterFecha()" (change)="onFilterFecha($any($event.target).value)" class="filter-input" />
+        <input type="date" [value]="filterFecha()" (change)="onFilterFecha($any($event.target).value)"
+          class="filter-input" />
       </div>
 
       <div class="filter-group">
@@ -150,11 +151,25 @@
 
         <div class="form-card" style="margin-top: 1rem;">
           <div class="form-group">
-            <label><i class="bi bi-chat-left-dots me-1"></i> Comentario para la persona solicitante:</label>
-            <textarea rows="3" placeholder="Indica el motivo o los detalles de esta decisión..." [ngModel]="motivoCorreccion()"
+            <label><i class="bi bi-ui-checks-grid me-1"></i> Campos que requieren corrección (si aplica):</label>
+            <div class="correction-fields-grid">
+              @for (campo of camposDisponibles; track campo.key) {
+              <label class="field-checkbox-item">
+                <input type="checkbox" [checked]="camposSeleccionados().includes(campo.key)"
+                  (change)="toggleCampoCorregir(campo.key, $any($event.target).checked)" />
+                <span>{{ campo.label }}</span>
+              </label>
+              }
+            </div>
+
+            <label style="margin-top: 0.75rem; display: block;">
+              <i class="bi bi-chat-left-dots me-1"></i> Instrucciones o comentario para la persona solicitante:
+            </label>
+            <textarea rows="3" placeholder="Especifica qué debe corregir en los campos seleccionados..."
+              [ngModel]="motivoCorreccion()"
               (ngModelChange)="motivoCorreccion.set($event); errorComentario.set('')"></textarea>
             @if (errorComentario()) {
-              <p class="comment-error" role="alert">{{ errorComentario() }}</p>
+            <p class="comment-error" role="alert">{{ errorComentario() }}</p>
             }
           </div>
         </div>

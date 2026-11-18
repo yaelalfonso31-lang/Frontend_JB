@@ -28,7 +28,8 @@
     <div class="filters">
       <div class="filter-group">
         <label>Fecha de Visita:</label>
-        <input type="date" [value]="filterFecha()" (change)="onFilterFecha($any($event.target).value)" class="filter-input" />
+        <input type="date" [value]="filterFecha()" (change)="onFilterFecha($any($event.target).value)"
+          class="filter-input" />
       </div>
 
       <div class="filter-group">
@@ -37,6 +38,7 @@
           <option value="todos">Todos</option>
           <option value="aprobada">Aprobada</option>
           <option value="pendiente">Pendiente</option>
+          <option value="correccion">En Corrección</option>
           <option value="rechazada">Rechazada</option>
         </select>
       </div>
@@ -80,102 +82,113 @@
       </thead>
       <tbody>
         @for (solicitud of filteredSolicitudes; track solicitud.id) {
-          <tr>
-            <td>{{ solicitud.id }}</td>
-            <td>{{ solicitud.solicitante }}</td>
-            <td>{{ solicitud.escuela }}</td>
-            <td>{{ solicitud.fechaVisita }}</td>
-            <td class="numeric">{{ solicitud.numeroVisitantes }}</td>
-            <td>{{ solicitud.proposito }}</td>
-            <td>
-              <span [class]="'status-badge status-' + solicitud.estado">
-                {{ solicitud.estado | titlecase }}
-              </span>
-            </td>
-            <td>
-              @if (checklistRoute(solicitud); as route) {
-                <a class="btn-checklist" [routerLink]="route" [queryParams]="{ folio: solicitud.folio }">Abrir checklist</a>
-              } @else if (solicitud.estado !== 'aprobada' && solicitud.folio) {
-                <span class="checklist-unavailable">Disponible al aprobar</span>
-              } @else {
-                <span class="checklist-unavailable" title="El API debe devolver el folio y los servicios seleccionados">Sin tipo de servicio</span>
-              }
-            </td>
-            <td>
-              @if (solicitud.estado === 'aprobada') {
-                <button class="btn-programa" type="button" (click)="abrirPrograma(solicitud)">
-                  <i class="bi bi-calendar2-check" aria-hidden="true"></i>
-                  {{ programaButtonLabel(solicitud) }}
-                </button>
-              } @else {
-                <span class="programa-pendiente">Disponible al aprobar</span>
-              }
-            </td>
-            <td>
-              <button class="btn-review" type="button" (click)="abrirChecklist(solicitud)">Revisar solicitud</button>
-            </td>
-          </tr>
+        <tr>
+          <td>{{ solicitud.id }}</td>
+          <td>{{ solicitud.solicitante }}</td>
+          <td>{{ solicitud.escuela }}</td>
+          <td>{{ solicitud.fechaVisita }}</td>
+          <td class="numeric">{{ solicitud.numeroVisitantes }}</td>
+          <td>{{ solicitud.proposito }}</td>
+          <td>
+            <span [class]="'status-badge status-' + solicitud.estado">
+              {{ solicitud.estado | titlecase }}
+            </span>
+          </td>
+          <td>
+            @if (checklistRoute(solicitud); as route) {
+            <a class="btn-checklist" [routerLink]="route" [queryParams]="{ folio: solicitud.folio }">Abrir checklist</a>
+            } @else if (solicitud.estado !== 'aprobada' && solicitud.folio) {
+            <span class="checklist-unavailable">Disponible al aprobar</span>
+            } @else {
+            <span class="checklist-unavailable" title="El API debe devolver el folio y los servicios seleccionados">Sin
+              tipo de servicio</span>
+            }
+          </td>
+          <td>
+            @if (solicitud.estado === 'aprobada') {
+            <button class="btn-programa" type="button" (click)="abrirPrograma(solicitud)">
+              <i class="bi bi-calendar2-check" aria-hidden="true"></i>
+              {{ programaButtonLabel(solicitud) }}
+            </button>
+            } @else {
+            <span class="programa-pendiente">Disponible al aprobar</span>
+            }
+          </td>
+          <td>
+            <button class="btn-review" type="button" (click)="abrirChecklist(solicitud)">Revisar solicitud</button>
+          </td>
+        </tr>
         }
       </tbody>
     </table>
 
     @if (filteredSolicitudes.length === 0) {
-      <div class="no-results">
-        <p>No se encontraron solicitudes con los filtros especificados</p>
-      </div>
+    <div class="no-results">
+      <p>No se encontraron solicitudes con los filtros especificados</p>
+    </div>
     }
   </div>
 </div>
 
 @if (checklistSeleccionada(); as solicitud) {
-  <div class="modal-backdrop" (click)="cerrarChecklist()">
-    <div class="modal-card" (click)="$event.stopPropagation()">
-      <div class="modal-header">
-        <h3>Revisión de solicitud #{{ solicitud.id }} ({{ solicitud.folio }})</h3>
-        <button class="close-btn" type="button" (click)="cerrarChecklist()">×</button>
-      </div>
-      <div class="modal-body">
-        <p><strong>Escuela:</strong> {{ solicitud.solicitante }} ({{ solicitud.escuela | titlecase }})</p>
-        <p><strong>Fecha y Hora:</strong> {{ solicitud.fechaVisita }} {{ solicitud.horaVisita || '' }}</p>
-        <p><strong>Visitantes:</strong> {{ solicitud.numeroVisitantes }}</p>
-        @if (solicitud.profesores) {
-          <p><strong>Profesor(es):</strong> {{ solicitud.profesores }}</p>
-        }
-        @if (solicitud.telefonos) {
-          <p><strong>Teléfono(s):</strong> {{ solicitud.telefonos }}</p>
-        }
-        @if (solicitud.correos) {
-          <p><strong>Correo(s):</strong> {{ solicitud.correos }}</p>
-        }
-        @if (solicitud.titularPago) {
-          <p><strong>Titular del Pago:</strong> {{ solicitud.titularPago }} (${{ solicitud.montoPagado }} MXN)</p>
-        }
-        @if (solicitud.comprobanteRuta) {
-          <p style="margin-top: 10px;">
-            <a [href]="solicitud.comprobanteRuta" target="_blank" rel="noopener" style="color: #004d40; font-weight: bold; text-decoration: underline;">
-              📄 Ver comprobante de pago adjunto
-            </a>
-          </p>
-        }
-        <div class="form-group status-comment">
-          <label for="comentarioEstado">Comentario para la persona solicitante:</label>
-          <textarea
-            id="comentarioEstado"
-            rows="3"
-            [value]="comentarioEstado()"
-            (input)="comentarioEstado.set($any($event.target).value); errorComentario.set('')"
-            placeholder="Indica el motivo o los detalles de esta decisión..."
-          ></textarea>
-          @if (errorComentario()) {
-            <p class="comment-error" role="alert">{{ errorComentario() }}</p>
+<div class="modal-backdrop" (click)="cerrarChecklist()">
+  <div class="modal-card" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>Revisión de solicitud #{{ solicitud.id }} ({{ solicitud.folio }})</h3>
+      <button class="close-btn" type="button" (click)="cerrarChecklist()">×</button>
+    </div>
+    <div class="modal-body">
+      <p><strong>Escuela:</strong> {{ solicitud.solicitante }} ({{ solicitud.escuela | titlecase }})</p>
+      <p><strong>Fecha y Hora:</strong> {{ solicitud.fechaVisita }} {{ solicitud.horaVisita || '' }}</p>
+      <p><strong>Visitantes:</strong> {{ solicitud.numeroVisitantes }}</p>
+      @if (solicitud.profesores) {
+      <p><strong>Profesor(es):</strong> {{ solicitud.profesores }}</p>
+      }
+      @if (solicitud.telefonos) {
+      <p><strong>Teléfono(s):</strong> {{ solicitud.telefonos }}</p>
+      }
+      @if (solicitud.correos) {
+      <p><strong>Correo(s):</strong> {{ solicitud.correos }}</p>
+      }
+      @if (solicitud.titularPago) {
+      <p><strong>Titular del Pago:</strong> {{ solicitud.titularPago }} (${{ solicitud.montoPagado }} MXN)</p>
+      }
+      @if (solicitud.comprobanteRuta) {
+      <p style="margin-top: 10px;">
+        <a [href]="solicitud.comprobanteRuta" target="_blank" rel="noopener"
+          style="color: #004d40; font-weight: bold; text-decoration: underline;">
+          Ver comprobante de pago adjunto
+        </a>
+      </p>
+      }
+      <div class="form-group status-comment">
+        <label class="fields-title">Selecciona los campos que requieren corrección (si aplica):</label>
+        <div class="correction-fields-grid">
+          @for (campo of camposDisponibles; track campo.key) {
+          <label class="field-checkbox-item">
+            <input type="checkbox" [checked]="camposSeleccionados().includes(campo.key)"
+              (change)="toggleCampoCorregir(campo.key, $any($event.target).checked)" />
+            <span>{{ campo.label }}</span>
+          </label>
           }
         </div>
-      </div>
-      <div class="modal-actions compact">
-        <button type="button" class="btn-success" (click)="cambiarEstado('aprobada')">Aprobar</button>
-        <button type="button" class="btn-warning" (click)="cambiarEstado('pendiente')">Pendiente</button>
-        <button type="button" class="btn-danger" (click)="cambiarEstado('rechazada')">Rechazar</button>
+
+        <label for="comentarioEstado" style="margin-top: 0.85rem; display: block;">
+          Instrucciones o comentario para la persona solicitante:
+        </label>
+        <textarea id="comentarioEstado" rows="3" [value]="comentarioEstado()"
+          (input)="comentarioEstado.set($any($event.target).value); errorComentario.set('')"
+          placeholder="Especifica qué debe corregir en los campos seleccionados o el motivo de tu decisión..."></textarea>
+        @if (errorComentario()) {
+        <p class="comment-error" role="alert">{{ errorComentario() }}</p>
+        }
       </div>
     </div>
+    <div class="modal-actions compact">
+      <button type="button" class="btn-success" (click)="cambiarEstado('aprobada')">Aprobar</button>
+      <button type="button" class="btn-warning" (click)="cambiarEstado('correccion')">Solicitar Corrección</button>
+      <button type="button" class="btn-danger" (click)="cambiarEstado('rechazada')">Rechazar</button>
+    </div>
   </div>
+</div>
 }

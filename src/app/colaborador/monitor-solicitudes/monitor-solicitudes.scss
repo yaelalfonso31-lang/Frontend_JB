@@ -6,3 +6,30 @@
   font-size: 0.875rem;
   font-weight: 600;
 }
+
+.correction-fields-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  gap: 0.5rem;
+  margin: 0.5rem 0 1rem;
+  padding: 0.75rem;
+  background: #ffffff;
+  border: 1px solid var(--border-input);
+  border-radius: var(--radius-sm);
+}
+
+.field-checkbox-item {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.85rem;
+  font-weight: 500 !important;
+  cursor: pointer;
+
+  input[type='checkbox'] {
+    accent-color: var(--accent-primary);
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+  }
+}

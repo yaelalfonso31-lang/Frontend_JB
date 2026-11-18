@@ -14,7 +14,8 @@ interface Solicitud {
   escuela: string;
   fechaVisita: string;
   horaVisita?: string;
-  estado: 'pendiente' | 'aprobada' | 'rechazada';
+  estado: 'pendiente' | 'aprobada' | 'rechazada' | 'correccion';
+  camposCorregir?: string[];
   comentarioEstado?: string;
   mensajeCorreccion?: string;
   mensajeRechazo?: string;
@@ -56,11 +57,27 @@ export class MonitorSolicitudesComponent implements OnInit {
 
   solicitudes = signal<Solicitud[]>([]);
   filterFecha = signal('');
-  filterEstado = signal<'todos' | 'aprobada' | 'pendiente' | 'rechazada'>('todos');
+  filterEstado = signal<'todos' | 'aprobada' | 'pendiente' | 'rechazada' | 'correccion'>('todos');
   filterEscuela = signal<string>('todos');
   checklistSeleccionada = signal<Solicitud | null>(null);
   comentarioEstado = signal('');
   errorComentario = signal('');
+  camposSeleccionados = signal<string[]>([]);
+
+  readonly camposDisponibles = [
+    { key: 'nombre_escuela', label: 'Nombre de la escuela / institución' },
+    { key: 'nivel_educativo', label: 'Nivel educativo' },
+    { key: 'fecha_visita', label: 'Fecha de visita' },
+    { key: 'hora_visita', label: 'Hora de visita' },
+    { key: 'numero_visitantes', label: 'Número de visitantes' },
+    { key: 'proposito', label: 'Propósito / Servicios' },
+    { key: 'profesores', label: 'Profesor(es) responsable(s)' },
+    { key: 'telefonos', label: 'Teléfono(s) de contacto' },
+    { key: 'correos', label: 'Correo(s) electrónico(s)' },
+    { key: 'titular_pago', label: 'Titular del pago' },
+    { key: 'monto_pagado', label: 'Monto pagado' },
+    { key: 'comprobante', label: 'Comprobante de pago (archivo)' }
+  ];
 
   ngOnInit(): void {
     this.cargarSolicitudes();
@@ -102,7 +119,7 @@ export class MonitorSolicitudesComponent implements OnInit {
     this.filterFecha.set(value);
   }
 
-  onFilterEstado(value: 'todos' | 'aprobada' | 'pendiente' | 'rechazada'): void {
+  onFilterEstado(value: 'todos' | 'aprobada' | 'pendiente' | 'rechazada' | 'correccion'): void {
     this.filterEstado.set(value);
   }
 
@@ -116,9 +133,17 @@ export class MonitorSolicitudesComponent implements OnInit {
     this.filterEscuela.set('todos');
   }
 
+  toggleCampoCorregir(key: string, checked: boolean): void {
+    this.camposSeleccionados.update(actuales =>
+      checked ? [...actuales, key] : actuales.filter(k => k !== key)
+    );
+    this.errorComentario.set('');
+  }
+
   abrirChecklist(solicitud: Solicitud): void {
     this.checklistSeleccionada.set(solicitud);
-    this.comentarioEstado.set('');
+    this.comentarioEstado.set(solicitud.mensajeCorreccion || solicitud.comentarioEstado || '');
+    this.camposSeleccionados.set(solicitud.camposCorregir ?? []);
     this.errorComentario.set('');
   }
 
@@ -177,10 +202,11 @@ export class MonitorSolicitudesComponent implements OnInit {
   cerrarChecklist(): void {
     this.checklistSeleccionada.set(null);
     this.comentarioEstado.set('');
+    this.camposSeleccionados.set([]);
     this.errorComentario.set('');
   }
 
-  cambiarEstado(nuevoEstado: 'aprobada' | 'pendiente' | 'rechazada'): void {
+  cambiarEstado(nuevoEstado: 'aprobada' | 'correccion' | 'rechazada'): void {
     const solicitudActual = this.checklistSeleccionada();
     if (!solicitudActual) return;
 
@@ -190,21 +216,30 @@ export class MonitorSolicitudesComponent implements OnInit {
       return;
     }
 
+    if (nuevoEstado === 'correccion' && this.camposSeleccionados().length === 0) {
+      this.errorComentario.set('Selecciona al menos un campo específico que el usuario deba corregir.');
+      return;
+    }
+
+    const campos = nuevoEstado === 'correccion' ? this.camposSeleccionados() : [];
+
     this.http.put(`/api/solicitudes/${solicitudActual.id}/estado`, {
       estado: nuevoEstado,
-      motivo: comentario
+      motivo: comentario,
+      campos_corregir: campos
     }).subscribe({
       next: () => {
         this.solicitudes.set(
           this.solicitudes().map((solicitud) =>
             solicitud.id === solicitudActual.id
               ? {
-                  ...solicitud,
-                  estado: nuevoEstado,
-                  comentarioEstado: comentario,
-                  mensajeCorreccion: nuevoEstado === 'pendiente' ? comentario : solicitud.mensajeCorreccion,
-                  mensajeRechazo: nuevoEstado === 'rechazada' ? comentario : solicitud.mensajeRechazo
-                }
+                ...solicitud,
+                estado: nuevoEstado,
+                comentarioEstado: comentario,
+                mensajeCorreccion: nuevoEstado === 'correccion' ? comentario : solicitud.mensajeCorreccion,
+                mensajeRechazo: nuevoEstado === 'rechazada' ? comentario : solicitud.mensajeRechazo,
+                camposCorregir: campos
+              }
               : solicitud
           )
         );
@@ -215,8 +250,6 @@ export class MonitorSolicitudesComponent implements OnInit {
           services: this.getServices(solicitudActual),
           status: nuevoEstado
         });
-        this.comentarioEstado.set('');
-        this.errorComentario.set('');
         this.cerrarChecklist();
       },
       error: (err) => {
@@ -293,10 +326,10 @@ export class MonitorSolicitudesComponent implements OnInit {
   get estadisticas() {
     return {
       total: this.filteredSolicitudes.length,
-      aprobadas: this.filteredSolicitudes.filter((solicitud) => solicitud.estado === 'aprobada').length,
-      pendientes: this.filteredSolicitudes.filter((solicitud) => solicitud.estado === 'pendiente').length,
-      rechazadas: this.filteredSolicitudes.filter((solicitud) => solicitud.estado === 'rechazada').length,
-      totalVisitantes: this.filteredSolicitudes.reduce((total, solicitud) => total + solicitud.numeroVisitantes, 0)
+      aprobadas: this.filteredSolicitudes.filter((s) => s.estado === 'aprobada').length,
+      pendientes: this.filteredSolicitudes.filter((s) => s.estado === 'pendiente' || s.estado === 'correccion').length,
+      rechazadas: this.filteredSolicitudes.filter((s) => s.estado === 'rechazada').length,
+      totalVisitantes: this.filteredSolicitudes.reduce((total, s) => total + s.numeroVisitantes, 0)
     };
   }
 }

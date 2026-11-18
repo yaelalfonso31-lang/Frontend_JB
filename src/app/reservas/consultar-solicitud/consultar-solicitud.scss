@@ -305,6 +305,31 @@ $icon-accent: #f4b63f;
         }
     }
 
+    .campos-solicitados {
+        margin-top: 0.75rem;
+        padding: 0.65rem 1rem;
+        background: rgba(255, 255, 255, 0.08);
+        border-radius: 6px;
+        font-size: 0.9rem;
+
+        span {
+            font-weight: 700;
+            color: #ffe082;
+            display: block;
+            margin-bottom: 0.3rem;
+        }
+
+        ul {
+            margin: 0;
+            padding-left: 1.25rem;
+            color: #ffffff;
+        }
+
+        li {
+            margin-bottom: 0.2rem;
+        }
+    }
+
     .btn-corregir {
         display: inline-flex;
         align-items: center;
