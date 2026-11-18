@@ -116,77 +116,157 @@
 
   @if (solicitudSeleccionada(); as sol) {
   <div class="modal-backdrop" (click)="cerrarDetalle()">
-    <div class="modal-card" (click)="$event.stopPropagation()">
+    <div class="modal-card modal-botanico" (click)="$event.stopPropagation()">
+
+      <!-- Encabezado Verde Institucional -->
       <div class="modal-header">
-        <h3><i class="bi bi-file-earmark-text"></i> Solicitud #{{ sol.id }}</h3>
-        <button class="close-btn" (click)="cerrarDetalle()"><i class="bi bi-x-lg"></i></button>
+        <div class="header-title">
+          <div class="header-icon">
+            <i class="bi bi-clipboard2-check-fill"></i>
+          </div>
+          <div>
+            <span class="folio-pill">
+              <i class="bi bi-upc-scan"></i> {{ sol.folio || ('Solicitud #' + sol.id) }}
+            </span>
+            <h3>Revisión Operativa #{{ sol.id }}</h3>
+          </div>
+        </div>
+        <button class="close-btn" type="button" (click)="cerrarDetalle()" aria-label="Cerrar">
+          <i class="bi bi-x-lg"></i>
+        </button>
       </div>
 
+      <!-- Cuerpo del Modal -->
       <div class="modal-body">
-        <div class="detail-section">
-          <div class="detail-row"><span class="label">Escuela:</span> <span>{{ sol.solicitante }}</span></div>
-          <div class="detail-row"><span class="label">Nivel:</span> <span>{{ sol.escuela }}</span></div>
-          <div class="detail-row"><span class="label">Fecha:</span> <span>{{ sol.fechaVisita }}</span></div>
-          <div class="detail-row"><span class="label">Visitantes:</span> <span>{{ sol.numeroVisitantes }}
-              personas</span></div>
-          <div class="detail-row"><span class="label">Propósito:</span> <span>{{ sol.proposito }}</span></div>
+        <div class="info-summary-grid">
+          <div class="summary-item">
+            <i class="bi bi-building-fill summary-icon"></i>
+            <div>
+              <small>Escuela / Institución</small>
+              <strong>{{ sol.solicitante }} ({{ sol.escuela | titlecase }})</strong>
+            </div>
+          </div>
+
+          <div class="summary-item">
+            <i class="bi bi-calendar-event-fill summary-icon"></i>
+            <div>
+              <small>Fecha y Hora</small>
+              <strong>{{ sol.fechaVisita }} {{ sol.horaVisita || '' }}</strong>
+            </div>
+          </div>
+
+          <div class="summary-item">
+            <i class="bi bi-people-fill summary-icon"></i>
+            <div>
+              <small>Visitantes</small>
+              <strong>{{ sol.numeroVisitantes }} personas</strong>
+            </div>
+          </div>
+
+          <div class="summary-item">
+            <i class="bi bi-tree-fill summary-icon"></i>
+            <div>
+              <small>Propósito / Servicio</small>
+              <strong>{{ sol.proposito }}</strong>
+            </div>
+          </div>
+
           @if (sol.profesores) {
-          <div class="detail-row"><span class="label">Profesor(es):</span> <span>{{ sol.profesores }}</span></div>
+          <div class="summary-item">
+            <i class="bi bi-person-badge-fill summary-icon"></i>
+            <div>
+              <small>Profesor(es)</small>
+              <strong>{{ sol.profesores }}</strong>
+            </div>
+          </div>
           }
+
           @if (sol.telefonos) {
-          <div class="detail-row"><span class="label">Teléfono(s):</span> <span>{{ sol.telefonos }}</span></div>
+          <div class="summary-item">
+            <i class="bi bi-telephone-fill summary-icon"></i>
+            <div>
+              <small>Teléfono(s)</small>
+              <strong>{{ sol.telefonos }}</strong>
+            </div>
+          </div>
           }
+
           @if (sol.correos) {
-          <div class="detail-row"><span class="label">Correo(s):</span> <span>{{ sol.correos }}</span></div>
+          <div class="summary-item">
+            <i class="bi bi-envelope-at-fill summary-icon"></i>
+            <div>
+              <small>Correo(s)</small>
+              <strong>{{ sol.correos }}</strong>
+            </div>
+          </div>
           }
         </div>
 
         @if (sol.comprobanteRuta) {
-        <p>
-          <a [href]="sol.comprobanteRuta" target="_blank" rel="noopener" class="btn-checklist">
-            <i class="bi bi-receipt"></i> Ver comprobante de pago ({{ sol.titularPago }} - ${{ sol.montoPagado }} MXN)
-          </a>
-        </p>
+        <a [href]="sol.comprobanteRuta" target="_blank" rel="noopener" class="comprobante-banner">
+          <i class="bi bi-receipt"></i>
+          <span>Ver comprobante de pago ({{ sol.titularPago }} - ${{ sol.montoPagado }} MXN)</span>
+          <i class="bi bi-box-arrow-up-right ms-auto"></i>
+        </a>
         }
 
-        <div class="form-card" style="margin-top: 1rem;">
-          <div class="form-group">
-            <label><i class="bi bi-ui-checks-grid me-1"></i> Campos que requieren corrección (si aplica):</label>
-            <div class="correction-fields-grid">
-              @for (campo of camposDisponibles; track campo.key) {
-              <label class="field-checkbox-item">
-                <input type="checkbox" [checked]="camposSeleccionados().includes(campo.key)"
-                  (change)="toggleCampoCorregir(campo.key, $any($event.target).checked)" />
-                <span>{{ campo.label }}</span>
-              </label>
-              }
-            </div>
-
-            <label style="margin-top: 0.75rem; display: block;">
-              <i class="bi bi-chat-left-dots me-1"></i> Instrucciones o comentario para la persona solicitante:
+        <div class="form-group status-comment">
+          <div class="section-label-row">
+            <label class="fields-title">
+              <i class="bi bi-ui-checks-grid"></i>
+              Campos que requieren corrección:
             </label>
-            <textarea rows="3" placeholder="Especifica qué debe corregir en los campos seleccionados..."
-              [ngModel]="motivoCorreccion()"
-              (ngModelChange)="motivoCorreccion.set($event); errorComentario.set('')"></textarea>
-            @if (errorComentario()) {
-            <p class="comment-error" role="alert">{{ errorComentario() }}</p>
+            @if (camposSeleccionados().length > 0) {
+            <span class="selected-count">
+              {{ camposSeleccionados().length }} seleccionado(s)
+            </span>
             }
           </div>
+
+          <div class="correction-fields-grid">
+            @for (campo of camposDisponibles; track campo.key) {
+            <label class="field-checkbox-item" [class.is-checked]="camposSeleccionados().includes(campo.key)">
+              <input type="checkbox" [checked]="camposSeleccionados().includes(campo.key)"
+                (change)="toggleCampoCorregir(campo.key, $any($event.target).checked)" />
+              <i class="bi bi-pencil-square"></i>
+              <span>{{ campo.label }}</span>
+            </label>
+            }
+          </div>
+
+          <label class="comment-label">
+            <i class="bi bi-chat-left-dots-fill"></i>
+            Instrucciones o comentario para la persona solicitante:
+          </label>
+          <textarea rows="3"
+            placeholder="Especifica qué debe corregir en los campos seleccionados o el motivo de tu decisión..."
+            [ngModel]="motivoCorreccion()"
+            (ngModelChange)="motivoCorreccion.set($event); errorComentario.set('')"></textarea>
+
+          @if (errorComentario()) {
+          <div class="comment-error" role="alert">
+            <i class="bi bi-exclamation-octagon-fill"></i>
+            <span>{{ errorComentario() }}</span>
+          </div>
+          }
         </div>
       </div>
 
+      <!-- Botones de Acción -->
       <div class="modal-actions">
-        <button class="btn-warning" (click)="cambiarEstado('correccion')">
-          <i class="bi bi-exclamation-circle"></i> Solicitar Corrección
+        <button type="button" class="btn-action btn-approve" (click)="cambiarEstado('aprobada')">
+          <i class="bi bi-check-circle-fill"></i> Aprobar
         </button>
-        <button class="btn-danger" (click)="cambiarEstado('rechazada')">
-          <i class="bi bi-x-circle"></i> Rechazar
+        <button type="button" class="btn-action btn-correct" (click)="cambiarEstado('correccion')">
+          <i class="bi bi-exclamation-triangle-fill"></i> Solicitar Corrección
         </button>
-        <button class="btn-success" (click)="cambiarEstado('aprobada')">
-          <i class="bi bi-check-circle"></i> Aprobar
+        <button type="button" class="btn-action btn-reject" (click)="cambiarEstado('rechazada')">
+          <i class="bi bi-x-circle-fill"></i> Rechazar
         </button>
       </div>
+
     </div>
   </div>
   }
+
 </div>

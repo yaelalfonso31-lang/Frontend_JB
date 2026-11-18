@@ -104,3 +104,362 @@
     }
   }
 }
+
+// ==========================================================================
+// MODAL DE REVISIÓN ESTILO JARDÍN BOTÁNICO
+// ==========================================================================
+$jb-bosque: #183524;
+$jb-primario: #2e7d32;
+$jb-medio: #408558;
+$jb-suave: #e8f5e9;
+$jb-dorado: #f4b63f;
+$jb-peligro: #dc3545;
+
+.modal-card.modal-botanico {
+  width: 95%;
+  max-width: 680px;
+  border-radius: 14px;
+  border: 1px solid rgba($jb-medio, 0.25);
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.35);
+  overflow: hidden;
+  padding: 0;
+  background: #ffffff;
+
+  .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.2rem 1.5rem;
+    background: linear-gradient(135deg, $jb-bosque 0%, $jb-primario 65%, $jb-medio 100%);
+    color: #ffffff;
+    border-bottom: 3px solid $jb-dorado;
+
+    .header-title {
+      display: flex;
+      align-items: center;
+      gap: 0.9rem;
+
+      .header-icon {
+        width: 44px;
+        height: 44px;
+        border-radius: 10px;
+        background: rgba(255, 255, 255, 0.15);
+        border: 1px solid rgba(255, 255, 255, 0.25);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.35rem;
+        color: $jb-dorado;
+        flex-shrink: 0;
+      }
+
+      .folio-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        font-size: 0.76rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        background: rgba(0, 0, 0, 0.25);
+        color: #ffe082;
+        padding: 0.2rem 0.6rem;
+        border-radius: 50px;
+        margin-bottom: 0.2rem;
+      }
+
+      h3 {
+        margin: 0;
+        color: #ffffff;
+        font-size: 1.25rem;
+        font-weight: 700;
+      }
+    }
+
+    .close-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.14);
+      border: none;
+      color: #ffffff;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+
+      &:hover {
+        background: rgba($jb-peligro, 0.85);
+        transform: rotate(90deg);
+      }
+    }
+  }
+
+  .modal-body {
+    padding: 1.5rem;
+    max-height: 72vh;
+    overflow-y: auto;
+    background: #fbfdfb;
+
+    .info-summary-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+    }
+
+    .summary-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.7rem;
+      padding: 0.7rem 0.85rem;
+      background: #ffffff;
+      border: 1px solid #dce8de;
+      border-radius: 10px;
+
+      .summary-icon {
+        font-size: 1.15rem;
+        color: $jb-primario;
+        background: $jb-suave;
+        width: 34px;
+        height: 34px;
+        border-radius: 8px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+      }
+
+      small {
+        display: block;
+        font-size: 0.75rem;
+        color: #55665c;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+      }
+
+      strong {
+        font-size: 0.92rem;
+        color: $jb-bosque;
+        word-break: break-word;
+      }
+    }
+
+    .comprobante-banner {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      padding: 0.75rem 1rem;
+      margin-bottom: 1.1rem;
+      background: $jb-suave;
+      border: 1px solid #b7dfb9;
+      border-left: 4px solid $jb-primario;
+      border-radius: 8px;
+      color: $jb-bosque;
+      font-weight: 700;
+      font-size: 0.9rem;
+      text-decoration: none;
+      transition: all 0.2s ease;
+
+      i {
+        font-size: 1.15rem;
+        color: $jb-primario;
+      }
+
+      &:hover {
+        background: #d7eed8;
+        transform: translateY(-1px);
+      }
+    }
+
+    .status-comment {
+      margin-top: 0.5rem;
+      padding: 1.15rem;
+      background: #ffffff;
+      border: 1px solid #d5e3d7;
+      border-radius: 12px;
+
+      .section-label-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.5rem;
+        margin-bottom: 0.65rem;
+      }
+
+      .fields-title,
+      .comment-label {
+        display: flex;
+        align-items: center;
+        gap: 0.45rem;
+        font-weight: 700;
+        font-size: 0.92rem;
+        color: $jb-bosque;
+        margin: 0;
+
+        i {
+          color: $jb-primario;
+        }
+      }
+
+      .comment-label {
+        margin: 1rem 0 0.5rem 0;
+      }
+
+      .selected-count {
+        background: $jb-suave;
+        color: $jb-primario;
+        border: 1px solid #a5d6a7;
+        font-size: 0.76rem;
+        font-weight: 700;
+        padding: 0.2rem 0.65rem;
+        border-radius: 50px;
+      }
+
+      .correction-fields-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(195px, 1fr));
+        gap: 0.5rem;
+      }
+
+      .field-checkbox-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.55rem 0.7rem;
+        border: 1.5px solid #dce6de;
+        border-radius: 8px;
+        background: #f9fbf9;
+        font-size: 0.83rem;
+        font-weight: 600;
+        color: #2c3e35;
+        cursor: pointer;
+        transition: all 0.18s ease;
+        margin: 0;
+
+        input[type='checkbox'] {
+          accent-color: $jb-primario;
+          width: 16px;
+          height: 16px;
+          margin: 0;
+          cursor: pointer;
+        }
+
+        i {
+          color: $jb-medio;
+          font-size: 0.95rem;
+        }
+
+        &:hover {
+          border-color: #8fb573;
+          background: #f1f8f2;
+        }
+
+        &.is-checked {
+          background: $jb-suave;
+          border-color: $jb-primario;
+          color: $jb-bosque;
+          box-shadow: 0 2px 6px rgba($jb-primario, 0.12);
+
+          i {
+            color: $jb-primario;
+          }
+        }
+      }
+
+      textarea {
+        width: 100%;
+        min-height: 5rem;
+        padding: 0.75rem 0.9rem;
+        border: 1.5px solid #cbd5ce;
+        border-radius: 8px;
+        font-family: inherit;
+        font-size: 0.92rem;
+        resize: vertical;
+        box-sizing: border-box;
+        transition: all 0.2s ease;
+
+        &:focus {
+          outline: none;
+          border-color: $jb-primario;
+          box-shadow: 0 0 0 3px rgba($jb-primario, 0.15);
+        }
+      }
+
+      .comment-error {
+        display: flex;
+        align-items: center;
+        gap: 0.45rem;
+        margin-top: 0.65rem;
+        padding: 0.65rem 0.85rem;
+        background: #fdecea;
+        border-left: 4px solid $jb-peligro;
+        border-radius: 6px;
+        color: #842029;
+        font-size: 0.85rem;
+        font-weight: 600;
+      }
+    }
+  }
+
+  .modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    padding: 1rem 1.5rem;
+    background: #f3f8f4;
+    border-top: 1px solid #e2ece4;
+
+    .btn-action {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.45rem;
+      padding: 0.68rem 1.25rem;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+
+      &:hover {
+        transform: translateY(-1px);
+      }
+    }
+
+    .btn-approve {
+      background: linear-gradient(135deg, $jb-primario 0%, #1e8445 100%);
+      color: #ffffff;
+      box-shadow: 0 4px 10px rgba($jb-primario, 0.25);
+
+      &:hover {
+        background: linear-gradient(135deg, $jb-bosque 0%, $jb-primario 100%);
+      }
+    }
+
+    .btn-correct {
+      background: $jb-dorado;
+      color: #1c2b24;
+      box-shadow: 0 4px 10px rgba($jb-dorado, 0.3);
+
+      &:hover {
+        background: #e0a025;
+      }
+    }
+
+    .btn-reject {
+      background: #ffffff;
+      color: $jb-peligro;
+      border: 1.5px solid $jb-peligro;
+
+      &:hover {
+        background: $jb-peligro;
+        color: #ffffff;
+      }
+    }
+  }
+}

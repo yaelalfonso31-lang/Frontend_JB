@@ -65,18 +65,18 @@ export class MonitorSolicitudesComponent implements OnInit {
   camposSeleccionados = signal<string[]>([]);
 
   readonly camposDisponibles = [
-    { key: 'nombre_escuela', label: 'Nombre de la escuela / institución' },
-    { key: 'nivel_educativo', label: 'Nivel educativo' },
-    { key: 'fecha_visita', label: 'Fecha de visita' },
-    { key: 'hora_visita', label: 'Hora de visita' },
-    { key: 'numero_visitantes', label: 'Número de visitantes' },
-    { key: 'proposito', label: 'Propósito / Servicios' },
-    { key: 'profesores', label: 'Profesor(es) responsable(s)' },
-    { key: 'telefonos', label: 'Teléfono(s) de contacto' },
-    { key: 'correos', label: 'Correo(s) electrónico(s)' },
-    { key: 'titular_pago', label: 'Titular del pago' },
-    { key: 'monto_pagado', label: 'Monto pagado' },
-    { key: 'comprobante', label: 'Comprobante de pago (archivo)' }
+    { key: 'nombre_escuela', label: 'Nombre de la escuela', icon: 'bi-building-fill' },
+    { key: 'nivel_educativo', label: 'Nivel educativo', icon: 'bi-mortarboard-fill' },
+    { key: 'fecha', label: 'Fecha de visita', icon: 'bi-calendar-event-fill' },
+    { key: 'hora_visita', label: 'Hora de visita', icon: 'bi-clock-fill' },
+    { key: 'asistentes', label: 'Número de visitantes', icon: 'bi-people-fill' },
+    { key: 'proposito', label: 'Propósito / Servicios', icon: 'bi-tree-fill' },
+    { key: 'profesores', label: 'Profesor(es) responsable(s)', icon: 'bi-person-badge-fill' },
+    { key: 'telefonos', label: 'Teléfono(s) de contacto', icon: 'bi-telephone-fill' },
+    { key: 'correos', label: 'Correo(s) electrónico(s)', icon: 'bi-envelope-at-fill' },
+    { key: 'titular_pago', label: 'Titular del pago', icon: 'bi-person-vcard-fill' },
+    { key: 'monto_pagado', label: 'Monto pagado (MXN)', icon: 'bi-cash-coin' },
+    { key: 'comprobante', label: 'Comprobante de pago', icon: 'bi-file-earmark-medical-fill' }
   ];
 
   ngOnInit(): void {
