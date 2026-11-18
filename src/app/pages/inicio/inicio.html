@@ -3,71 +3,223 @@
     <!-- Barra de Navegación -->
     <app-header></app-header>
 
-    <!-- Sección Principal (Hero) -->
+    <!-- 1. SECCIÓN PRINCIPAL (HERO) -->
     <section class="hero-section position-relative d-flex align-items-center justify-content-center text-center">
-        <!-- Capa oscura para legibilidad -->
         <div class="hero-overlay position-absolute w-100 h-100"></div>
 
-        <div class="container position-relative z-1 text-white px-3">
-            <img src="/assets/logoJB_BN.png" alt="Logo del Jardín Botánico" class="hero-logo mb-4">
+        <div class="container position-relative z-1 text-white px-3 py-5">
+            <span class="hero-badge mb-3">
+                <i class="bi bi-leaf-fill"></i> Jardín Botánico Universitario · BUAP
+            </span>
 
-            <p class="lead mb-5 fs-4 text-shadow-sm mx-auto hero-text">
-                Un espacio dedicado a la conservación, la investigación y la educación ambiental. Conecta con la
-                biodiversidad en el corazón de la ciudad.
+            <div class="mb-3">
+                <img src="/assets/logoJB_BN.png" alt="Logo del Jardín Botánico" class="hero-logo">
+            </div>
+
+            <h1 class="hero-title mb-3">Servicios Educativos Escolares</h1>
+
+            <p class="hero-subtitle mx-auto mb-4">
+                Un espacio vivo dedicado a la conservación, la investigación y la educación ambiental.
+                Conecta a tu grupo escolar con la biodiversidad en el corazón de Ciudad Universitaria.
             </p>
 
-            <div class="d-flex flex-column flex-sm-row justify-content-center gap-4 mt-4">
-                <!-- Botón 1: Formulario -->
-                <button class="btn btn-success btn-lg px-5 py-3 shadow-lg hero-btn" (click)="irASolicitud()">
-                    <i class="bi bi-calendar2-check-fill me-2"></i> Agendar Visita o Taller
+            <div class="d-flex flex-column flex-sm-row justify-content-center gap-3 mt-4">
+                <button class="btn hero-btn hero-btn--primary" (click)="irASolicitud()">
+                    <i class="bi bi-calendar2-check-fill"></i> Agendar Visita o Taller
                 </button>
 
-                <!-- Botón 2: Consultar Estado -->
-                <button
-                    class="btn btn-light btn-lg px-5 py-3 shadow-lg hero-btn hero-btn--secondary text-success fw-bold"
-                    (click)="irAEstadoSolicitud()">
-                    <i class="bi bi-search me-2"></i> Consultar mi Solicitud
+                <button class="btn hero-btn hero-btn--secondary" (click)="irAEstadoSolicitud()">
+                    <i class="bi bi-search"></i> Consultar mi Solicitud
                 </button>
+            </div>
+
+            <!-- Cinta resumen rápida dentro del Hero -->
+            <div class="hero-highlights mt-5">
+                <div class="highlight-item">
+                    <i class="bi bi-clock-fill"></i>
+                    <span>Lunes a Viernes · 09:00 a 15:00 hrs</span>
+                </div>
+                <div class="highlight-divider"></div>
+                <div class="highlight-item">
+                    <i class="bi bi-people-fill"></i>
+                    <span>Preescolar hasta Licenciatura</span>
+                </div>
+                <div class="highlight-divider"></div>
+                <div class="highlight-item">
+                    <i class="bi bi-geo-alt-fill"></i>
+                    <span>Ciudad Universitaria BUAP, Puerta 1</span>
+                </div>
             </div>
         </div>
     </section>
 
-    <!-- Sección de Información Relevante -->
-    <section class="info-section container py-5 mt-4">
-        <div class="text-center mb-5">
-            <h2 class="fw-bold section-title">Planea tu visita</h2>
-            <p class="text-muted">Conoce los detalles para disfrutar al máximo nuestro espacio natural.</p>
+    <!-- 2. SECCIÓN DE SERVICIOS EDUCATIVOS (CON IMÁGENES E ICONOS) -->
+    <section class="services-section container py-5">
+        <div class="section-header text-center mb-5">
+            <span class="section-eyebrow"><i class="bi bi-stars"></i> Modalidades de Atención</span>
+            <h2 class="section-title">Nuestras Experiencias Educativas</h2>
+            <p class="section-desc mx-auto">
+                Selecciona la modalidad ideal para los objetivos académicos de tu grupo escolar.
+            </p>
+        </div>
+
+        <div class="row g-4">
+            @for (serv of servicios; track serv.titulo) {
+            <div class="col-lg-4 col-md-6">
+                <article class="service-card h-100">
+                    <div class="service-img-wrapper">
+                        <img [src]="serv.imagen" [alt]="serv.titulo" (error)="onImageError($event, serv.fallback)"
+                            class="service-img" />
+                        <span class="service-tag">
+                            <i class="bi bi-check2-circle"></i> {{ serv.etiqueta }}
+                        </span>
+                        <div class="service-icon-floating">
+                            <i class="bi" [ngClass]="serv.icono"></i>
+                        </div>
+                    </div>
+
+                    <div class="service-body">
+                        <span class="service-subtitle">{{ serv.subtitulo }}</span>
+                        <h3>{{ serv.titulo }}</h3>
+                        <p>{{ serv.descripcion }}</p>
+
+                        <button type="button" class="btn-link-botanico" (click)="irASolicitud()">
+                            <span>Solicitar este servicio</span>
+                            <i class="bi bi-arrow-right"></i>
+                        </button>
+                    </div>
+                </article>
+            </div>
+            }
+        </div>
+    </section>
+
+    <!-- 3. GALERÍA VISUAL DE ESPACIOS (PREPARADA PARA FUTURAS FOTOS EN ASSETS) -->
+    <section class="gallery-section py-5">
+        <div class="container">
+            <div class="section-header text-center mb-4">
+                <span class="section-eyebrow"><i class="bi bi-camera-fill"></i> Recorrido Visual</span>
+                <h2 class="section-title">Conoce Nuestro Espacio Natural</h2>
+                <p class="section-desc mx-auto">
+                    Un vistazo a las colecciones biológicas, senderos y áreas educativas que recorrerás durante tu
+                    visita.
+                </p>
+            </div>
+
+            <div class="gallery-bento">
+                @for (foto of galeria; track foto.titulo) {
+                <div class="gallery-card" [class.gallery-card--featured]="foto.destacada">
+                    <img [src]="foto.imagen" [alt]="foto.titulo" (error)="onImageError($event, foto.fallback)"
+                        class="gallery-img" />
+                    <div class="gallery-overlay">
+                        <span class="gallery-badge">
+                            <i class="bi" [ngClass]="foto.icono"></i> {{ foto.categoria }}
+                        </span>
+                        <h4>{{ foto.titulo }}</h4>
+                    </div>
+                </div>
+                }
+            </div>
+        </div>
+    </section>
+
+    <!-- 4. PASOS RÁPIDOS + INFORMACIÓN PRÁCTICA ("PLANEA TU VISITA") -->
+    <section class="info-section container py-5">
+        <!-- Cinta de 3 pasos para agendar -->
+        <div class="steps-banner mb-5">
+            <div class="steps-banner-header">
+                <h3><i class="bi bi-lightning-charge-fill"></i> ¿Cómo agendar tu visita escolar en 3 pasos?</h3>
+            </div>
+            <div class="steps-grid">
+                <div class="step-box">
+                    <span class="step-num">1</span>
+                    <div>
+                        <strong>Registra tu solicitud</strong>
+                        <p>Elige fecha, horario, servicio educativo y datos de tu institución.</p>
+                    </div>
+                </div>
+                <div class="step-box">
+                    <span class="step-num">2</span>
+                    <div>
+                        <strong>Recibe tu folio</strong>
+                        <p>Consulta el estado de revisión o sube correcciones con tu folio asignado.</p>
+                    </div>
+                </div>
+                <div class="step-box">
+                    <span class="step-num">3</span>
+                    <div>
+                        <strong>¡Vive la experiencia!</strong>
+                        <p>Acude 15 minutos antes con tu grupo siguiendo el reglamento del jardín.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section-header text-center mb-4">
+            <span class="section-eyebrow"><i class="bi bi-compass"></i> Información Práctica</span>
+            <h2 class="section-title">Planea tu Visita</h2>
+            <p class="section-desc mx-auto">Todo lo que necesitas saber antes de acudir a nuestras instalaciones.</p>
         </div>
 
         <div class="row g-4">
             <div class="col-md-4">
-                <div class="card h-100 border-0 shadow-sm text-center p-4 card-hover">
-                    <div class="icon-wrapper mx-auto mb-3 text-success">
-                        <i class="bi bi-clock-history icon-lg"></i>
+                <div class="info-card h-100">
+                    <div class="icon-wrapper">
+                        <i class="bi bi-clock-history"></i>
                     </div>
-                    <h5 class="fw-bold">Horarios</h5>
-                    <p class="text-muted mb-0">De Lunes a Viernes<br>09:00 hrs a 15:00 hrs.</p>
+                    <div>
+                        <h5>Horarios de Atención</h5>
+                        <p class="mb-1"><strong>Lunes a Viernes:</strong> 09:00 a 15:00 hrs.</p>
+                        <small class="text-muted">Se requiere reservación previa para grupos escolares.</small>
+                    </div>
                 </div>
             </div>
 
             <div class="col-md-4">
-                <div class="card h-100 border-0 shadow-sm text-center p-4 card-hover">
-                    <div class="icon-wrapper mx-auto mb-3 text-success">
-                        <i class="bi bi-geo-alt-fill icon-lg"></i>
+                <div class="info-card h-100">
+                    <div class="icon-wrapper">
+                        <i class="bi bi-geo-alt-fill"></i>
                     </div>
-                    <h5 class="fw-bold">Ubicación</h5>
-                    <p class="text-muted mb-0">Ciudad Universitaria BUAP<br>Acceso sugerido por Puerta 1.</p>
+                    <div>
+                        <h5>Ubicación</h5>
+                        <p class="mb-1"><strong>Ciudad Universitaria BUAP</strong></p>
+                        <small class="text-muted">Av. San Claudio s/n, Col. San Manuel. Acceso sugerido por Puerta
+                            1.</small>
+                    </div>
                 </div>
             </div>
 
             <div class="col-md-4">
-                <div class="card h-100 border-0 shadow-sm text-center p-4 card-hover">
-                    <div class="icon-wrapper mx-auto mb-3 text-success">
-                        <i class="bi bi-telephone-fill icon-lg"></i>
+                <div class="info-card h-100">
+                    <div class="icon-wrapper">
+                        <i class="bi bi-telephone-inbound-fill"></i>
                     </div>
-                    <h5 class="fw-bold">Contacto</h5>
-                    <p class="text-muted mb-0">Tel: 222 229 5500 ext. 7033<br>WhatsApp: +52 222 529 7312</p>
+                    <div>
+                        <h5>Contacto Directo</h5>
+                        <p class="mb-1"><strong>Tel:</strong> 222 229 5500 ext. 7033</p>
+                        <small class="text-muted"><i class="bi bi-whatsapp text-success"></i> WhatsApp: +52 222 529
+                            7312</small>
+                    </div>
                 </div>
+            </div>
+        </div>
+
+        <!-- Accesos rápidos a Reglamento y Preguntas Frecuentes -->
+        <div class="help-strip mt-4">
+            <div class="help-strip-text">
+                <i class="bi bi-shield-check"></i>
+                <div>
+                    <strong>¿Tienes dudas sobre el acceso o las normas de conservación?</strong>
+                    <span>Revisa el código de comportamiento y las preguntas frecuentes antes de tu recorrido.</span>
+                </div>
+            </div>
+            <div class="help-strip-actions">
+                <button type="button" class="btn-outline-jb" (click)="irAReglamentoJardin()">
+                    <i class="bi bi-journal-bookmark-fill"></i> Ver Reglamento
+                </button>
+                <button type="button" class="btn-outline-jb" (click)="irAPreguntasFrecuentes()">
+                    <i class="bi bi-question-circle-fill"></i> Preguntas Frecuentes
+                </button>
             </div>
         </div>
     </section>

@@ -8,42 +8,8 @@
             <div class="footer-brand">
                 <div class="footer-brand__name">
                     <span class="footer-brand__leaf" aria-hidden="true">🌿</span>
-                    <span>Jardín Botánico Universitario</span>
+                    <span>Servicios Educativos Escolares</span>
                 </div>
-                <h2 class="footer-brand__slogan">
-                    Conectando con la naturaleza <br>un espacio a la vez.
-                </h2>
-            </div>
-
-            <div class="footer-subscribe">
-                <h3>¡Mantente en contacto!</h3>
-                <form class="subscribe-form" (submit)="onSubmit($event)" novalidate>
-                    <i class="bi bi-envelope-paper-fill subscribe-form__icon" aria-hidden="true"></i>
-                    <input type="email" name="email" placeholder="Ingresa tu correo" required [(ngModel)]="email"
-                        [class.is-invalid]="emailTouched && !emailValido()" (blur)="emailTouched = true"
-                        aria-label="Correo electrónico">
-                    <button type="submit" [disabled]="enviando()">
-                        @if (enviando()) {
-                        <span class="spinner-border spinner-border-sm me-1" aria-hidden="true"></span>
-                        Enviando…
-                        } @else {
-                        <i class="bi bi-send-fill me-1"></i> Suscribirse
-                        }
-                    </button>
-                </form>
-
-                @if (emailTouched && !emailValido() && email.length > 0) {
-                <p class="subscribe-feedback subscribe-feedback--error">
-                    <i class="bi bi-exclamation-circle-fill me-1"></i>
-                    Ingresa un correo válido.
-                </p>
-                }
-                @if (mensajeExito()) {
-                <p class="subscribe-feedback subscribe-feedback--ok">
-                    <i class="bi bi-check-circle-fill me-1"></i>
-                    ¡Gracias! Te hemos suscrito.
-                </p>
-                }
             </div>
         </div>
 
