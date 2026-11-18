@@ -85,4 +85,24 @@ export class ModalCorreccionComponent implements OnInit, OnChanges {
     this.errorMsg = '';
     this.guardar.emit(this.valoresFormulario);
   }
+
+  obtenerIcono(campoId: string): string {
+    const mapaIconos: Record<string, string> = {
+      nombre_escuela: 'bi-building-fill',
+      nivel_educativo: 'bi-mortarboard-fill',
+      fecha: 'bi-calendar-event-fill',
+      fecha_visita: 'bi-calendar-event-fill',
+      hora_visita: 'bi-clock-fill',
+      asistentes: 'bi-people-fill',
+      numero_visitantes: 'bi-people-fill',
+      proposito: 'bi-tree-fill',
+      profesores: 'bi-person-badge-fill',
+      telefonos: 'bi-telephone-fill',
+      correos: 'bi-envelope-at-fill',
+      titular_pago: 'bi-person-vcard-fill',
+      monto_pagado: 'bi-cash-coin',
+      comprobante: 'bi-file-earmark-medical-fill'
+    };
+    return mapaIconos[campoId] || 'bi-pencil-fill';
+  }
 }
