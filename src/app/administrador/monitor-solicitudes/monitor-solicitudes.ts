@@ -211,13 +211,14 @@ export class MonitorSolicitudesComponent implements OnInit {
     if (!solicitudActual) return;
 
     const comentario = this.comentarioEstado().trim();
-    if (!comentario) {
-      this.errorComentario.set('Escribe un comentario para informar a la persona solicitante.');
-      return;
-    }
 
     if (nuevoEstado === 'correccion' && this.camposSeleccionados().length === 0) {
       this.errorComentario.set('Selecciona al menos un campo específico que el usuario deba corregir.');
+      return;
+    }
+
+    if ((nuevoEstado === 'correccion' || nuevoEstado === 'rechazada') && !comentario) {
+      this.errorComentario.set('Escribe las instrucciones o el motivo para informar a la persona solicitante.');
       return;
     }
 
@@ -225,7 +226,7 @@ export class MonitorSolicitudesComponent implements OnInit {
 
     this.http.put(`/api/solicitudes/${solicitudActual.id}/estado`, {
       estado: nuevoEstado,
-      motivo: comentario,
+      motivo: comentario || null,
       campos_corregir: campos
     }).subscribe({
       next: () => {
@@ -236,8 +237,8 @@ export class MonitorSolicitudesComponent implements OnInit {
                 ...solicitud,
                 estado: nuevoEstado,
                 comentarioEstado: comentario,
-                mensajeCorreccion: nuevoEstado === 'correccion' ? comentario : solicitud.mensajeCorreccion,
-                mensajeRechazo: nuevoEstado === 'rechazada' ? comentario : solicitud.mensajeRechazo,
+                mensajeCorreccion: nuevoEstado === 'correccion' ? comentario : '',
+                mensajeRechazo: nuevoEstado === 'rechazada' ? comentario : '',
                 camposCorregir: campos
               }
               : solicitud
