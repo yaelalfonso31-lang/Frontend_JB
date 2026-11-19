@@ -1,155 +1,110 @@
-<!-- Backdrop oscuro con desenfoque -->
 <div class="modal-backdrop" (click)="cerrar.emit()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
 
-    <!-- Contenedor del Modal -->
-    <div class="modal-content" (click)="$event.stopPropagation()">
-
-        <!-- Encabezado con gradiente verde institucional -->
-        <div class="modal-header">
-            <div class="header-title">
-                <div class="header-icon">
-                    <i class="bi bi-pencil-square"></i>
-                </div>
-                <div>
-                    <span class="folio-pill">
-                        <i class="bi bi-upc-scan"></i> Folio: {{ folio }}
-                    </span>
-                    <h3>Corrección de Solicitud</h3>
-                </div>
-            </div>
-            <button type="button" class="btn-close" (click)="cerrar.emit()" aria-label="Cerrar">
-                <i class="bi bi-x-lg"></i>
-            </button>
+    <div class="modal-header">
+      <div class="header-title">
+        <span class="header-icon"><i class="bi bi-pencil-square"></i></span>
+        <div>
+          <span class="folio-badge">Folio: {{ folio }}</span>
+          <h3>Actualizar Datos de Solicitud</h3>
         </div>
-
-        <!-- Cuerpo del Modal -->
-        <div class="modal-body">
-            <p class="instrucciones">
-                <i class="bi bi-info-circle-fill"></i>
-                Actualiza únicamente los campos señalados por el equipo del Jardín Botánico para continuar con tu
-                trámite.
-            </p>
-
-            @if (campos.length > 0 && campos[0].mensajeError) {
-            <div class="alerta-revisor">
-                <div class="alerta-icono">
-                    <i class="bi bi-chat-left-dots-fill"></i>
-                </div>
-                <div class="alerta-texto">
-                    <strong>Observaciones del revisor:</strong>
-                    <p>{{ campos[0].mensajeError }}</p>
-                </div>
-            </div>
-            }
-
-            <form #correccionForm="ngForm" class="form-correccion" (ngSubmit)="enviarCorrecciones()">
-                @for (campo of campos; track campo.id) {
-                <div class="form-group">
-                    <label [for]="campo.id">
-                        <i class="bi" [ngClass]="obtenerIcono(campo.id)"></i>
-                        {{ campo.etiqueta }} <span class="req">*</span>
-                    </label>
-
-                    <!-- Selector de Nivel Educativo -->
-                    @if (campo.id === 'nivel_educativo' || campo.tipo === 'select') {
-                    <div class="input-icon-wrapper">
-                        <i class="bi bi-mortarboard-fill input-icon"></i>
-                        <select [id]="campo.id" [name]="campo.id" [(ngModel)]="valoresFormulario[campo.id]"
-                            class="form-control with-icon" required>
-                            <option value="prescolar">Preescolar</option>
-                            <option value="primaria">Primaria</option>
-                            <option value="secundaria">Secundaria</option>
-                            <option value="preparatoria">Preparatoria</option>
-                            <option value="licenciatura">Licenciatura</option>
-                        </select>
-                    </div>
-                    }
-
-                    <!-- Selector de Fecha -->
-                    @else if (campo.id === 'fecha' || campo.id === 'fecha_visita' || campo.tipo === 'date') {
-                    <div class="input-icon-wrapper">
-                        <i class="bi bi-calendar-event-fill input-icon"></i>
-                        <input type="date" [id]="campo.id" [name]="campo.id" [(ngModel)]="valoresFormulario[campo.id]"
-                            class="form-control with-icon" required />
-                    </div>
-                    }
-
-                    <!-- Selector de Hora -->
-                    @else if (campo.id === 'hora_visita' || campo.tipo === 'time') {
-                    <div class="input-icon-wrapper">
-                        <i class="bi bi-clock-fill input-icon"></i>
-                        <input type="time" [id]="campo.id" [name]="campo.id" [(ngModel)]="valoresFormulario[campo.id]"
-                            class="form-control with-icon" required />
-                    </div>
-                    }
-
-                    <!-- Campos Numéricos -->
-                    @else if (campo.tipo === 'number') {
-                    <div class="input-icon-wrapper">
-                        <i class="bi input-icon" [ngClass]="obtenerIcono(campo.id)"></i>
-                        <input type="number" [id]="campo.id" [name]="campo.id"
-                            [min]="campo.id === 'monto_pagado' ? '0.01' : '1'"
-                            [step]="campo.id === 'monto_pagado' ? '0.01' : '1'"
-                            [(ngModel)]="valoresFormulario[campo.id]" class="form-control with-icon" required />
-                    </div>
-                    }
-
-                    <!-- Área de Texto -->
-                    @else if (campo.tipo === 'textarea') {
-                    <textarea [id]="campo.id" [name]="campo.id" [(ngModel)]="valoresFormulario[campo.id]"
-                        class="form-control" rows="3" placeholder="Escribe aquí la información actualizada..."
-                        required></textarea>
-                    }
-
-                    <!-- Subida de Archivo (Comprobante) -->
-                    @else if (campo.tipo === 'file' || campo.id === 'comprobante') {
-                    <label class="file-upload-box" [for]="campo.id">
-                        <i class="bi bi-cloud-arrow-up-fill upload-icon"></i>
-                        <div class="upload-text">
-                            @if (valoresFormulario[campo.id]) {
-                            <strong class="archivo-cargado">
-                                <i class="bi bi-check-circle-fill"></i> {{ valoresFormulario[campo.id].name }}
-                            </strong>
-                            <small>Haz clic para cambiar el archivo</small>
-                            } @else {
-                            <strong>Selecciona o arrastra el nuevo comprobante</strong>
-                            <small>Formatos permitidos: PDF, JPG o PNG</small>
-                            }
-                        </div>
-                        <input type="file" [id]="campo.id" [name]="campo.id" class="form-control-file"
-                            accept=".pdf,image/*" (change)="onFileSelected(campo.id, $event)" required />
-                    </label>
-                    }
-
-                    <!-- Campos de Texto / Correo / Teléfono -->
-                    @else {
-                    <div class="input-icon-wrapper">
-                        <i class="bi input-icon" [ngClass]="obtenerIcono(campo.id)"></i>
-                        <input [type]="campo.id === 'correos' ? 'email' : (campo.id === 'telefonos' ? 'tel' : 'text')"
-                            [id]="campo.id" [name]="campo.id" [(ngModel)]="valoresFormulario[campo.id]"
-                            class="form-control with-icon" required />
-                    </div>
-                    }
-                </div>
-                }
-
-                @if (errorMsg) {
-                <div class="alerta-error" role="alert">
-                    <i class="bi bi-exclamation-octagon-fill"></i>
-                    <span>{{ errorMsg }}</span>
-                </div>
-                }
-            </form>
-        </div>
-
-        <!-- Pie del Modal -->
-        <div class="modal-footer">
-            <button type="button" class="btn-cancelar" (click)="cerrar.emit()">
-                <i class="bi bi-x-circle"></i> Cancelar
-            </button>
-            <button type="button" class="btn-guardar" (click)="enviarCorrecciones()" [disabled]="!formularioValido()">
-                <i class="bi bi-send-check-fill"></i> Enviar Corrección
-            </button>
-        </div>
+      </div>
+      <button type="button" class="btn-close-modal" (click)="cerrar.emit()" aria-label="Cerrar">
+        <i class="bi bi-x-lg"></i>
+      </button>
     </div>
+
+    <div class="modal-body">
+      @if (motivoGeneral) {
+      <div class="instrucciones-box">
+        <strong><i class="bi bi-chat-left-text-fill me-1"></i> Indicaciones del revisor:</strong>
+        <p>{{ motivoGeneral }}</p>
+      </div>
+      }
+
+      <form #correccionForm="ngForm" class="form-correccion" (ngSubmit)="enviarCorrecciones()">
+        @for (campo of campos; track campo.id) {
+        <div class="form-group">
+          <label [for]="campo.id">
+            <i class="bi bi-asterisk req-icon"></i> {{ campo.etiqueta }}
+          </label>
+
+          @if (campo.mensajeError) {
+          <small class="campo-hint">{{ campo.mensajeError }}</small>
+          }
+
+          @switch (campo.tipo) {
+            @case ('text') {
+              <input type="text" [id]="campo.id" [name]="campo.id"
+                [(ngModel)]="valoresFormulario[campo.id]"
+                [placeholder]="campo.placeholder || ''"
+                class="form-control" required />
+            }
+            @case ('number') {
+              <input type="number" [id]="campo.id" [name]="campo.id"
+                [(ngModel)]="valoresFormulario[campo.id]"
+                min="1" class="form-control" required />
+            }
+            @case ('date') {
+              <input type="date" [id]="campo.id" [name]="campo.id"
+                [(ngModel)]="valoresFormulario[campo.id]"
+                class="form-control" required />
+            }
+            @case ('time') {
+              <input type="time" [id]="campo.id" [name]="campo.id"
+                [(ngModel)]="valoresFormulario[campo.id]"
+                min="09:00" max="15:00" class="form-control" required />
+            }
+            @case ('select') {
+              <select [id]="campo.id" [name]="campo.id"
+                [(ngModel)]="valoresFormulario[campo.id]"
+                class="form-control" required>
+                @for (op of campo.opciones || []; track op.valor) {
+                  <option [value]="op.valor">{{ op.texto }}</option>
+                }
+              </select>
+            }
+            @case ('textarea') {
+              <textarea [id]="campo.id" [name]="campo.id"
+                [(ngModel)]="valoresFormulario[campo.id]"
+                [placeholder]="campo.placeholder || ''"
+                class="form-control" rows="3" required></textarea>
+            }
+            @case ('file') {
+              <div class="file-upload-wrapper">
+                <input type="file" [id]="campo.id"
+                  class="form-control"
+                  accept=".pdf,.png,.jpg,.jpeg"
+                  (change)="onFileSelected($event)" />
+                @if (nombreArchivo()) {
+                <div class="file-selected">
+                  <i class="bi bi-check-circle-fill"></i> Archivo cargado: <strong>{{ nombreArchivo() }}</strong>
+                </div>
+                }
+                <small class="campo-hint">Formatos aceptados: PDF, JPG o PNG (máx. 15 MB).</small>
+              </div>
+            }
+          }
+        </div>
+        }
+
+        @if (errorValidacion()) {
+        <div class="error-banner" role="alert">
+          <i class="bi bi-exclamation-triangle-fill"></i>
+          <span>{{ errorValidacion() }}</span>
+        </div>
+        }
+      </form>
+    </div>
+
+    <div class="modal-footer">
+      <button type="button" class="btn-cancelar" (click)="cerrar.emit()">
+        Cancelar
+      </button>
+      <button type="button" class="btn-guardar" (click)="enviarCorrecciones()" [disabled]="!esFormularioValido()">
+        <i class="bi bi-send-check-fill me-1"></i> Enviar Corrección
+      </button>
+    </div>
+
+  </div>
 </div>

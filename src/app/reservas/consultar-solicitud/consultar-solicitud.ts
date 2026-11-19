@@ -1,229 +1,249 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
+import { Router } from '@angular/router';
 import { ModalCorreccionComponent, CampoCorreccion } from '../modal-correccion/modal-correccion';
 import { HeaderComponent } from '../../shared/header/header';
 import { FooterComponent } from '../../shared/footer/footer';
-import { RouterOutlet } from '@angular/router';
 
-export interface SolicitudVisita {
-  id?: number;
+export interface SolicitudVisitaDetalle {
   folio: string;
   correo: string;
+  nombre_escuela: string;
+  nivel_educativo: string;
+  grado?: string;
   servicio: string;
+  proposito: string;
   fecha: string;
-  hora_visita?: string;
-  horaVisita?: string;
+  fecha_visita: string;
+  hora_visita: string;
   asistentes: number;
-  nombre_escuela?: string;
-  solicitante?: string;
-  nivel_educativo?: string;
-  escuela?: string;
-  proposito?: string;
-  profesores?: string;
-  telefonos?: string;
-  correos?: string;
-  titular_pago?: string;
-  titularPago?: string;
-  monto_pagado?: number;
-  montoPagado?: number;
-  estado: 'Pendiente' | 'En Revisión' | 'Aprobada' | 'Rechazada' | 'Requiere Corrección' | 'Correccion' | 'correccion' | string;
+  profesores: string;
+  telefonos: string;
+  correos: string;
+  titular_pago: string;
+  monto_pagado: number;
+  comprobante_ruta?: string;
+  estado: 'Pendiente' | 'En Revisión' | 'Aprobada' | 'Rechazada' | 'Requiere Corrección';
   mensajeCorreccion?: string;
   mensajeRechazo?: string;
-  comentarioEstado?: string;
-  comentario?: string;
-  motivo?: string;
   camposCorregir?: string[];
-  campos_corregir?: string[];
 }
 
 @Component({
   selector: 'app-consultar-solicitud',
   standalone: true,
-  imports: [CommonModule, FormsModule, ModalCorreccionComponent, HeaderComponent, FooterComponent, RouterOutlet],
+  imports: [CommonModule, FormsModule, ModalCorreccionComponent, HeaderComponent, FooterComponent],
   templateUrl: './consultar-solicitud.html',
   styleUrls: ['./consultar-solicitud.scss']
 })
 export class ConsultarSolicitudComponent {
   private http = inject(HttpClient);
+  private router = inject(Router);
 
   folio: string = '';
   correo: string = '';
+  buscando = signal(false);
   busquedaRealizada: boolean = false;
-  solicitudEncontrada: SolicitudVisita | null = null;
+  solicitudEncontrada: SolicitudVisitaDetalle | null = null;
   mensajeExito: boolean = false;
 
   mostrarModalCorreccion: boolean = false;
   camposACorregir: CampoCorreccion[] = [];
 
-  readonly etiquetasCampos: Record<string, string> = {
-    nombre_escuela: 'Nombre de la escuela / institución',
-    nivel_educativo: 'Nivel educativo',
-    fecha: 'Fecha de visita',
-    fecha_visita: 'Fecha de visita',
-    hora_visita: 'Hora de visita',
-    asistentes: 'Número de visitantes',
-    numero_visitantes: 'Número de visitantes',
-    proposito: 'Propósito / Servicios',
-    profesores: 'Profesor(es) responsable(s)',
-    telefonos: 'Teléfono(s) de contacto',
-    correos: 'Correo(s) electrónico(s)',
-    titular_pago: 'Titular del pago',
-    monto_pagado: 'Monto pagado',
-    comprobante: 'Comprobante de pago'
+  private readonly catalogoCampos: Record<string, Omit<CampoCorreccion, 'valorActual'>> = {
+    nombre_escuela: {
+      id: 'nombre_escuela',
+      etiqueta: 'Nombre de la escuela / institución',
+      tipo: 'text',
+      mensajeError: 'Verifica el nombre oficial de la institución educativa.'
+    },
+    nivel_educativo: {
+      id: 'nivel_educativo',
+      etiqueta: 'Nivel educativo',
+      tipo: 'select',
+      mensajeError: 'Selecciona el nivel escolar correspondiente.',
+      opciones: [
+        { valor: 'prescolar', texto: 'Preescolar' },
+        { valor: 'primaria', texto: 'Primaria' },
+        { valor: 'secundaria', texto: 'Secundaria' },
+        { valor: 'preparatoria', texto: 'Preparatoria' },
+        { valor: 'licenciatura', texto: 'Licenciatura' },
+        { valor: 'otro', texto: 'Otro' }
+      ]
+    },
+    fecha: {
+      id: 'fecha',
+      etiqueta: 'Fecha de visita',
+      tipo: 'date',
+      mensajeError: 'Selecciona una nueva fecha hábil disponible (Lunes a Viernes).'
+    },
+    hora_visita: {
+      id: 'hora_visita',
+      etiqueta: 'Horario de visita (09:00 - 15:00)',
+      tipo: 'time',
+      mensajeError: 'Indica un horario dentro del rango de atención (09:00 a 15:00 hrs).'
+    },
+    asistentes: {
+      id: 'asistentes',
+      etiqueta: 'Número total de visitantes',
+      tipo: 'number',
+      mensajeError: 'Ajusta el número total de asistentes.'
+    },
+    proposito: {
+      id: 'proposito',
+      etiqueta: 'Propósito / Notas de la visita',
+      tipo: 'textarea',
+      mensajeError: 'Detalla o corrige el propósito y observaciones de la visita.'
+    },
+    profesores: {
+      id: 'profesores',
+      etiqueta: 'Profesor(es) responsable(s)',
+      tipo: 'text',
+      placeholder: 'Si son varios, sepáralos por coma',
+      mensajeError: 'Verifica el nombre completo del profesor o profesores responsables.'
+    },
+    telefonos: {
+      id: 'telefonos',
+      etiqueta: 'Teléfono(s) de contacto (10 dígitos)',
+      tipo: 'text',
+      placeholder: 'Ej. 2221234567',
+      mensajeError: 'Proporciona un número telefónico válido de 10 dígitos.'
+    },
+    correos: {
+      id: 'correos',
+      etiqueta: 'Correo(s) electrónico(s)',
+      tipo: 'text',
+      placeholder: 'ejemplo@correo.com',
+      mensajeError: 'Verifica que el correo electrónico esté bien escrito.'
+    },
+    titular_pago: {
+      id: 'titular_pago',
+      etiqueta: 'Titular del pago / Institución',
+      tipo: 'text',
+      mensajeError: 'Verifica el nombre del titular registrado en el comprobante.'
+    },
+    monto_pagado: {
+      id: 'monto_pagado',
+      etiqueta: 'Monto pagado (MXN)',
+      tipo: 'number',
+      mensajeError: 'Verifica que el monto coincida con tu ficha de depósito o transferencia.'
+    },
+    comprobante: {
+      id: 'comprobante',
+      etiqueta: 'Comprobante de pago (PDF, JPG o PNG)',
+      tipo: 'file',
+      mensajeError: 'Adjunta nuevamente un comprobante legible y vigente.'
+    }
   };
 
   buscarSolicitud(): void {
-    this.busquedaRealizada = true;
+    const folioLimpio = this.folio.trim();
+    const correoLimpio = this.correo.trim();
+    if (!folioLimpio || !correoLimpio) return;
+
+    this.buscando.set(true);
+    this.busquedaRealizada = false;
     this.mensajeExito = false;
     this.solicitudEncontrada = null;
 
-    this.http.get<SolicitudVisita>(`/api/solicitudes/${this.folio.trim()}?correo=${this.correo.trim()}`)
-      .subscribe({
-        next: (datosBD) => {
-          console.log('¡Solicitud encontrada en la Base de Datos!', datosBD);
-          this.solicitudEncontrada = datosBD;
-        },
-        error: (err) => {
-          console.error('Error o solicitud no encontrada:', err);
-          this.solicitudEncontrada = null;
-        }
-      });
-  }
-
-  esEstadoCorreccion(estado?: string): boolean {
-    const limpio = (estado || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim();
-    return limpio === 'correccion' || limpio === 'requiere correccion';
-  }
-
-  esEstadoAprobada(estado?: string): boolean {
-    return (estado || '').toLowerCase().trim() === 'aprobada';
-  }
-
-  esEstadoRechazada(estado?: string): boolean {
-    return (estado || '').toLowerCase().trim() === 'rechazada';
-  }
-
-  obtenerEtiquetaEstado(estado?: string): string {
-    if (this.esEstadoCorreccion(estado)) return 'Requiere Corrección';
-    if (this.esEstadoAprobada(estado)) return 'Aprobada';
-    if (this.esEstadoRechazada(estado)) return 'Rechazada';
-    return estado || 'Pendiente';
+    this.http.get<SolicitudVisitaDetalle>(
+      `/api/solicitudes/${encodeURIComponent(folioLimpio)}?correo=${encodeURIComponent(correoLimpio)}`
+    ).subscribe({
+      next: (datosBD) => {
+        this.buscando.set(false);
+        this.busquedaRealizada = true;
+        this.solicitudEncontrada = datosBD;
+      },
+      error: (err) => {
+        console.error('Error o solicitud no encontrada:', err);
+        this.buscando.set(false);
+        this.busquedaRealizada = true;
+        this.solicitudEncontrada = null;
+      }
+    });
   }
 
   obtenerClaseEstado(estado: string): string {
-    if (this.esEstadoCorreccion(estado)) return 'badge-correccion';
-    if (this.esEstadoAprobada(estado)) return 'badge-aprobada';
-    if (this.esEstadoRechazada(estado)) return 'badge-rechazada';
-
-    const mapaClases: { [key: string]: string } = {
+    const mapaClases: Record<string, string> = {
       'Pendiente': 'badge-pendiente',
-      'pendiente': 'badge-pendiente',
-      'En Revisión': 'badge-revision'
+      'En Revisión': 'badge-revision',
+      'Aprobada': 'badge-aprobada',
+      'Rechazada': 'badge-rechazada',
+      'Requiere Corrección': 'badge-correccion'
     };
-    return mapaClases[estado] || 'badge-default';
+    return mapaClases[estado] || 'badge-pendiente';
   }
 
-  obtenerMensajeRevision(): string {
-    if (!this.solicitudEncontrada) return '';
-    return (
-      this.solicitudEncontrada.mensajeCorreccion ||
-      this.solicitudEncontrada.comentarioEstado ||
-      this.solicitudEncontrada.comentario ||
-      this.solicitudEncontrada.motivo ||
-      ''
-    );
-  }
-
-  obtenerCamposSolicitados(): string[] {
-    if (!this.solicitudEncontrada) return [];
-    return this.solicitudEncontrada.camposCorregir ?? this.solicitudEncontrada.campos_corregir ?? [];
+  etiquetaCampo(key: string): string {
+    const normalizada = key === 'fecha_visita' ? 'fecha' : key === 'numero_visitantes' ? 'asistentes' : key;
+    return this.catalogoCampos[normalizada]?.etiqueta || key;
   }
 
   abrirModalCorreccion(): void {
     if (!this.solicitudEncontrada) return;
-
     const sol = this.solicitudEncontrada;
-    const seleccionados = this.obtenerCamposSolicitados();
-    const instruccion = this.obtenerMensajeRevision() || 'Verifica y corrige este dato.';
 
-    const mapaConfiguracion: Record<string, { tipo: 'text' | 'number' | 'file' | 'textarea'; valor: any }> = {
-      nombre_escuela: { tipo: 'text', valor: sol.nombre_escuela || sol.solicitante || '' },
-      nivel_educativo: { tipo: 'text', valor: sol.nivel_educativo || sol.escuela || '' },
-      fecha: { tipo: 'text', valor: sol.fecha || '' },
-      fecha_visita: { tipo: 'text', valor: sol.fecha || '' },
-      hora_visita: { tipo: 'text', valor: sol.hora_visita || sol.horaVisita || '' },
-      asistentes: { tipo: 'number', valor: sol.asistentes },
-      numero_visitantes: { tipo: 'number', valor: sol.asistentes },
-      proposito: { tipo: 'textarea', valor: sol.proposito || sol.servicio || '' },
-      profesores: { tipo: 'text', valor: sol.profesores || '' },
-      telefonos: { tipo: 'text', valor: sol.telefonos || '' },
-      correos: { tipo: 'text', valor: sol.correos || sol.correo || '' },
-      titular_pago: { tipo: 'text', valor: sol.titular_pago || sol.titularPago || '' },
-      monto_pagado: { tipo: 'number', valor: sol.monto_pagado ?? sol.montoPagado ?? 0 },
-      comprobante: { tipo: 'file', valor: null }
+    const llavesSolicitadas = (sol.camposCorregir && sol.camposCorregir.length > 0)
+      ? sol.camposCorregir
+      : ['asistentes', 'proposito', 'comprobante'];
+
+    const valoresActuales: Record<string, any> = {
+      nombre_escuela: sol.nombre_escuela,
+      nivel_educativo: (sol.nivel_educativo || 'primaria').toLowerCase(),
+      fecha: sol.fecha_visita || sol.fecha,
+      hora_visita: sol.hora_visita,
+      asistentes: sol.asistentes,
+      proposito: sol.proposito,
+      profesores: sol.profesores,
+      telefonos: sol.telefonos,
+      correos: sol.correos || sol.correo,
+      titular_pago: sol.titular_pago,
+      monto_pagado: sol.monto_pagado,
+      comprobante: null
     };
 
-    if (seleccionados.length > 0) {
-      this.camposACorregir = seleccionados.map((key) => {
-        const config = mapaConfiguracion[key] || { tipo: 'text', valor: (sol as any)[key] ?? '' };
-        return {
-          id: key,
-          etiqueta: this.etiquetasCampos[key] || key,
-          tipo: config.tipo,
-          valorActual: config.valor,
-          mensajeError: instruccion
-        };
-      });
-    } else {
-      // Si la solicitud fue marcada en corrección sin especificar campos individuales
-      this.camposACorregir = [
-        {
-          id: 'asistentes',
-          etiqueta: 'Número de visitantes',
-          tipo: 'number',
-          valorActual: sol.asistentes,
-          mensajeError: instruccion
-        }
-      ];
-    }
+    this.camposACorregir = llavesSolicitadas
+      .map(rawKey => (rawKey === 'fecha_visita' ? 'fecha' : rawKey === 'numero_visitantes' ? 'asistentes' : rawKey))
+      .filter(key => !!this.catalogoCampos[key])
+      .map(key => ({
+        ...this.catalogoCampos[key],
+        valorActual: valoresActuales[key]
+      }));
 
     this.mostrarModalCorreccion = true;
   }
 
-  procesarCorreccion(datosActualizados: Record<string, any>): void {
+  procesarCorreccion(evento: { valores: Record<string, any>; archivo: File | null }): void {
     if (!this.solicitudEncontrada) return;
 
     const formData = new FormData();
-    Object.entries(datosActualizados).forEach(([key, valor]) => {
-      if (valor !== undefined && valor !== null) {
-        if (valor instanceof File) {
-          formData.append(key, valor, valor.name);
-        } else {
-          formData.append(key, String(valor));
-        }
+    Object.entries(evento.valores).forEach(([key, val]) => {
+      if (val !== undefined && val !== null && String(val).trim() !== '') {
+        formData.append(key, String(val).trim());
       }
     });
 
-    this.http.put(`/api/solicitudes/${this.solicitudEncontrada.folio}/correccion`, formData).subscribe({
-      next: () => {
-        this.mostrarModalCorreccion = false;
-        if (this.solicitudEncontrada) {
-          this.solicitudEncontrada.estado = 'Pendiente';
-          this.solicitudEncontrada.camposCorregir = [];
-          this.solicitudEncontrada.campos_corregir = [];
+    if (evento.archivo) {
+      formData.append('comprobante', evento.archivo);
+    }
+
+    this.http.put(`/api/solicitudes/${encodeURIComponent(this.solicitudEncontrada.folio)}/correccion`, formData)
+      .subscribe({
+        next: () => {
+          this.mostrarModalCorreccion = false;
           this.mensajeExito = true;
+          this.buscarSolicitud();
+        },
+        error: (err) => {
+          console.error('Error al enviar corrección:', err);
+          alert(err?.error?.detail || 'No se pudo enviar la corrección. Intenta nuevamente.');
         }
-      },
-      error: (err) => {
-        console.error('Error al enviar corrección:', err);
-        alert('No se pudo enviar la corrección. Intenta nuevamente.');
-      }
-    });
+      });
   }
 
   regresarInicio(): void {
-    window.location.href = '/inicio';
+    this.router.navigate(['/inicio']);
   }
 }
