@@ -69,7 +69,7 @@ export class Nosotros {
     {
       src: 'assets/foto20.jpg',
       titulo: 'Conservación y Reforestación',
-      descripcion: 'Siembra y manejo especializado de agaves y especies nativas.',
+      descripcion: 'Siembra y manejo de especies nativas.',
       categoria: 'instalaciones',
     },
     {

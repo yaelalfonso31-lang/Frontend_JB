@@ -1,6 +1,8 @@
 import { Component, ChangeDetectionStrategy, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { HeaderComponent } from '../../shared/header/header';
+import { FooterComponent } from '../../shared/footer/footer';
 
 interface RuleCategory {
   id: string;
@@ -13,7 +15,7 @@ interface RuleCategory {
 @Component({
   selector: 'app-reglamento-jardin',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, HeaderComponent, FooterComponent],
   templateUrl: './reglamento-jardin.html',
   styleUrl: './reglamento-jardin.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

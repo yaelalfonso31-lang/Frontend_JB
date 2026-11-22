@@ -49,10 +49,9 @@ export class Servicios {
       categoriaLabel: 'Visita Especializada',
       duracion: '1 hora 30 min.',
       nivel: 'Nivel Profesional / Todo público',
-      proposito: 'Recorrido especializado enfocado en ejes temáticos de botánica, paisajismo y conservación biológica.',
+      proposito: 'Paisajismo (A nivel profesional)',
       precio: 99,
       temas: [
-        'Paisajismo (A nivel profesional)',
         'Nuestros árboles',
         '¿Qué es conservación y por qué conservar?'
       ]

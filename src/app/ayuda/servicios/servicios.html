@@ -30,7 +30,7 @@
           <i class="bi bi-clock"></i>
         </div>
         <div class="metric-value">9:00 – 15:00</div>
-        <p class="metric-label">Lunes a viernes (calendario BUAP)</p>
+        <p class="metric-label">Lunes a viernes (excepto dias no laborables en calendario BUAP)</p>
       </div>
 
       <div class="metric-card metric-info">
@@ -48,7 +48,7 @@
           <i class="bi bi-calendar2-week"></i>
         </div>
         <div class="metric-value">2 Semanas</div>
-        <p class="metric-label">Reserva previa obligatoria</p>
+        <p class="metric-label">Los talleres requieren 2 semanas de reserva previa</p>
       </div>
 
       <div class="metric-card metric-success">
@@ -57,7 +57,7 @@
           <i class="bi bi-person-badge"></i>
         </div>
         <div class="metric-value">Sin Costo</div>
-        <p class="metric-label">Docentes con grupo no pagan entrada</p>
+        <p class="metric-label">Docentes con grupo no pagan entrada (Costos sujetos a cambios)</p>
       </div>
     </section>
 
@@ -149,10 +149,6 @@
               <span class="nota-extra">
                 <i class="bi bi-info-circle"></i> {{ servicio.notaExtra }}
               </span>
-            } @else {
-              <span class="nota-extra text-success">
-                <i class="bi bi-check2-circle"></i> Recorrido guiado incluido
-              </span>
             }
 
             <a routerLink="/solicitud-visita" class="btn btn-review">
@@ -178,18 +174,14 @@
           <h3><i class="bi bi-123"></i> ¿Cómo agendar una visita?</h3>
           <ol class="pasos-list">
             <li>
-              <strong>Llena tu solicitud en línea:</strong> Ingresa a nuestra sección de
-              <a routerLink="/solicitud-visita">Reservas</a> y espera la confirmación de disponibilidad.
+              <strong>Registra tu solicitud:</strong> Ingresa a nuestra sección de
+              <a routerLink="/solicitud-visita">Reservas</a> elige fecha, horario, servicio educativo y datos de tu institución..
             </li>
             <li>
-              <strong>Realiza tu depósito:</strong> Cuenta HSBC <code>4016001638</code> · CLABE
-              <code>021650040160016381</code> a nombre de <em>Herbario y Jardín Botánico BUAP</em>.
+              <strong>Recibe tu folio</strong> Consulta el estado de revisión o sube correcciones con tu folio asignado.
             </li>
             <li>
-              <strong>Reporta tu pago y facturación:</strong> Sube tu comprobante en el portal. Si requieres factura, escríbela a la brevedad a <code>jardinbotanico.cfdi@correo.buap.mx</code> (Ext. 7034 / 3950).
-            </li>
-            <li>
-              <strong>Asiste puntualmente:</strong> En caso de retraso o cambio, notifica al <code>(222) 229 55 00</code> ext. 7032, 7033 o 3950.
+              <strong>¡Vive la experiencia!</strong> Acude 15 minutos antes con tu grupo siguiendo el reglamento del jardín.
             </li>
           </ol>
         </div>
