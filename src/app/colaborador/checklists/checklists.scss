@@ -1,5 +1,70 @@
 @use '../../../styles/panel-sistema';
 
+.overview-strip {
+  overflow: hidden;
+  border-color: var(--border-light);
+  background: linear-gradient(135deg, var(--bg-surface), var(--bg-app));
+}
+
+.overview-item {
+  transition: background-color 160ms ease;
+
+  &:hover {
+    background: var(--accent-soft);
+  }
+
+  &.active-total strong {
+    color: var(--warning-text);
+  }
+}
+
+.checklist-entry {
+  border: 1px solid var(--border-light);
+  background: var(--bg-surface);
+  box-shadow: var(--shadow-sm);
+  transition: border-color 160ms ease, box-shadow 160ms ease;
+
+  &:hover,
+  &.entry-expanded {
+    border-color: var(--accent-primary);
+    box-shadow: var(--shadow-md);
+  }
+}
+
+.checklists-table {
+  thead {
+    background: var(--accent-soft);
+
+    th {
+      color: var(--success-text);
+    }
+  }
+
+  tbody tr:nth-child(even):not(.details-row) {
+    background: var(--bg-app);
+  }
+
+  .service-cell {
+    color: var(--success-text);
+    font-weight: 700;
+  }
+
+  .folio-cell {
+    color: var(--text-secondary);
+    font-variant-numeric: tabular-nums;
+    font-weight: 700;
+  }
+
+  .phase-cell {
+    max-width: 14rem;
+    color: var(--text-secondary);
+  }
+
+  .action-cell {
+    text-align: right;
+  }
+}
+
 .checklists-table .progress-cell {
   min-width: 10rem;
   padding: 0.65rem 0.8rem;
@@ -68,6 +133,31 @@
   animation: checklist-refresh-spin 800ms linear infinite;
 }
 
+.expanded-checklist {
+  padding: 0.5rem;
+  border-radius: var(--radius-md);
+  background: var(--bg-app);
+}
+
 @keyframes checklist-refresh-spin {
   to { transform: rotate(360deg); }
+}
+
+@media (max-width: 768px) {
+  .overview-strip {
+    grid-template-columns: 1fr;
+  }
+
+  .overview-item + .overview-item {
+    border-top: 1px solid var(--border-light);
+    border-left: 0;
+  }
+
+  .checklist-entry {
+    overflow-x: auto;
+  }
+
+  .checklists-table {
+    min-width: 860px;
+  }
 }

@@ -1,12 +1,14 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, OnInit, signal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { RouterLink } from '@angular/router';
+import { ChecklistDocumentUploadComponent } from '../checklists/checklist-document-upload';
 import { downloadChecklistPdf } from '../checklists/checklist-pdf';
 import { ChecklistRegistryService } from '../checklists/checklist-registry.service';
 
 interface ProcedureStep {
   id: string;
   description: string;
+  requiresAttachment?: boolean;
   details?: string[];
 }
 
@@ -33,7 +35,7 @@ const STORAGE_KEY = 'jbuap-checklist-visita-tematica';
 @Component({
   selector: 'app-checklist-visita-tematica',
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, ChecklistDocumentUploadComponent],
   templateUrl: './checklist-visita-tematica.html',
   styleUrl: '../checklist-visita/checklist-visita.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -42,6 +44,7 @@ export class ChecklistVisitaTematicaComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private registry = inject(ChecklistRegistryService);
   readonly folioInput = input<string>();
+  readonly attachmentChecklistKey = STORAGE_KEY;
   readonly currentPerformer = this.registry.currentPerformerName();
   readonly statusVerifying = signal(true);
   readonly approvedByServer = signal(false);
@@ -58,12 +61,12 @@ export class ChecklistVisitaTematicaComponent implements OnInit {
         { id: 'tematica-notificacion-3', description: 'Anotar la fecha y hora en la agenda del Área de Educación y Divulgación (carpeta y Google Calendar).' },
         { id: 'tematica-notificacion-4', description: 'Identificar al académico o instructor que impartirá la visita.' },
         { id: 'tematica-notificacion-5', description: 'Verificar la disponibilidad de hora y fecha del académico que impartirá la visita temática.' },
-        { id: 'tematica-notificacion-6', description: 'Llenar la Solicitud Interna de Servicios Educativos dirigida al responsable de la visita temática y recabar las firmas de las áreas de Educación y Administrativa.' },
+        { id: 'tematica-notificacion-6', description: 'Llenar la Solicitud Interna de Servicios Educativos dirigida al responsable de la visita temática y recabar las firmas de las áreas de Educación y Administrativa.', requiresAttachment: true },
         { id: 'tematica-notificacion-7', description: 'Confirmar la atención de la visita temática entregando la Solicitud Interna de Servicios Educativos al académico o instructor responsable.' },
         { id: 'tematica-notificacion-8', description: 'Apartar fecha y hora en la agenda de aulas para su uso.' },
-        { id: 'tematica-notificacion-9', description: 'Solicitar apoyo logístico a Horticultura mediante el formato de solicitud de servicio para los círculos de bancas, si aplica (72 horas antes y con las firmas correspondientes).' },
+        { id: 'tematica-notificacion-9', description: 'Solicitar apoyo logístico a Horticultura mediante el formato de solicitud de servicio para los círculos de bancas, si aplica (72 horas antes y con las firmas correspondientes).', requiresAttachment: true },
         { id: 'tematica-notificacion-10', description: 'Enviar por correo el Programa de servicio educativo en PDF a Marketing, al profesor responsable y al académico involucrado (72 horas antes).' },
-        { id: 'tematica-notificacion-11', description: 'Redactar y entregar oficio al Director de la DASU con fecha, hora, institución y número de estudiantes (72 horas antes).' }
+        { id: 'tematica-notificacion-11', description: 'Redactar y entregar oficio al Director de la DASU con fecha, hora, institución y número de estudiantes (72 horas antes).', requiresAttachment: true }
       ]
     },
     {
