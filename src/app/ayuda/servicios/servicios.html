@@ -1,0 +1,227 @@
+<app-header></app-header>
+
+<main class="servicios-page">
+  <div class="servicios-container">
+
+    <!-- ENCABEZADO PRINCIPAL -->
+    <header class="header-section">
+      <div>
+        <p class="eyebrow">Área de Educación y Divulgación · BUAP</p>
+        <h1>
+          <i class="bi bi-flower1"></i>
+          Visitas y Talleres Educativos
+        </h1>
+        <p class="page-description">
+          Explora nuestra oferta educativa certificada internacionalmente para escuelas, instituciones y público general.
+        </p>
+      </div>
+      <div class="document-actions">
+        <a routerLink="/solicitud-visita" class="btn btn-primary">
+          <i class="bi bi-calendar-check"></i> Agendar Visita o Taller
+        </a>
+      </div>
+    </header>
+
+    <!-- DATOS CLAVE DE OPERACIÓN (KPIs estilo panel-sistema) -->
+    <section class="metrics-grid">
+      <div class="metric-card metric-success">
+        <div class="metric-header">
+          <h3>Horario de Atención</h3>
+          <i class="bi bi-clock"></i>
+        </div>
+        <div class="metric-value">9:00 – 15:00</div>
+        <p class="metric-label">Lunes a viernes (calendario BUAP)</p>
+      </div>
+
+      <div class="metric-card metric-info">
+        <div class="metric-header">
+          <h3>Cupo por Día</h3>
+          <i class="bi bi-people"></i>
+        </div>
+        <div class="metric-value">10 a 60</div>
+        <p class="metric-label">Mínimo 10 · Máximo 60 visitantes</p>
+      </div>
+
+      <div class="metric-card metric-warning">
+        <div class="metric-header">
+          <h3>Anticipación</h3>
+          <i class="bi bi-calendar2-week"></i>
+        </div>
+        <div class="metric-value">2 Semanas</div>
+        <p class="metric-label">Reserva previa obligatoria</p>
+      </div>
+
+      <div class="metric-card metric-success">
+        <div class="metric-header">
+          <h3>Docentes</h3>
+          <i class="bi bi-person-badge"></i>
+        </div>
+        <div class="metric-value">Sin Costo</div>
+        <p class="metric-label">Docentes con grupo no pagan entrada</p>
+      </div>
+    </section>
+
+    <!-- CONTROLES DE BÚSQUEDA Y FILTRO -->
+    <div class="controls">
+      <div class="search-box">
+        <i class="bi bi-search search-icon"></i>
+        <input
+          type="text"
+          class="search-input"
+          placeholder="Buscar por nombre, tema o nivel escolar (ej. primaria, terrarios, medicinales)..."
+          [ngModel]="searchTerm()"
+          (ngModelChange)="searchTerm.set($event)"
+        />
+      </div>
+
+      <div class="filter-tabs">
+        <button
+          type="button"
+          [class.active]="selectedCategory() === 'todos'"
+          (click)="selectedCategory.set('todos')"
+        >
+          Todos ({{ servicios.length }})
+        </button>
+        <button
+          type="button"
+          [class.active]="selectedCategory() === 'visita'"
+          (click)="selectedCategory.set('visita')"
+        >
+          Visitas
+        </button>
+        <button
+          type="button"
+          [class.active]="selectedCategory() === 'taller_general'"
+          (click)="selectedCategory.set('taller_general')"
+        >
+          Talleres Generales
+        </button>
+        <button
+          type="button"
+          [class.active]="selectedCategory() === 'taller_especial'"
+          (click)="selectedCategory.set('taller_especial')"
+        >
+          Talleres Especiales
+        </button>
+      </div>
+    </div>
+
+    <!-- CATÁLOGO DE SERVICIOS -->
+    <div class="servicios-grid">
+      @for (servicio of serviciosFiltrados(); track servicio.id) {
+        <article class="servicio-card">
+          <div class="servicio-card__top">
+            <span
+              class="status-badge"
+              [class.status-activo]="servicio.categoria === 'visita'"
+              [class.status-pendiente]="servicio.categoria === 'taller_general'"
+              [class.status-inactivo]="servicio.categoria === 'taller_especial'"
+            >
+              {{ servicio.categoriaLabel }}
+            </span>
+            <span class="servicio-precio">
+              ${{ servicio.precio }}.00 <small>MXN / persona</small>
+            </span>
+          </div>
+
+          <h2 class="servicio-titulo">{{ servicio.nombre }}</h2>
+
+          <div class="servicio-meta">
+            <span><i class="bi bi-hourglass-split"></i> {{ servicio.duracion }}</span>
+            <span><i class="bi bi-mortarboard"></i> {{ servicio.nivel }}</span>
+          </div>
+
+          <p class="servicio-proposito">{{ servicio.proposito }}</p>
+
+          @if (servicio.temas?.length) {
+            <div class="servicio-temas">
+              <small>Temas disponibles:</small>
+              <ul>
+                @for (tema of servicio.temas; track tema) {
+                  <li>{{ tema }}</li>
+                }
+              </ul>
+            </div>
+          }
+
+          <div class="servicio-card__footer">
+            @if (servicio.notaExtra) {
+              <span class="nota-extra">
+                <i class="bi bi-info-circle"></i> {{ servicio.notaExtra }}
+              </span>
+            } @else {
+              <span class="nota-extra text-success">
+                <i class="bi bi-check2-circle"></i> Recorrido guiado incluido
+              </span>
+            }
+
+            <a routerLink="/solicitud-visita" class="btn btn-review">
+              Reservar <i class="bi bi-arrow-right"></i>
+            </a>
+          </div>
+        </article>
+      } @empty {
+        <div class="empty-state">
+          <i class="bi bi-search"></i>
+          <p>No se encontraron servicios que coincidan con "<strong>{{ searchTerm() }}</strong>".</p>
+        </div>
+      }
+    </div>
+
+    <!-- PROCESO PARA AGENDAR Y RECOMENDACIONES -->
+    <section class="quick-actions info-operativa-section">
+      <h2><i class="bi bi-clipboard2-check"></i> Proceso para Agendar y Recomendaciones</h2>
+
+      <div class="operativa-grid">
+        <!-- Pasos -->
+        <div class="operativa-box">
+          <h3><i class="bi bi-123"></i> ¿Cómo agendar una visita?</h3>
+          <ol class="pasos-list">
+            <li>
+              <strong>Llena tu solicitud en línea:</strong> Ingresa a nuestra sección de
+              <a routerLink="/solicitud-visita">Reservas</a> y espera la confirmación de disponibilidad.
+            </li>
+            <li>
+              <strong>Realiza tu depósito:</strong> Cuenta HSBC <code>4016001638</code> · CLABE
+              <code>021650040160016381</code> a nombre de <em>Herbario y Jardín Botánico BUAP</em>.
+            </li>
+            <li>
+              <strong>Reporta tu pago y facturación:</strong> Sube tu comprobante en el portal. Si requieres factura, escríbela a la brevedad a <code>jardinbotanico.cfdi@correo.buap.mx</code> (Ext. 7034 / 3950).
+            </li>
+            <li>
+              <strong>Asiste puntualmente:</strong> En caso de retraso o cambio, notifica al <code>(222) 229 55 00</code> ext. 7032, 7033 o 3950.
+            </li>
+          </ol>
+        </div>
+
+        <!-- Recomendaciones -->
+        <div class="operativa-box operativa-box--highlight">
+          <h3><i class="bi bi-shield-check"></i> Recomendaciones para tu Visita</h3>
+          <ul class="recomendaciones-list">
+            <li>
+              <i class="bi bi-check-circle-fill"></i>
+              <span>
+                Leer el <a routerLink="/reglamento-jardin">Código de Comportamiento</a> antes de acudir al jardín.
+              </span>
+            </li>
+            <li>
+              <i class="bi bi-check-circle-fill"></i>
+              <span>Venir con ropa cómoda, repelente de insectos, gorra y agua para tomar.</span>
+            </li>
+            <li>
+              <i class="bi bi-check-circle-fill"></i>
+              <span>Si el grupo tomará alimentos, solicitar previamente el espacio asignado para lunch.</span>
+            </li>
+            <li>
+              <i class="bi bi-check-circle-fill"></i>
+              <span>Precios sujetos a cambios sin previo aviso.</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<app-footer></app-footer>
