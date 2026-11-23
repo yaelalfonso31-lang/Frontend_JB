@@ -1,41 +1,61 @@
-<div class="document-upload">
+<div class="document-upload" [class.is-disabled]="disabled()">
   <div class="upload-heading">
-    <strong><i class="bi bi-paperclip" aria-hidden="true"></i> Evidencia del procedimiento</strong>
-    <span>Opcional</span>
+    <strong>
+      <i class="bi bi-paperclip" aria-hidden="true"></i>
+      Evidencia del procedimiento
+    </strong>
+    <span class="optional-badge">
+      <i class="bi bi-info-circle" aria-hidden="true"></i> Opcional
+    </span>
   </div>
-  <p class="upload-help">Adjunta el documento firmado, sellado o autorizado (PDF, JPG o PNG; máximo 10 MB cada uno).</p>
+
+  <p class="upload-help">
+    Adjunta el documento firmado, sellado o autorizado (<strong>PDF, JPG o PNG</strong>; máximo 10 MB por archivo).
+  </p>
+
   <label class="upload-control">
-    <span>Seleccionar documento(s)</span>
-    <input
-      type="file"
-      accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png"
-      multiple
-      [disabled]="disabled()"
-      (change)="onFilesSelected($event)"
-      aria-label="Seleccionar documentos PDF, JPG o PNG"
-    />
+    <div class="upload-cta-icon">
+      <i class="bi bi-cloud-arrow-up-fill" aria-hidden="true"></i>
+    </div>
+    <div class="upload-cta-text">
+      <span>Seleccionar documento(s)</span>
+      <small>Haz clic aquí para explorar archivos en tu equipo</small>
+    </div>
+    <input type="file" accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png" multiple
+      [disabled]="disabled()" (change)="onFilesSelected($event)" aria-label="Seleccionar documentos PDF, JPG o PNG" />
   </label>
 
   @if (documents().length > 0) {
-    <ul class="document-list" aria-label="Documentos adjuntos">
-      @for (document of documents(); track document.id) {
-        <li>
-          <a [href]="document.url" target="_blank" rel="noopener noreferrer">
-            <i class="bi bi-file-earmark-check" aria-hidden="true"></i>
-            {{ document.name }} <span>({{ formatSize(document.size) }})</span>
-          </a>
-          <button type="button" [disabled]="disabled()" (click)="removeDocument(document)" [attr.aria-label]="'Eliminar ' + document.name">
-            <i class="bi bi-trash" aria-hidden="true"></i>
-          </button>
-        </li>
-      }
-    </ul>
+  <ul class="document-list" aria-label="Documentos adjuntos">
+    @for (document of documents(); track document.id) {
+    <li>
+      <a [href]="document.url" target="_blank" rel="noopener noreferrer" class="doc-link">
+        <span class="doc-icon">
+          <i class="bi bi-file-earmark-check-fill" aria-hidden="true"></i>
+        </span>
+        <span class="doc-meta">
+          <strong>{{ document.name }}</strong>
+          <small>{{ formatSize(document.size) }}</small>
+        </span>
+        <i class="bi bi-box-arrow-up-right doc-external" aria-hidden="true"></i>
+      </a>
+      <button type="button" class="btn-remove-doc" [disabled]="disabled()" (click)="removeDocument(document)"
+        [attr.aria-label]="'Eliminar ' + document.name" title="Eliminar documento">
+        <i class="bi bi-trash3-fill" aria-hidden="true"></i>
+      </button>
+    </li>
+    }
+  </ul>
   }
 
   @if (message()) {
-    <p class="upload-message" role="status">{{ message() }}</p>
+  <p class="upload-message" role="status">
+    <i class="bi bi-check-circle-fill" aria-hidden="true"></i> {{ message() }}
+  </p>
   }
   @if (error()) {
-    <p class="upload-error" role="alert">{{ error() }}</p>
+  <p class="upload-error" role="alert">
+    <i class="bi bi-exclamation-triangle-fill" aria-hidden="true"></i> {{ error() }}
+  </p>
   }
 </div>

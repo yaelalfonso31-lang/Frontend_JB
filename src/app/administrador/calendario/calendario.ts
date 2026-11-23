@@ -107,6 +107,16 @@ export class AdministradorCalendarioComponent implements OnInit {
     }
     return Array.from(setHoras).sort();
   });
+  visitasSemanaActual = computed(() => {
+    const fechasSemana = new Set(this.diasSemanaActual().map(d => d.fechaISO));
+    return this.visitas().filter(v => fechasSemana.has(v.fechaVisita));
+  });
+
+  totalVisitasSemana = computed(() => this.visitasSemanaActual().length);
+
+  totalVisitantesSemana = computed(() =>
+    this.visitasSemanaActual().reduce((acc, v) => acc + (v.numeroVisitantes || 0), 0)
+  );
 
   ngOnInit(): void {
     this.cargarVisitas();
@@ -120,7 +130,58 @@ export class AdministradorCalendarioComponent implements OnInit {
         const primeraHoy = data.find(v => v.fechaVisita === hoyISO) || data[0] || null;
         this.visitaSeleccionada.set(primeraHoy);
       },
-      error: (error) => console.error('Error al cargar calendario administrativo:', error)
+      error: () => {
+        console.warn('Backend apagado: Cargando visitas de ejemplo en el calendario...');
+        const hoy = new Date();
+        const manana = new Date(hoy.getFullYear(), hoy.getMonth(), hoy.getDate() + 1);
+        const pasado = new Date(hoy.getFullYear(), hoy.getMonth(), hoy.getDate() + 2);
+
+        const mockVisitas: VisitaCalendario[] = [
+          {
+            id: 1,
+            solicitante: 'Escuela Primaria Benito Juárez',
+            escuela: 'primaria',
+            fechaVisita: this.formatearFecha(hoy),
+            horaVisita: '09:00',
+            numeroVisitantes: 38,
+            estado: 'aprobada',
+            proposito: 'Visita Guiada'
+          },
+          {
+            id: 2,
+            solicitante: 'Preparatoria Emiliano Zapata BUAP',
+            escuela: 'preparatoria',
+            fechaVisita: this.formatearFecha(hoy),
+            horaVisita: '11:00',
+            numeroVisitantes: 30,
+            estado: 'aprobada',
+            proposito: 'Visita Guiada + Taller'
+          },
+          {
+            id: 3,
+            solicitante: 'Facultad de Ciencias Biológicas',
+            escuela: 'licenciatura',
+            fechaVisita: this.formatearFecha(manana),
+            horaVisita: '10:00',
+            numeroVisitantes: 25,
+            estado: 'aprobada',
+            proposito: 'Visita Temática'
+          },
+          {
+            id: 4,
+            solicitante: 'Secundaria Técnica No. 14',
+            escuela: 'secundaria',
+            fechaVisita: this.formatearFecha(pasado),
+            horaVisita: '12:30',
+            numeroVisitantes: 42,
+            estado: 'aprobada',
+            proposito: 'Visita Guiada'
+          }
+        ];
+
+        this.visitas.set(mockVisitas);
+        this.visitaSeleccionada.set(mockVisitas[0]);
+      }
     });
   }
 

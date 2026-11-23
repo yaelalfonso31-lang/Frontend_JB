@@ -1,1 +1,706 @@
-@use '../../../styles/panel-sistema';
+$jb-bosque: #12372a;
+$jb-oscuro: #183524;
+$jb-primario: #2e7d32;
+$jb-medio: #408558;
+$jb-suave: #e8f5e9;
+$jb-dorado: #f4b63f;
+$texto-oscuro: #1c2b24;
+$texto-gris: #55665c;
+
+.calendar-container {
+    max-width: 1480px;
+    margin: 0 auto;
+    padding: 1.25rem clamp(1rem, 2vw, 1.75rem) 2.5rem;
+}
+
+/* ==========================================================================
+   ENCABEZADO INSTITUCIONAL
+   ========================================================================== */
+.calendar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1.25rem;
+    padding: 1.35rem 1.65rem;
+    margin-bottom: 1.5rem;
+    background: linear-gradient(135deg, $jb-bosque 0%, $jb-primario 65%, $jb-medio 100%);
+    color: #ffffff;
+    border-radius: 16px;
+    border-bottom: 4px solid $jb-dorado;
+    box-shadow: 0 10px 24px rgba(18, 55, 42, 0.16);
+
+    .header-title {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+
+        .header-icon {
+            width: 52px;
+            height: 52px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.55rem;
+            color: $jb-dorado;
+            flex-shrink: 0;
+        }
+
+        .eyebrow {
+            display: block;
+            font-size: 0.74rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.75px;
+            color: #c8e6c9;
+            margin-bottom: 0.15rem;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: clamp(1.35rem, 2.4vw, 1.75rem);
+            font-weight: 800;
+            color: #ffffff;
+        }
+
+        p {
+            margin: 0.25rem 0 0;
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.88);
+        }
+    }
+
+    .header-stats {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+    }
+
+    .stat-pill {
+        display: flex;
+        align-items: center;
+        gap: 0.7rem;
+        padding: 0.65rem 1rem;
+        background: rgba(0, 0, 0, 0.24);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 12px;
+
+        i {
+            font-size: 1.35rem;
+            color: $jb-dorado;
+        }
+
+        small {
+            display: block;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            color: #c8e6c9;
+        }
+
+        strong {
+            font-size: 0.96rem;
+            color: #ffffff;
+        }
+    }
+}
+
+/* ==========================================================================
+   WORKSPACE PRINCIPAL (2 COLUMNAS)
+   ========================================================================== */
+.calendar-workspace {
+    display: grid;
+    grid-template-columns: 320px minmax(0, 1fr);
+    gap: 1.35rem;
+    align-items: start;
+
+    @media (max-width: 1080px) {
+        grid-template-columns: 1fr;
+    }
+}
+
+.calendar-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+/* ==========================================================================
+   MINI CALENDARIO MENSUAL
+   ========================================================================== */
+.mini-calendar-card {
+    background: #ffffff;
+    border: 1px solid #dce8de;
+    border-top: 3px solid $jb-primario;
+    border-radius: 14px;
+    padding: 1.15rem;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
+
+    .mini-month-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 0.9rem;
+
+        h2 {
+            margin: 0;
+            font-size: 0.95rem;
+            font-weight: 800;
+            color: $jb-bosque;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            letter-spacing: 0.3px;
+
+            i {
+                color: $jb-primario;
+            }
+        }
+
+        .btn-month-nav {
+            width: 30px;
+            height: 30px;
+            border-radius: 8px;
+            border: 1px solid #d5e3d7;
+            background: #f6faf7;
+            color: $jb-bosque;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.18s ease;
+
+            &:hover {
+                background: $jb-primario;
+                color: #ffffff;
+                border-color: $jb-primario;
+            }
+        }
+    }
+
+    .mini-weekdays {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        text-align: center;
+        font-size: 0.75rem;
+        font-weight: 800;
+        color: $jb-medio;
+        margin-bottom: 0.45rem;
+        padding-bottom: 0.4rem;
+        border-bottom: 1px solid #edf3ee;
+    }
+
+    .mini-days-grid {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 4px;
+    }
+
+    .mini-day {
+        position: relative;
+        aspect-ratio: 1;
+        border: 1px solid transparent;
+        border-radius: 9px;
+        background: transparent;
+        color: $texto-oscuro;
+        font-size: 0.84rem;
+        font-weight: 600;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.16s ease;
+
+        &:hover:not(:disabled) {
+            background: $jb-suave;
+            color: $jb-bosque;
+        }
+
+        &.empty-day {
+            cursor: default;
+        }
+
+        &.has-visits:not(.selected-day) {
+            background: #f2f9f3;
+            border-color: #c8e6c9;
+            font-weight: 700;
+        }
+
+        &.is-today {
+            border: 1.5px solid $jb-dorado;
+            color: $jb-bosque;
+            font-weight: 800;
+        }
+
+        &.selected-day {
+            background: linear-gradient(135deg, $jb-primario 0%, $jb-bosque 100%);
+            color: #ffffff;
+            font-weight: 800;
+            box-shadow: 0 3px 8px rgba($jb-primario, 0.3);
+
+            .visit-dot {
+                background: $jb-dorado;
+            }
+        }
+
+        .visit-dot {
+            position: absolute;
+            bottom: 4px;
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: $jb-primario;
+        }
+    }
+
+    .mini-legend {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-top: 0.85rem;
+        padding-top: 0.7rem;
+        border-top: 1px solid #edf3ee;
+        font-size: 0.73rem;
+        color: $texto-gris;
+        font-weight: 600;
+
+        span {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+
+            &.dot-today {
+                border: 2px solid $jb-dorado;
+                background: #ffffff;
+            }
+
+            &.dot-selected {
+                background: $jb-primario;
+            }
+
+            &.dot-visit {
+                background: #a5d6a7;
+            }
+        }
+    }
+}
+
+/* ==========================================================================
+   TARJETA DE DETALLE DEL EVENTO
+   ========================================================================== */
+.event-detail-card {
+    background: #ffffff;
+    border: 1px solid #dce8de;
+    border-top: 3px solid $jb-dorado;
+    border-radius: 14px;
+    padding: 1.2rem;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.05);
+
+    .detail-card-header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 0.65rem;
+        margin-bottom: 0.85rem;
+
+        .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            font-size: 0.72rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: $jb-medio;
+        }
+
+        h3 {
+            margin: 0.2rem 0 0;
+            font-size: 1.12rem;
+            font-weight: 800;
+            color: $jb-bosque;
+        }
+    }
+
+    .detail-date-banner {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.55rem 0.8rem;
+        margin-bottom: 0.9rem;
+        border-radius: 8px;
+        background: $jb-suave;
+        color: $jb-bosque;
+        font-size: 0.85rem;
+        font-weight: 700;
+
+        i {
+            color: $jb-primario;
+        }
+    }
+
+    .detail-list {
+        display: flex;
+        flex-direction: column;
+        gap: 0.7rem;
+    }
+
+    .detail-item {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.6rem 0.75rem;
+        background: #f8fbf9;
+        border: 1px solid #e6f0e8;
+        border-radius: 10px;
+
+        .detail-icon {
+            width: 34px;
+            height: 34px;
+            border-radius: 8px;
+            background: #ffffff;
+            border: 1px solid #dce8de;
+            color: $jb-primario;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+
+        .detail-text {
+            small {
+                display: block;
+                font-size: 0.72rem;
+                text-transform: uppercase;
+                letter-spacing: 0.3px;
+                color: $texto-gris;
+            }
+
+            strong {
+                font-size: 0.9rem;
+                color: $jb-bosque;
+            }
+        }
+    }
+}
+
+.empty-detail-card {
+    text-align: center;
+    padding: 1.75rem 1.25rem;
+    background: #ffffff;
+    border: 1.5px dashed #cfe0d2;
+    border-radius: 14px;
+
+    .empty-icon-wrap {
+        width: 48px;
+        height: 48px;
+        margin: 0 auto 0.65rem;
+        border-radius: 12px;
+        background: $jb-suave;
+        color: $jb-primario;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.45rem;
+    }
+
+    h4 {
+        margin: 0 0 0.3rem;
+        font-size: 0.98rem;
+        font-weight: 700;
+        color: $jb-bosque;
+    }
+
+    p {
+        margin: 0;
+        font-size: 0.84rem;
+        color: $texto-gris;
+        line-height: 1.45;
+    }
+}
+
+/* ==========================================================================
+   AGENDA SEMANAL POR HORAS
+   ========================================================================== */
+.weekly-schedule-card {
+    background: #ffffff;
+    border: 1px solid #dce8de;
+    border-top: 3px solid $jb-primario;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+}
+
+.weekly-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.85rem;
+    padding: 1rem 1.25rem;
+    background: #f6faf7;
+    border-bottom: 1px solid #dce8de;
+
+    .week-range-label {
+        display: flex;
+        align-items: center;
+        gap: 0.7rem;
+
+        .toolbar-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: 9px;
+            background: $jb-suave;
+            color: $jb-primario;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.15rem;
+        }
+
+        small {
+            display: block;
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            color: $texto-gris;
+            font-weight: 700;
+        }
+
+        strong {
+            font-size: 1rem;
+            color: $jb-bosque;
+        }
+    }
+
+    .week-nav-buttons {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+
+        .btn-nav {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.5rem 0.9rem;
+            background: #ffffff;
+            border: 1.5px solid #cfe0d2;
+            border-radius: 8px;
+            color: $jb-bosque;
+            font-size: 0.84rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.18s ease;
+
+            &:hover {
+                background: $jb-suave;
+                border-color: $jb-primario;
+            }
+
+            &.btn-today {
+                background: $jb-primario;
+                border-color: $jb-primario;
+                color: #ffffff;
+
+                &:hover {
+                    background: $jb-bosque;
+                    border-color: $jb-bosque;
+                }
+            }
+        }
+    }
+}
+
+.weekly-grid-scroll {
+    overflow-x: auto;
+}
+
+.weekly-table {
+    width: 100%;
+    min-width: 760px;
+    border-collapse: collapse;
+    table-layout: fixed;
+
+    thead th {
+        padding: 0.75rem 0.4rem;
+        text-align: center;
+        background: #fbfdfb;
+        border-bottom: 1.5px solid #dce8de;
+        border-left: 1px solid #edf3ee;
+        cursor: pointer;
+        transition: background-color 0.16s ease;
+
+        &.time-col-header {
+            width: 64px;
+            cursor: default;
+            color: $jb-primario;
+            font-size: 1rem;
+            border-left: none;
+        }
+
+        .day-name {
+            display: block;
+            font-size: 0.74rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: $texto-gris;
+        }
+
+        .day-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 30px;
+            height: 30px;
+            margin-top: 0.2rem;
+            border-radius: 50%;
+            font-size: 0.96rem;
+            font-weight: 800;
+            color: $jb-bosque;
+        }
+
+        &.is-today-col .day-number {
+            border: 2px solid $jb-dorado;
+        }
+
+        &.is-selected-col {
+            background: $jb-suave;
+
+            .day-name {
+                color: $jb-primario;
+            }
+
+            .day-number {
+                background: $jb-primario;
+                color: #ffffff;
+            }
+        }
+    }
+
+    tbody td {
+        height: 76px;
+        padding: 0.35rem;
+        vertical-align: top;
+        border-bottom: 1px solid #edf3ee;
+        border-left: 1px solid #edf3ee;
+        transition: background-color 0.15s ease;
+
+        &.time-slot-label {
+            width: 64px;
+            text-align: center;
+            vertical-align: middle;
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: $texto-gris;
+            background: #fafdfb;
+            border-left: none;
+        }
+
+        &.schedule-cell {
+            cursor: pointer;
+
+            &:hover {
+                background: #f4faf5;
+            }
+
+            &.is-selected-col {
+                background: rgba($jb-suave, 0.55);
+            }
+        }
+    }
+}
+
+/* ==========================================================================
+   TARJETA DE EVENTO DENTRO DE LA CUADRÍCULA
+   ========================================================================== */
+.schedule-event-card {
+    width: 100%;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    padding: 0.5rem 0.6rem;
+    margin-bottom: 0.3rem;
+    background: $jb-suave;
+    border: 1px solid #a5d6a7;
+    border-left: 4px solid $jb-primario;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.18s ease;
+
+    &:last-child {
+        margin-bottom: 0;
+    }
+
+    .event-time {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.28rem;
+        font-size: 0.72rem;
+        font-weight: 800;
+        color: $jb-primario;
+    }
+
+    .event-title {
+        font-size: 0.8rem;
+        font-weight: 800;
+        color: $jb-bosque;
+        line-height: 1.25;
+    }
+
+    .event-school {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: $texto-oscuro;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .event-meta {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+        font-size: 0.71rem;
+        color: $texto-gris;
+        font-weight: 600;
+    }
+
+    &:hover {
+        background: #d5eed7;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 10px rgba(18, 55, 42, 0.12);
+    }
+
+    &.event-active {
+        background: linear-gradient(135deg, $jb-bosque 0%, $jb-primario 100%);
+        border-color: $jb-bosque;
+        border-left: 4px solid $jb-dorado;
+        box-shadow: 0 5px 12px rgba(18, 55, 42, 0.25);
+
+        .event-time {
+            color: #ffe082;
+        }
+
+        .event-title,
+        .event-school {
+            color: #ffffff;
+        }
+
+        .event-meta {
+            color: #c8e6c9;
+        }
+    }
+}

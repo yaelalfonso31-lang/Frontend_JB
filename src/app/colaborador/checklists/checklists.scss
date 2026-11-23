@@ -7,15 +7,50 @@
 }
 
 .overview-item {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
   transition: background-color 160ms ease;
 
   &:hover {
     background: var(--accent-soft);
   }
 
+  .overview-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    flex-shrink: 0;
+
+    &.icon-total {
+      background: var(--accent-soft);
+      color: var(--success-text);
+    }
+
+    &.icon-active {
+      background: var(--warning-bg);
+      color: var(--warning-text);
+    }
+
+    &.icon-done {
+      background: var(--success-bg);
+      color: var(--success-text);
+    }
+  }
+
   &.active-total strong {
     color: var(--warning-text);
   }
+}
+
+.filter-tabs button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
 }
 
 .checklist-entry {
@@ -37,6 +72,7 @@
 
     th {
       color: var(--success-text);
+      white-space: nowrap;
     }
   }
 
@@ -47,6 +83,16 @@
   .service-cell {
     color: var(--success-text);
     font-weight: 700;
+
+    .service-title {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+
+      i {
+        color: var(--accent-primary);
+      }
+    }
   }
 
   .folio-cell {
@@ -66,7 +112,7 @@
 }
 
 .checklists-table .progress-cell {
-  min-width: 10rem;
+  min-width: 10.5rem;
   padding: 0.65rem 0.8rem;
   border-radius: var(--radius-md);
   background: var(--bg-app);
@@ -90,7 +136,7 @@
     span {
       height: 100%;
       border-radius: inherit;
-      background: var(--accent-primary);
+      background: linear-gradient(90deg, var(--accent-primary), var(--success-text));
       transition: width 180ms ease;
     }
   }
@@ -105,22 +151,43 @@
   }
 }
 
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
 .refresh-error {
   margin: 0 0 1rem;
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius-md);
+  background: var(--danger-bg);
   color: var(--danger-text);
   font-weight: 600;
 }
 
 .approval-state {
-  display: block;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
   margin-top: 0.35rem;
+  padding: 0.15rem 0.55rem;
+  border-radius: 999px;
+  background: var(--warning-bg);
   color: var(--warning-text);
-  font-size: 0.73rem;
+  font-size: 0.72rem;
   font-weight: 700;
 }
 
 .approval-state-approved {
+  background: var(--success-bg);
   color: var(--success-text);
+}
+
+.open-checklist {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
 }
 
 .open-locked {
@@ -134,13 +201,15 @@
 }
 
 .expanded-checklist {
-  padding: 0.5rem;
+  padding: 0.75rem;
   border-radius: var(--radius-md);
   background: var(--bg-app);
 }
 
 @keyframes checklist-refresh-spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 @media (max-width: 768px) {
@@ -148,7 +217,7 @@
     grid-template-columns: 1fr;
   }
 
-  .overview-item + .overview-item {
+  .overview-item+.overview-item {
     border-top: 1px solid var(--border-light);
     border-left: 0;
   }

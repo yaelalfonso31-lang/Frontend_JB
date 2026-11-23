@@ -5,39 +5,77 @@
   align-items: center;
   gap: 0.65rem;
   margin: 1rem 0;
-  padding: 0.9rem 1rem;
-  border: 1px solid var(--warning-bg);
+  padding: 0.9rem 1.1rem;
+  border: 1px solid #ffe082;
+  border-left: 4px solid #f4b63f;
   border-radius: var(--radius-md);
   background: var(--warning-bg);
   color: var(--warning-text);
   font-weight: 700;
+
+  i {
+    font-size: 1.15rem;
+  }
 }
 
 .document-header {
   background:
-    linear-gradient(110deg, var(--success-bg), transparent 58%),
+    linear-gradient(115deg, var(--success-bg), transparent 62%),
     var(--bg-surface);
+  border-bottom: 2px solid var(--border-light);
+
+  .document-kicker {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  h2 {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
 }
 
 .service-name {
   display: inline-flex;
-  margin: 0.45rem 0 0;
-  padding: 0.3rem 0.7rem;
+  align-items: center;
+  gap: 0.45rem;
+  margin: 0.5rem 0 0;
+  padding: 0.35rem 0.85rem;
   border: 1px solid var(--border-light);
   border-radius: 999px;
-  background: var(--bg-app);
+  background: var(--accent-soft);
   color: var(--success-text);
-  font-size: 0.82rem;
+  font-size: 0.84rem;
   font-weight: 700;
+
+  i {
+    color: var(--accent-primary);
+  }
+}
+
+.folio-field>span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
 }
 
 .progress-panel {
   border-top: 3px solid var(--accent-primary);
+  box-shadow: var(--shadow-sm);
+}
+
+.progress-track span {
+  background: linear-gradient(90deg, var(--accent-primary), var(--success-text));
 }
 
 .progress-count,
 .section-progress {
-  padding: 0.4rem 0.75rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.4rem 0.8rem;
   border: 1px solid var(--border-light);
   border-radius: 999px;
   background: var(--accent-soft);
@@ -49,29 +87,52 @@
 }
 
 .phase-marker {
-  padding: 0.55rem 0.65rem;
-  border: 1px solid transparent;
+  padding: 0.65rem 0.75rem;
+  border: 1px solid var(--border-light);
   border-radius: var(--radius-sm);
   background: var(--bg-app);
+  transition: all 160ms ease;
 
   &.phase-current {
-    border-color: var(--border-light);
+    border-color: var(--accent-primary);
     background: var(--accent-soft);
+    box-shadow: var(--shadow-sm);
   }
 
   &.phase-done {
+    border-color: #a5d6a7;
     background: var(--success-bg);
+  }
+
+  .phase-status-icon {
+    font-size: 0.95rem;
+    color: var(--text-muted);
+  }
+
+  &.phase-current .phase-status-icon {
+    color: var(--accent-primary);
+  }
+
+  &.phase-done .phase-status-icon {
+    color: var(--success-text);
   }
 }
 
 .procedure-section {
   overflow: hidden;
-  border-top: 2px solid var(--border-light);
+  border: 1px solid var(--border-light);
+  border-top: 3px solid var(--accent-primary);
+  box-shadow: var(--shadow-sm);
 }
 
 .section-heading {
-  background:
-    linear-gradient(100deg, var(--accent-soft), var(--bg-app) 70%);
+  background: linear-gradient(100deg, var(--accent-soft), var(--bg-app) 70%);
+
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+  }
 }
 
 .procedure-table {
@@ -82,10 +143,13 @@
 
     th {
       color: var(--success-text);
+      white-space: nowrap;
     }
   }
 
   tbody tr {
+    transition: background-color 140ms ease;
+
     &:nth-child(even) {
       background: #fbfdfb;
     }
@@ -102,7 +166,11 @@
       }
 
       .procedure-cell {
-        box-shadow: inset 3px 0 0 var(--accent-primary);
+        box-shadow: inset 4px 0 0 var(--accent-primary);
+      }
+
+      .procedure-copy {
+        color: var(--success-text);
       }
     }
   }
@@ -114,26 +182,37 @@
 
   .date-cell,
   .performer-cell {
-    min-width: 10rem;
+    min-width: 10.5rem;
+    vertical-align: top;
   }
 
   .date-cell input,
   .performer-cell input,
   .performer-cell select {
-    border-color: var(--border-input);
+    border: 1.5px solid var(--border-input);
     border-radius: var(--radius-sm);
     background-color: var(--bg-surface);
+    transition: border-color 150ms ease, box-shadow 150ms ease;
+
+    &:focus:not(:disabled) {
+      outline: none;
+      border-color: var(--accent-primary);
+      box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.15);
+    }
   }
 }
 
 .procedure-check {
   align-items: flex-start;
+  cursor: pointer;
 
   input[type='checkbox'] {
     flex: 0 0 auto;
-    width: 18px;
-    height: 18px;
+    width: 19px;
+    height: 19px;
     margin-top: 0.12rem;
+    accent-color: var(--accent-primary);
+    cursor: pointer;
   }
 }
 
@@ -148,8 +227,20 @@
   line-height: 1.5;
 }
 
+.procedure-details {
+  margin: 0.45rem 0 0;
+  padding-left: 1.15rem;
+  color: var(--text-secondary);
+  font-size: 0.88rem;
+
+  li {
+    margin-bottom: 0.2rem;
+  }
+}
+
 .section-number {
   border-radius: 50%;
+  box-shadow: var(--shadow-sm);
 }
 
 .document-actions button:disabled,
@@ -168,6 +259,12 @@
     color: var(--success-text);
     text-decoration-thickness: 2px;
   }
+}
+
+.document-footer span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
 }
 
 @media (max-width: 768px) {

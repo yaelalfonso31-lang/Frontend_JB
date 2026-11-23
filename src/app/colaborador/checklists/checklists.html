@@ -1,11 +1,12 @@
 <main class="checklists-page">
   <header class="page-heading">
     <div>
-      <p class="eyebrow">Área de Educación y Divulgación</p>
-      <h1>Control de checklists</h1>
-      <p class="page-description">Seguimiento de procedimientos por servicio y folio.</p>
+      <p class="eyebrow"><i class="bi bi-flower1 me-1" aria-hidden="true"></i> Área de Educación y Divulgación</p>
+      <h1><i class="bi bi-ui-checks-grid me-2" aria-hidden="true"></i>Control de checklists</h1>
+      <p class="page-description">Seguimiento de procedimientos operativos por servicio y folio asignado.</p>
     </div>
-    <button class="refresh-button" type="button" [disabled]="actualizando()" (click)="refresh()" aria-label="Actualizar listado" title="Actualizar listado">
+    <button class="refresh-button" type="button" [disabled]="actualizando()" (click)="refresh()"
+      aria-label="Actualizar listado" title="Actualizar listado">
       <i class="bi bi-arrow-clockwise" [class.spin]="actualizando()" aria-hidden="true"></i>
       {{ actualizando() ? 'Actualizando...' : 'Actualizar' }}
     </button>
@@ -13,139 +14,156 @@
 
   <section class="overview-strip" aria-label="Resumen de checklists">
     <div class="overview-item">
-      <span class="overview-label">Registrados</span>
-      <strong>{{ checklists().length }}</strong>
+      <div class="overview-icon icon-total"><i class="bi bi-journals" aria-hidden="true"></i></div>
+      <div>
+        <span class="overview-label">Registrados</span>
+        <strong>{{ checklists().length }}</strong>
+      </div>
     </div>
     <div class="overview-item active-total">
-      <span class="overview-label">Activos</span>
-      <strong>{{ activeCount() }}</strong>
+      <div class="overview-icon icon-active"><i class="bi bi-hourglass-split" aria-hidden="true"></i></div>
+      <div>
+        <span class="overview-label">Activos</span>
+        <strong>{{ activeCount() }}</strong>
+      </div>
     </div>
     <div class="overview-item completed-total">
-      <span class="overview-label">Concluidos</span>
-      <strong>{{ concludedCount() }}</strong>
+      <div class="overview-icon icon-done"><i class="bi bi-check2-circle" aria-hidden="true"></i></div>
+      <div>
+        <span class="overview-label">Concluidos</span>
+        <strong>{{ concludedCount() }}</strong>
+      </div>
     </div>
   </section>
 
   @if (errorActualizacion()) {
-    <p class="refresh-error" role="alert">{{ errorActualizacion() }}</p>
+  <p class="refresh-error" role="alert">
+    <i class="bi bi-exclamation-octagon-fill me-1" aria-hidden="true"></i> {{ errorActualizacion() }}
+  </p>
   }
 
   <section class="list-section" aria-labelledby="list-heading">
     <div class="list-heading-row">
       <div>
-        <p class="eyebrow">Servicios registrados</p>
+        <p class="eyebrow"><i class="bi bi-clipboard2-pulse me-1" aria-hidden="true"></i> Servicios registrados</p>
         <h2 id="list-heading">{{ filter() === 'activos' ? 'En seguimiento' : 'Historial concluido' }}</h2>
       </div>
       <div class="filter-tabs" role="tablist" aria-label="Filtrar checklists">
-        <button
-          type="button"
-          role="tab"
-          [attr.aria-selected]="filter() === 'activos'"
-          [class.selected]="filter() === 'activos'"
-          (click)="setFilter('activos')"
-        >
+        <button type="button" role="tab" [attr.aria-selected]="filter() === 'activos'"
+          [class.selected]="filter() === 'activos'" (click)="setFilter('activos')">
+          <i class="bi bi-play-circle-fill" aria-hidden="true"></i>
           Activos <span>{{ activeCount() }}</span>
         </button>
-        <button
-          type="button"
-          role="tab"
-          [attr.aria-selected]="filter() === 'concluidos'"
-          [class.selected]="filter() === 'concluidos'"
-          (click)="setFilter('concluidos')"
-        >
+        <button type="button" role="tab" [attr.aria-selected]="filter() === 'concluidos'"
+          [class.selected]="filter() === 'concluidos'" (click)="setFilter('concluidos')">
+          <i class="bi bi-check-circle-fill" aria-hidden="true"></i>
           Concluidos <span>{{ concludedCount() }}</span>
         </button>
       </div>
     </div>
 
     @if (filteredChecklists().length > 0) {
-      @for (item of filteredChecklists(); track item.kind + ':' + item.folio) {
-        <article class="checklist-entry" [class.entry-expanded]="isExpanded(item)">
-          <div class="table-scroll">
-            <table class="checklists-table">
-              <thead>
-                <tr>
-                  <th scope="col">Servicio</th>
-                  <th scope="col">Folio</th>
-                  <th scope="col">Escuela</th>
-                  <th scope="col">Fecha</th>
-                  <th scope="col">Fase actual</th>
-                  <th scope="col">Completados</th>
-                  <th scope="col">Estado</th>
-                  <th scope="col"><span class="visually-hidden">Acción</span></th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td class="service-cell">
-                    {{ item.service }}
-                    <span class="approval-state" [class.approval-state-approved]="item.requestStatus === 'aprobada'">
-                      Solicitud {{ item.requestStatus | titlecase }}
-                    </span>
-                  </td>
-                  <td class="folio-cell">{{ item.folio }}</td>
-                  <td>{{ item.school || 'Sin institución' }}</td>
-                  <td>{{ item.date ? (item.date | date: 'dd/MM/yyyy') : 'Sin fecha' }}</td>
-                  <td class="phase-cell">{{ item.currentPhase }}</td>
-                  <td class="progress-cell" [class.progress-complete]="item.status === 'Concluido'">
-                  <div class="progress-label">
-                    <span>{{ item.completedSteps }} / {{ item.totalSteps }}</span>
-                    <strong>{{ item.progressPercent }}%</strong>
-                  </div>
-                  <div class="progress-track" role="progressbar" [attr.aria-label]="'Avance ' + item.service + ', folio ' + item.folio" [attr.aria-valuenow]="item.progressPercent" aria-valuemin="0" aria-valuemax="100">
-                    <span [style.width.%]="item.progressPercent"></span>
-                  </div>
-                  </td>
-                  <td>
-                    <span class="status-badge" [class.status-progress]="item.status === 'En proceso'" [class.status-pending]="item.status === 'Pendiente de inicio'" [class.status-done]="item.status === 'Concluido'">
-                      {{ item.status }}
-                    </span>
-                  </td>
-                  <td class="action-cell">
-                    <button
-                      class="open-checklist"
-                      [class.open-locked]="item.requestStatus !== 'aprobada'"
-                      type="button"
-                      [attr.aria-expanded]="isExpanded(item)"
-                      [attr.aria-controls]="detailsId(item)"
-                      (click)="toggleExpanded(item)"
-                    >
-                      {{ isExpanded(item) ? 'Ocultar' : item.requestStatus === 'aprobada' ? 'Desglosar' : 'Bloqueado' }}
-                      <i class="bi" [class.bi-chevron-down]="!isExpanded(item)" [class.bi-chevron-up]="isExpanded(item)" aria-hidden="true"></i>
-                    </button>
-                  </td>
-                </tr>
+    @for (item of filteredChecklists(); track item.kind + ':' + item.folio) {
+    <article class="checklist-entry" [class.entry-expanded]="isExpanded(item)">
+      <div class="table-scroll">
+        <table class="checklists-table">
+          <thead>
+            <tr>
+              <th scope="col"><i class="bi bi-tag me-1" aria-hidden="true"></i> Servicio</th>
+              <th scope="col"><i class="bi bi-hash me-1" aria-hidden="true"></i> Folio</th>
+              <th scope="col"><i class="bi bi-building me-1" aria-hidden="true"></i> Escuela</th>
+              <th scope="col"><i class="bi bi-calendar-event me-1" aria-hidden="true"></i> Fecha</th>
+              <th scope="col"><i class="bi bi-signpost-split me-1" aria-hidden="true"></i> Fase actual</th>
+              <th scope="col"><i class="bi bi-bar-chart-steps me-1" aria-hidden="true"></i> Completados</th>
+              <th scope="col"><i class="bi bi-flag me-1" aria-hidden="true"></i> Estado</th>
+              <th scope="col"><span class="visually-hidden">Acción</span></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="service-cell">
+                <div class="service-title">
+                  <i class="bi bi-tree-fill" aria-hidden="true"></i>
+                  <span>{{ item.service }}</span>
+                </div>
+                <span class="approval-state" [class.approval-state-approved]="item.requestStatus === 'aprobada'">
+                  <i class="bi" [class.bi-patch-check-fill]="item.requestStatus === 'aprobada'"
+                    [class.bi-clock-history]="item.requestStatus !== 'aprobada'" aria-hidden="true"></i>
+                  Solicitud {{ item.requestStatus | titlecase }}
+                </span>
+              </td>
+              <td class="folio-cell">{{ item.folio }}</td>
+              <td>{{ item.school || 'Sin institución' }}</td>
+              <td>{{ item.date ? (item.date | date: 'dd/MM/yyyy') : 'Sin fecha' }}</td>
+              <td class="phase-cell">{{ item.currentPhase }}</td>
+              <td class="progress-cell" [class.progress-complete]="item.status === 'Concluido'">
+                <div class="progress-label">
+                  <span>{{ item.completedSteps }} / {{ item.totalSteps }}</span>
+                  <strong>{{ item.progressPercent }}%</strong>
+                </div>
+                <div class="progress-track" role="progressbar"
+                  [attr.aria-label]="'Avance ' + item.service + ', folio ' + item.folio"
+                  [attr.aria-valuenow]="item.progressPercent" aria-valuemin="0" aria-valuemax="100">
+                  <span [style.width.%]="item.progressPercent"></span>
+                </div>
+              </td>
+              <td>
+                <span class="status-badge" [class.status-progress]="item.status === 'En proceso'"
+                  [class.status-pending]="item.status === 'Pendiente de inicio'"
+                  [class.status-done]="item.status === 'Concluido'">
+                  <i class="bi" [class.bi-arrow-repeat]="item.status === 'En proceso'"
+                    [class.bi-hourglass]="item.status === 'Pendiente de inicio'"
+                    [class.bi-check-circle-fill]="item.status === 'Concluido'" aria-hidden="true"></i>
+                  {{ item.status }}
+                </span>
+              </td>
+              <td class="action-cell">
+                <button class="open-checklist" [class.open-locked]="item.requestStatus !== 'aprobada'" type="button"
+                  [attr.aria-expanded]="isExpanded(item)" [attr.aria-controls]="detailsId(item)"
+                  (click)="toggleExpanded(item)">
+                  <i class="bi" [class.bi-eye-slash-fill]="isExpanded(item)"
+                    [class.bi-list-check]="!isExpanded(item) && item.requestStatus === 'aprobada'"
+                    [class.bi-lock-fill]="!isExpanded(item) && item.requestStatus !== 'aprobada'"
+                    aria-hidden="true"></i>
+                  {{ isExpanded(item) ? 'Ocultar' : item.requestStatus === 'aprobada' ? 'Desglosar' : 'Bloqueado' }}
+                  <i class="bi" [class.bi-chevron-down]="!isExpanded(item)" [class.bi-chevron-up]="isExpanded(item)"
+                    aria-hidden="true"></i>
+                </button>
+              </td>
+            </tr>
 
-                @if (isExpanded(item)) {
-                  <tr class="details-row">
-                    <td colspan="8">
-                      <div class="expanded-checklist" [id]="detailsId(item)">
-                        @switch (item.kind) {
-                          @case ('visita-guiada') {
-                            <app-checklist-visita [folioInput]="item.folio"></app-checklist-visita>
-                          }
-                          @case ('visita-guiada-taller') {
-                            <app-checklist-visita-taller [folioInput]="item.folio"></app-checklist-visita-taller>
-                          }
-                          @case ('visita-tematica') {
-                            <app-checklist-visita-tematica [folioInput]="item.folio"></app-checklist-visita-tematica>
-                          }
-                        }
-                      </div>
-                    </td>
-                  </tr>
-                }
-              </tbody>
-            </table>
-          </div>
-        </article>
-      }
-    } @else {
-      <div class="empty-state">
-        <span class="empty-icon" aria-hidden="true"><i class="bi bi-clipboard2-check"></i></span>
-        <h3>{{ filter() === 'activos' ? 'No hay servicios activos' : 'Aún no hay checklists concluidos' }}</h3>
-        <p>{{ filter() === 'activos' ? 'Los checklists aparecerán aquí cuando se registre una solicitud con un servicio educativo compatible.' : 'Cuando todos los procedimientos de un checklist estén marcados, aparecerá en este historial.' }}</p>
+            @if (isExpanded(item)) {
+            <tr class="details-row">
+              <td colspan="8">
+                <div class="expanded-checklist" [id]="detailsId(item)">
+                  @switch (item.kind) {
+                  @case ('visita-guiada') {
+                  <app-checklist-visita [folioInput]="item.folio"></app-checklist-visita>
+                  }
+                  @case ('visita-guiada-taller') {
+                  <app-checklist-visita-taller [folioInput]="item.folio"></app-checklist-visita-taller>
+                  }
+                  @case ('visita-tematica') {
+                  <app-checklist-visita-tematica [folioInput]="item.folio"></app-checklist-visita-tematica>
+                  }
+                  }
+                </div>
+              </td>
+            </tr>
+            }
+          </tbody>
+        </table>
       </div>
+    </article>
+    }
+    } @else {
+    <div class="empty-state">
+      <span class="empty-icon" aria-hidden="true"><i class="bi bi-clipboard2-check"></i></span>
+      <h3>{{ filter() === 'activos' ? 'No hay servicios activos' : 'Aún no hay checklists concluidos' }}</h3>
+      <p>{{ filter() === 'activos' ? 'Los checklists aparecerán aquí cuando se registre una solicitud con un servicio
+        educativo compatible.' : 'Cuando todos los procedimientos de un checklist estén marcados, aparecerá en este
+        historial.' }}</p>
+    </div>
     }
   </section>
 </main>
