@@ -42,8 +42,8 @@ export class InicioComponent {
       descripcion: 'Explora las colecciones biológicas del jardín acompañado por un guía especializado que adaptará el recorrido al nivel educativo de tu grupo.',
       icono: 'bi-compass-fill',
       etiqueta: 'Todos los niveles',
-      imagen: '/assets/visita-guiada.jpg',
-      fallback: '/assets/fondoJB.jpg'
+      imagen: '/assets/foto2.jpg',
+      fallback: '/assets/foto2.jpg'
     },
     {
       titulo: 'Visita Temática',
@@ -51,8 +51,8 @@ export class InicioComponent {
       descripcion: 'Recorridos especializados enfocados en temas específicos de botánica, ecología, evolución y conservación de especies endémicas.',
       icono: 'bi-flower1',
       etiqueta: 'Secundaria a Licenciatura',
-      imagen: '/assets/visita-tematica.jpg',
-      fallback: '/assets/fondoJB2.jpg'
+      imagen: '/assets/detective4.jpg',
+      fallback: '/assets/detective4.jpg'
     },
     {
       titulo: 'Talleres Educativos',
@@ -60,8 +60,8 @@ export class InicioComponent {
       descripcion: 'Complementa tu visita con actividades prácticas como "Crea tu herbario", "De fósiles y plantas" y sesiones de "Horticultura".',
       icono: 'bi-mortarboard-fill',
       etiqueta: 'Práctico e interactivo',
-      imagen: '/assets/talleres-educativos.jpg',
-      fallback: '/assets/fondo3.jpg'
+      imagen: '/assets/plantasmedicinales.jpg',
+      fallback: '/assets/plantasmedicinales.jpg'
     }
   ];
 
@@ -71,29 +71,29 @@ export class InicioComponent {
       titulo: 'Colecciones Botánicas al Aire Libre',
       categoria: 'Biodiversidad',
       icono: 'bi-tree-fill',
-      imagen: '/assets/galeria-1.jpg',
-      fallback: '/assets/fondo3.jpg',
+      imagen: '/assets/foto19.jpg',
+      fallback: '/assets/foto19.jpg',
       destacada: true
     },
     {
       titulo: 'Jardín de Cactáceas y Suculentas',
       categoria: 'Zonas Áridas',
       icono: 'bi-brightness-high-fill',
-      imagen: '/assets/galeria-2.jpg',
-      fallback: '/assets/fondoJB.jpg'
+      imagen: '/assets/fondoJB2.jpg',
+      fallback: '/assets/fondoJB2.jpg'
     },
     {
       titulo: 'Lago y Humedal Universitario',
       categoria: 'Ecosistemas Acuáticos',
       icono: 'bi-water',
-      imagen: '/assets/galeria-3.jpg',
-      fallback: '/assets/fondoJB2.jpg'
+      imagen: '/assets/foto8.jpg',
+      fallback: '/assets/foto8.jpg'
     },
     {
       titulo: 'Aulas y Espacios para Talleres',
       categoria: 'Divulgación Científica',
       icono: 'bi-easel2-fill',
-      imagen: '/assets/galeria-4.jpg',
+      imagen: '/assets/fondoJB.jpg',
       fallback: '/assets/fondoJB.jpg'
     }
   ];
