@@ -75,6 +75,14 @@ export const routes: Routes = [
         loadComponent: () => import('./ayuda/centro-ayuda/centro-ayuda').then(m => m.CentroAyudaComponent)
     },
     {
+        path: 'servicios',
+        loadComponent: () => import('./ayuda/servicios/servicios').then(m => m.Servicios)
+    },
+    {
+        path: 'nosotros',
+        loadComponent: () => import('./ayuda/nosotros/nosotros').then(m => m.Nosotros)
+    },
+    {
         path: 'administrador',
         canActivate: [adminGuard],
         loadComponent: () => import('./administrador/administrador').then(m => m.AdministradorComponent),

@@ -1,0 +1,183 @@
+<app-header></app-header>
+
+<main class="nosotros-page">
+  <div class="nosotros-container">
+
+    <!-- ENCABEZADO PRINCIPAL -->
+    <header class="header-section">
+      <div>
+        <p class="eyebrow">Benemérita Universidad Autónoma de Puebla</p>
+        <h1>
+          <i class="bi bi-tree-fill"></i>
+          Jardín Botánico Universitario
+        </h1>
+        <p class="page-description">
+          Centro botánico por excelencia en Puebla dedicado a la conservación de la flora regional, la investigación científica y la educación ambiental.
+        </p>
+      </div>
+      <div class="document-actions">
+        <a routerLink="/servicios" class="btn btn-secondary">
+          <i class="bi bi-flower1"></i> Ver Servicios
+        </a>
+        <a routerLink="/solicitud-visita" class="btn btn-primary">
+          <i class="bi bi-calendar-check"></i> Agendar Visita
+        </a>
+      </div>
+    </header>
+
+    <!-- HERO INSTITUCIONAL CON IMAGEN DESTACADA (fondoJB2.jpg) -->
+    <section class="hero-card">
+      <div class="hero-card__media">
+        <img src="assets/fondoJB2.jpg" alt="Lago y colecciones del Jardín Botánico Universitario BUAP" />
+        <span class="hero-badge">
+          <i class="bi bi-patch-check-fill"></i> Certificado Internacionalmente
+        </span>
+      </div>
+
+      <div class="hero-card__content">
+        <h2>Un espacio vivo de conexión entre la naturaleza y el ser humano</h2>
+        <p>
+          El <strong>Jardín Botánico Universitario de la BUAP</strong> resguarda colecciones científicas vivas y de herbario que representan la riqueza florística del Estado de Puebla y de México.
+        </p>
+        <p>
+          A través de nuestros recorridos guiados, talleres educativos y programas de divulgación, impulsamos una cultura de respeto, conocimiento y conservación activa de los ecosistemas para estudiantes, investigadores y público general.
+        </p>
+
+        <div class="mision-vision-grid">
+          <div class="mv-box">
+            <h3><i class="bi bi-compass"></i> Misión</h3>
+            <p>
+              Conservar, investigar y difundir la diversidad vegetal regional mediante colecciones científicas y programas educativos de excelencia que promuevan el cuidado ambiental.
+            </p>
+          </div>
+          <div class="mv-box">
+            <h3><i class="bi bi-eye"></i> Visión</h3>
+            <p>
+              Ser un Centro de Estudios y de Investigación de excelencia en la ciencia de las plantas, que gestiona el conocimiento botánico, y genera desarrollo tecnológico con impacto en la conservación y cuidado del ambiente.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ACREDITACIONES Y RECONOCIMIENTOS (KPI Cards estilo panel-sistema) -->
+    <section class="acreditaciones-section">
+      <div class="section-heading">
+        <h2><i class="bi bi-award-fill"></i> Acreditaciones y Reconocimientos</h2>
+        <p>Respaldo nacional e internacional a nuestros procesos de conservación, calidad y educación ambiental.</p>
+      </div>
+
+      <div class="metrics-grid">
+        @for (item of acreditaciones; track item.titulo) {
+          <div class="metric-card metric-success">
+            <div class="metric-header">
+              <h3>Acreditación Oficial</h3>
+              <i [class]="item.icono"></i>
+            </div>
+            <div class="acreditacion-titulo">{{ item.titulo }}</div>
+            <p class="metric-label">{{ item.subtitulo }}</p>
+          </div>
+        }
+      </div>
+    </section>
+
+    <!-- GALERÍA FOTOGRÁFICA INTERACTIVA -->
+    <section class="quick-actions galeria-section">
+      <div class="galeria-header">
+        <div>
+          <h2><i class="bi bi-images"></i> Nuestro Jardín en Imágenes</h2>
+          <p class="galeria-subtitle">
+            Conoce nuestras instalaciones, colecciones vivas, visitas guiadas y talleres educativos.
+          </p>
+        </div>
+
+        <div class="filter-tabs">
+          <button
+            type="button"
+            [class.active]="selectedCategory() === 'todas'"
+            (click)="selectedCategory.set('todas')"
+          >
+            Todas ({{ galeria.length }})
+          </button>
+          <button
+            type="button"
+            [class.active]="selectedCategory() === 'instalaciones'"
+            (click)="selectedCategory.set('instalaciones')"
+          >
+            Jardín y Flora
+          </button>
+          <button
+            type="button"
+            [class.active]="selectedCategory() === 'visitas'"
+            (click)="selectedCategory.set('visitas')"
+          >
+            Visitas Guiadas
+          </button>
+          <button
+            type="button"
+            [class.active]="selectedCategory() === 'talleres'"
+            (click)="selectedCategory.set('talleres')"
+          >
+            Talleres
+          </button>
+        </div>
+      </div>
+
+      <div class="galeria-grid">
+        @for (foto of fotosFiltradas(); track foto.src) {
+          <figure class="foto-card" (click)="abrirFoto(foto)">
+            <div class="foto-card__img-wrap">
+              <img [src]="foto.src" [alt]="foto.titulo" loading="lazy" />
+              <div class="foto-card__overlay">
+                <i class="bi bi-arrows-fullscreen"></i>
+                <span>Ampliar</span>
+              </div>
+            </div>
+            <figcaption class="foto-card__caption">
+              <h3>{{ foto.titulo }}</h3>
+              <p>{{ foto.descripcion }}</p>
+            </figcaption>
+          </figure>
+        }
+      </div>
+    </section>
+
+    <!-- CONTACTO Y UBICACIÓN -->
+    <section class="contacto-banner">
+      <div class="contacto-banner__info">
+        <h2><i class="bi bi-geo-alt-fill"></i> Visítanos en Ciudad Universitaria</h2>
+        <p>
+          <strong>Relaciones Públicas y Marketing:</strong> Tel. (222) 229 55 00 ext. 7032, 7033, 3950 ·
+          Correo: <code>jardin.botanico@correo.buap.mx</code>
+        </p>
+        <div class="redes-chips">
+          <span><i class="bi bi-facebook"></i> @jardinbotanicobuap</span>
+          <span><i class="bi bi-instagram"></i> @jardinbuap</span>
+          <span><i class="bi bi-globe"></i> www.jardinbotanico.buap.mx</span>
+        </div>
+      </div>
+      <a routerLink="/centro-ayuda" class="btn btn-primary">
+        <i class="bi bi-life-preserver"></i> Centro de Ayuda
+      </a>
+    </section>
+
+  </div>
+
+  <!-- MODAL LIGHTBOX PARA VER FOTO EN GRANDE -->
+  @if (selectedPhoto(); as foto) {
+    <div class="lightbox-backdrop" (click)="cerrarFoto()">
+      <div class="lightbox-modal" (click)="$event.stopPropagation()">
+        <button type="button" class="lightbox-close" aria-label="Cerrar imagen" (click)="cerrarFoto()">
+          <i class="bi bi-x-lg"></i>
+        </button>
+        <img [src]="foto.src" [alt]="foto.titulo" class="lightbox-img" />
+        <div class="lightbox-info">
+          <h3>{{ foto.titulo }}</h3>
+          <p>{{ foto.descripcion }}</p>
+        </div>
+      </div>
+    </div>
+  }
+</main>
+
+<app-footer></app-footer>

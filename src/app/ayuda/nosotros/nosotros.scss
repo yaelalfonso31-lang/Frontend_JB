@@ -1,0 +1,397 @@
+@import '../../../styles/panel-sistema.scss';
+
+.nosotros-page {
+  background-color: var(--bg-app);
+  min-height: calc(100vh - 140px);
+}
+
+.nosotros-container {
+  max-width: 1320px;
+  margin: 0 auto;
+  padding: 2.25rem clamp(1.25rem, 2.5vw, 2.5rem);
+}
+
+/* ==========================================================================
+   HERO INSTITUCIONAL
+   ========================================================================== */
+.hero-card {
+  display: grid;
+  grid-template-columns: 1fr 1.15fr;
+  gap: 2rem;
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  padding: 1.75rem;
+  box-shadow: var(--shadow-sm);
+  margin-bottom: 2.25rem;
+  align-items: center;
+
+  &__media {
+    position: relative;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    height: 100%;
+    min-height: 310px;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .hero-badge {
+      position: absolute;
+      bottom: 1rem;
+      left: 1rem;
+      background: rgba(15, 41, 24, 0.88);
+      color: #ffffff;
+      padding: 0.45rem 0.9rem;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      backdrop-filter: blur(4px);
+
+      i {
+        color: #86efac;
+      }
+    }
+  }
+
+  &__content {
+    h2 {
+      margin: 0 0 0.85rem;
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: var(--text-main);
+      line-height: 1.3;
+    }
+
+    p {
+      margin: 0 0 0.9rem;
+      font-size: 0.92rem;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+  }
+}
+
+.mision-vision-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-top: 1.25rem;
+}
+
+.mv-box {
+  background-color: var(--bg-app);
+  border: 1px solid var(--border-light);
+  border-left: 4px solid var(--accent-primary);
+  border-radius: var(--radius-md);
+  padding: 1rem;
+
+  h3 {
+    margin: 0 0 0.45rem;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--text-main);
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+
+    i {
+      color: var(--accent-primary);
+    }
+  }
+
+  p {
+    margin: 0;
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+  }
+}
+
+/* ==========================================================================
+   ACREDITACIONES
+   ========================================================================== */
+.acreditaciones-section {
+  margin-bottom: 1rem;
+}
+
+.section-heading {
+  margin-bottom: 1.15rem;
+
+  h2 {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-main);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    i {
+      color: var(--accent-primary);
+    }
+  }
+
+  p {
+    margin: 0.25rem 0 0;
+    font-size: 0.88rem;
+    color: var(--text-secondary);
+  }
+}
+
+.acreditacion-titulo {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--text-main);
+  margin: 0.35rem 0 0.4rem;
+  line-height: 1.25;
+}
+
+/* ==========================================================================
+   GALERÍA INTERACTIVA
+   ========================================================================== */
+.galeria-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+
+  h2 {
+    margin: 0;
+  }
+
+  .galeria-subtitle {
+    margin: 0.25rem 0 0;
+    font-size: 0.88rem;
+    color: var(--text-secondary);
+  }
+}
+
+.galeria-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1.25rem;
+}
+
+.foto-card {
+  margin: 0;
+  background-color: var(--bg-app);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  display: flex;
+  flex-direction: column;
+
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--accent-primary);
+
+    .foto-card__img-wrap img {
+      transform: scale(1.05);
+    }
+
+    .foto-card__overlay {
+      opacity: 1;
+    }
+  }
+
+  &__img-wrap {
+    position: relative;
+    height: 195px;
+    overflow: hidden;
+    background-color: #e2e8f0;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.3s ease;
+    }
+  }
+
+  &__overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(15, 41, 24, 0.55);
+    color: #ffffff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.3rem;
+    font-size: 0.85rem;
+    font-weight: 700;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+
+    i {
+      font-size: 1.35rem;
+    }
+  }
+
+  &__caption {
+    padding: 0.9rem 1rem;
+
+    h3 {
+      margin: 0 0 0.25rem;
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    p {
+      margin: 0;
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      line-height: 1.45;
+    }
+  }
+}
+
+/* ==========================================================================
+   BANNER DE CONTACTO
+   ========================================================================== */
+.contacto-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1.25rem;
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-light);
+  border-left: 4px solid var(--accent-primary);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem 1.75rem;
+  box-shadow: var(--shadow-sm);
+
+  h2 {
+    margin: 0 0 0.35rem;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text-main);
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+
+    i {
+      color: var(--accent-primary);
+    }
+  }
+
+  p {
+    margin: 0 0 0.65rem;
+    font-size: 0.88rem;
+    color: var(--text-secondary);
+  }
+}
+
+.redes-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+
+  span {
+    background-color: var(--accent-soft);
+    color: var(--success-text);
+    padding: 0.25rem 0.7rem;
+    border-radius: 999px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+  }
+}
+
+/* ==========================================================================
+   MODAL LIGHTBOX
+   ========================================================================== */
+.lightbox-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.82);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  z-index: 1050;
+  backdrop-filter: blur(3px);
+}
+
+.lightbox-modal {
+  position: relative;
+  background: var(--bg-surface);
+  border-radius: var(--radius-lg);
+  max-width: 860px;
+  width: 100%;
+  overflow: hidden;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.35);
+
+  .lightbox-close {
+    position: absolute;
+    top: 0.85rem;
+    right: 0.85rem;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(15, 23, 42, 0.75);
+    color: #ffffff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+
+    &:hover {
+      background: #dc2626;
+    }
+  }
+
+  .lightbox-img {
+    width: 100%;
+    max-height: 70vh;
+    object-fit: contain;
+    background: #0f172a;
+    display: block;
+  }
+
+  .lightbox-info {
+    padding: 1.15rem 1.5rem;
+
+    h3 {
+      margin: 0 0 0.25rem;
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    p {
+      margin: 0;
+      font-size: 0.88rem;
+      color: var(--text-secondary);
+    }
+  }
+}
+
+@media (max-width: 900px) {
+  .hero-card {
+    grid-template-columns: 1fr;
+  }
+
+  .mision-vision-grid {
+    grid-template-columns: 1fr;
+  }
+}
