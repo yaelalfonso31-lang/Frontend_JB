@@ -249,4 +249,11 @@ export class MonitorSolicitudes implements OnInit {
       }
     });
   }
+
+  private servicesFor(solicitud: Solicitud): string[] {
+    const rawServices = solicitud.servicios ?? solicitud.services ?? [];
+    return Array.isArray(rawServices)
+      ? rawServices
+      : String(rawServices).split(',').map(service => service.trim()).filter(Boolean);
+  }
 }

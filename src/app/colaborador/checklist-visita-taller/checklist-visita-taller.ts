@@ -1,12 +1,14 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, OnInit, signal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { RouterLink } from '@angular/router';
+import { ChecklistDocumentUploadComponent } from '../checklists/checklist-document-upload';
 import { downloadChecklistPdf } from '../checklists/checklist-pdf';
 import { ChecklistRegistryService } from '../checklists/checklist-registry.service';
 
 interface ProcedureStep {
   id: string;
   description: string;
+  requiresAttachment?: boolean;
   details?: string[];
 }
 
@@ -33,7 +35,7 @@ const STORAGE_KEY = 'jbuap-checklist-visita-guiada-taller';
 @Component({
   selector: 'app-checklist-visita-taller',
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, ChecklistDocumentUploadComponent],
   templateUrl: './checklist-visita-taller.html',
   styleUrl: '../checklist-visita/checklist-visita.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -42,6 +44,7 @@ export class ChecklistVisitaTallerComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private registry = inject(ChecklistRegistryService);
   readonly folioInput = input<string>();
+  readonly attachmentChecklistKey = STORAGE_KEY;
   readonly currentPerformer = this.registry.currentPerformerName();
   readonly statusVerifying = signal(true);
   readonly approvedByServer = signal(false);
@@ -59,16 +62,16 @@ export class ChecklistVisitaTallerComponent implements OnInit {
         { id: 'taller-notificacion-4', description: 'Identificar al académico o instructor que impartirá la visita.' },
         { id: 'taller-notificacion-5', description: 'Identificar al académico y las áreas que impartirán el taller.' },
         { id: 'taller-notificacion-6', description: 'Verificar la disponibilidad de hora y fecha de los académicos o instructores que impartirán la visita y el taller.' },
-        { id: 'taller-notificacion-7', description: 'Llenar las Solicitudes Internas de Servicios Educativos dirigidas a los responsables de la visita y el taller, con las firmas de las áreas de Educación y Administrativa.' },
+        { id: 'taller-notificacion-7', description: 'Llenar las Solicitudes Internas de Servicios Educativos dirigidas a los responsables de la visita y el taller, con las firmas de las áreas de Educación y Administrativa.', requiresAttachment: true },
         { id: 'taller-notificacion-8', description: 'Confirmar la atención de la visita guiada y el taller entregando la Solicitud Interna de Servicios Educativos al académico o instructor responsable.' },
         { id: 'taller-notificacion-9', description: 'Verificar la disponibilidad de hora, fecha y espacios para impartir el taller.' },
         { id: 'taller-notificacion-10', description: 'Apartar fecha y hora en la agenda de aulas para su uso, si aplica.' },
         { id: 'taller-notificacion-11', description: 'Verificar el stock de material existente e identificar el material faltante.' },
-        { id: 'taller-notificacion-12', description: 'Solicitar el recurso económico para comprar material mediante el formato de solicitud de compras (15 días de anticipación).' },
+        { id: 'taller-notificacion-12', description: 'Solicitar el recurso económico para comprar material mediante el formato de solicitud de compras (15 días de anticipación).', requiresAttachment: true },
         { id: 'taller-notificacion-13', description: 'Preparar el material necesario y un stock excedente para 20 personas.' },
-        { id: 'taller-notificacion-14', description: 'Solicitar apoyo logístico a Horticultura mediante el formato de solicitud de servicio para círculos de bancas, mesas y bancos, si aplica (72 horas antes y con las firmas correspondientes).' },
+        { id: 'taller-notificacion-14', description: 'Solicitar apoyo logístico a Horticultura mediante el formato de solicitud de servicio para círculos de bancas, mesas y bancos, si aplica (72 horas antes y con las firmas correspondientes).', requiresAttachment: true },
         { id: 'taller-notificacion-15', description: 'Enviar por correo el Programa de servicio educativo en PDF a Marketing, al profesor responsable y a los académicos e instructores involucrados (72 horas antes).' },
-        { id: 'taller-notificacion-16', description: 'Redactar y entregar oficio al Director de la DASU con fecha, hora, institución y número de estudiantes (72 horas antes).' }
+        { id: 'taller-notificacion-16', description: 'Redactar y entregar oficio al Director de la DASU con fecha, hora, institución y número de estudiantes (72 horas antes).', requiresAttachment: true }
       ]
     },
     {

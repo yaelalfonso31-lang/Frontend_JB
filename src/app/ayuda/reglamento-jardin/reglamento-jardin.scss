@@ -1,9 +1,39 @@
 @import '../../../styles/panel-sistema.scss';
 
+.reglamento-page {
+  background-color: var(--bg-app);
+  min-height: calc(100vh - 140px);
+}
+
 .reglamento-container {
   max-width: 1200px;
   margin: 0 auto;
   padding: 2rem clamp(1.25rem, 2.5vw, 2.5rem);
+}
+
+@media print {
+  app-header,
+  app-footer,
+  .sidebar, 
+  .controls, 
+  .document-actions {
+    display: none !important;
+  }
+
+  .reglamento-page {
+    background-color: #ffffff;
+  }
+
+  .reglamento-container {
+    padding: 0;
+    max-width: 100%;
+  }
+
+  .rule-card {
+    box-shadow: none;
+    border: 1px solid #ddd;
+    break-inside: avoid;
+  }
 }
 
 /* Alineación del logo con el título */

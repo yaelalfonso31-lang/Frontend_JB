@@ -113,6 +113,14 @@
                       }
                     </div>
                   </label>
+                  @if (step.requiresAttachment) {
+                    <app-checklist-document-upload
+                      [checklistKey]="attachmentChecklistKey"
+                      [folio]="checklist().folio"
+                      [stepId]="step.id"
+                      [disabled]="isLocked()"
+                    ></app-checklist-document-upload>
+                  }
                 </td>
                 <td class="date-cell">
                   <input

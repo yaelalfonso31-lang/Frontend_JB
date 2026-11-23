@@ -13,6 +13,145 @@
   font-weight: 700;
 }
 
+.document-header {
+  background:
+    linear-gradient(110deg, var(--success-bg), transparent 58%),
+    var(--bg-surface);
+}
+
+.service-name {
+  display: inline-flex;
+  margin: 0.45rem 0 0;
+  padding: 0.3rem 0.7rem;
+  border: 1px solid var(--border-light);
+  border-radius: 999px;
+  background: var(--bg-app);
+  color: var(--success-text);
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.progress-panel {
+  border-top: 3px solid var(--accent-primary);
+}
+
+.progress-count,
+.section-progress {
+  padding: 0.4rem 0.75rem;
+  border: 1px solid var(--border-light);
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--success-text);
+  font-size: 0.85rem;
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.phase-marker {
+  padding: 0.55rem 0.65rem;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  background: var(--bg-app);
+
+  &.phase-current {
+    border-color: var(--border-light);
+    background: var(--accent-soft);
+  }
+
+  &.phase-done {
+    background: var(--success-bg);
+  }
+}
+
+.procedure-section {
+  overflow: hidden;
+  border-top: 2px solid var(--border-light);
+}
+
+.section-heading {
+  background:
+    linear-gradient(100deg, var(--accent-soft), var(--bg-app) 70%);
+}
+
+.procedure-table {
+  min-width: 680px;
+
+  thead {
+    background: var(--bg-app);
+
+    th {
+      color: var(--success-text);
+    }
+  }
+
+  tbody tr {
+    &:nth-child(even) {
+      background: #fbfdfb;
+    }
+
+    &:hover {
+      background: var(--bg-hover);
+    }
+
+    &.row-completed {
+      background: var(--success-bg);
+
+      &:hover {
+        background: #d3f1dc;
+      }
+
+      .procedure-cell {
+        box-shadow: inset 3px 0 0 var(--accent-primary);
+      }
+    }
+  }
+
+  .procedure-cell {
+    min-width: 22rem;
+    line-height: 1.5;
+  }
+
+  .date-cell,
+  .performer-cell {
+    min-width: 10rem;
+  }
+
+  .date-cell input,
+  .performer-cell input,
+  .performer-cell select {
+    border-color: var(--border-input);
+    border-radius: var(--radius-sm);
+    background-color: var(--bg-surface);
+  }
+}
+
+.procedure-check {
+  align-items: flex-start;
+
+  input[type='checkbox'] {
+    flex: 0 0 auto;
+    width: 18px;
+    height: 18px;
+    margin-top: 0.12rem;
+  }
+}
+
+.step-number {
+  min-width: 1.5rem;
+  color: var(--success-text);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.procedure-copy {
+  line-height: 1.5;
+}
+
+.section-number {
+  border-radius: 50%;
+}
+
 .document-actions button:disabled,
 .procedure-table input:disabled,
 .procedure-table select:disabled {
@@ -24,4 +163,29 @@
   color: var(--accent-hover);
   font-weight: 700;
   text-decoration: underline;
+
+  &:hover {
+    color: var(--success-text);
+    text-decoration-thickness: 2px;
+  }
+}
+
+@media (max-width: 768px) {
+  .checklist-page {
+    padding: 1rem 0.75rem;
+  }
+
+  .document-header,
+  .progress-panel {
+    padding: 1rem;
+  }
+
+  .phase-overview {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+
+  .table-scroll {
+    border-radius: var(--radius-md);
+  }
 }

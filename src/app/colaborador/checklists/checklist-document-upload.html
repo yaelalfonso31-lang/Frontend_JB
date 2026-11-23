@@ -1,0 +1,41 @@
+<div class="document-upload">
+  <div class="upload-heading">
+    <strong><i class="bi bi-paperclip" aria-hidden="true"></i> Evidencia del procedimiento</strong>
+    <span>Opcional</span>
+  </div>
+  <p class="upload-help">Adjunta el documento firmado, sellado o autorizado (PDF, JPG o PNG; máximo 10 MB cada uno).</p>
+  <label class="upload-control">
+    <span>Seleccionar documento(s)</span>
+    <input
+      type="file"
+      accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png"
+      multiple
+      [disabled]="disabled()"
+      (change)="onFilesSelected($event)"
+      aria-label="Seleccionar documentos PDF, JPG o PNG"
+    />
+  </label>
+
+  @if (documents().length > 0) {
+    <ul class="document-list" aria-label="Documentos adjuntos">
+      @for (document of documents(); track document.id) {
+        <li>
+          <a [href]="document.url" target="_blank" rel="noopener noreferrer">
+            <i class="bi bi-file-earmark-check" aria-hidden="true"></i>
+            {{ document.name }} <span>({{ formatSize(document.size) }})</span>
+          </a>
+          <button type="button" [disabled]="disabled()" (click)="removeDocument(document)" [attr.aria-label]="'Eliminar ' + document.name">
+            <i class="bi bi-trash" aria-hidden="true"></i>
+          </button>
+        </li>
+      }
+    </ul>
+  }
+
+  @if (message()) {
+    <p class="upload-message" role="status">{{ message() }}</p>
+  }
+  @if (error()) {
+    <p class="upload-error" role="alert">{{ error() }}</p>
+  }
+</div>
