@@ -1,12 +1,14 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, OnInit, signal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { RouterLink } from '@angular/router';
+import { ChecklistDocumentUploadComponent } from '../checklists/checklist-document-upload';
 import { downloadChecklistPdf } from '../checklists/checklist-pdf';
 import { ChecklistRegistryService } from '../checklists/checklist-registry.service';
 
 interface ProcedureStep {
   id: string;
   description: string;
+  requiresAttachment?: boolean;
 }
 
 interface ProcedurePhase {
@@ -32,7 +34,7 @@ const STORAGE_KEY = 'jbuap-checklist-visita-guiada';
 @Component({
   selector: 'app-checklist-visita',
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, ChecklistDocumentUploadComponent],
   templateUrl: './checklist-visita.html',
   styleUrl: './checklist-visita.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -41,6 +43,7 @@ export class ChecklistVisitaComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private registry = inject(ChecklistRegistryService);
   readonly folioInput = input<string>();
+  readonly attachmentChecklistKey = STORAGE_KEY;
   readonly currentPerformer = this.registry.currentPerformerName();
   readonly statusVerifying = signal(true);
   readonly approvedByServer = signal(false);
@@ -57,11 +60,11 @@ export class ChecklistVisitaComponent implements OnInit {
         { id: 'notificacion-3', description: 'Anotar la fecha y hora en la agenda del Área de Educación y Divulgación (carpeta y Google Calendar).' },
         { id: 'notificacion-4', description: 'Identificar al académico o instructor que impartirá la visita.' },
         { id: 'notificacion-5', description: 'Verificar la disponibilidad de hora y fecha del académico o instructor responsable.' },
-        { id: 'notificacion-6', description: 'Llenar la Solicitud Interna de Servicios Educativos dirigida al responsable de la visita y recabar las firmas de las áreas de Educación y Administrativa.' },
+        { id: 'notificacion-6', description: 'Llenar la Solicitud Interna de Servicios Educativos dirigida al responsable de la visita y recabar las firmas de las áreas de Educación y Administrativa.', requiresAttachment: true },
         { id: 'notificacion-7', description: 'Confirmar la atención de la visita entregando la Solicitud Interna de Servicios Educativos al académico o instructor responsable.' },
-        { id: 'notificacion-8', description: 'Solicitar apoyo logístico a Horticultura mediante el formato de solicitud de servicio para los círculos de bancas, si aplica (72 horas antes).' },
+        { id: 'notificacion-8', description: 'Solicitar apoyo logístico a Horticultura mediante el formato de solicitud de servicio para los círculos de bancas, si aplica (72 horas antes).', requiresAttachment: true },
         { id: 'notificacion-9', description: 'Enviar el Programa de servicio educativo en PDF a Marketing, al profesor responsable y al personal académico e instructor involucrado (72 horas antes).' },
-        { id: 'notificacion-10', description: 'Redactar y entregar oficio al Director de la DASU con fecha, hora, institución y número de estudiantes (72 horas antes).' }
+        { id: 'notificacion-10', description: 'Redactar y entregar oficio al Director de la DASU con fecha, hora, institución y número de estudiantes (72 horas antes).', requiresAttachment: true }
       ]
     },
     {
